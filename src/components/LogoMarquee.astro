@@ -1,0 +1,151 @@
+---
+/**
+ * Homepage client/partner logo marquee (implementation plan §8.4, §20.2).
+ *
+ * Institutional proof rendered as an accessible logo strip. The component
+ * invents nothing: it renders only entries returned by `marqueeLogos()`, i.e.
+ * brands that are both `status: "retain"` and `permission: "approved"`. Removed
+ * brands (Awayco, Perion, Synaptico) and any logo whose publishing rights are
+ * still `pending` (R-008) are withheld, so an unapproved or forbidden asset can
+ * never leak into a production build through markup.
+ *
+ * `assertLogosValid()` runs at render time so a drifted register — a removed
+ * brand slipping back to visible, a hotlinked CDN asset, a missing alt — fails
+ * the build instead of shipping. Publication is gated exactly like the proof
+ * banner: until at least one asset's rights are confirmed, `marqueeLogos()`
+ * returns nothing and this component renders nothing at all. The marquee
+ * reappears automatically once the register clears an entry for use.
+ *
+ * Accessibility (§8.4):
+ *  - the duplicate set that makes the scroll seamless is `aria-hidden`, so
+ *    assistive tech announces each brand once;
+ *  - when `prefers-reduced-motion: reduce` is set, the animation stops and the
+ *    logos fall back to a static wrapped grid with the duplicate set hidden.
+ */
+import {
+  logos as defaultLogos,
+  marqueeLogos,
+  assertLogosValid,
+  type LogoEntry,
+} from "../config/logos";
+
+export interface Props {
+  /** Defaults to the site's `logos` register; overridable for testing. */
+  logos?: readonly LogoEntry[];
+}
+
+const { logos = defaultLogos } = Astro.props;
+
+assertLogosValid(logos);
+
+const visible = marqueeLogos(logos);
+---
+
+{
+  visible.length > 0 && (
+    <section class="marquee" aria-labelledby="marquee-heading">
+      <h2 class="marquee__heading" id="marquee-heading">
+        Clients and partners
+      </h2>
+      <div class="marquee__viewport">
+        {/* The visible set carries the accessible names. */}
+        <ul class="marquee__track" role="list">
+          {visible.map((logo) => (
+            <li class="marquee__item">
+              <img
+                class="marquee__logo"
+                src={`/logos/${logo.asset}`}
+                alt={logo.alt}
+                loading="lazy"
+                decoding="async"
+              />
+            </li>
+          ))}
+        </ul>
+        {/* A duplicate set makes the scroll seamless; it is hidden from
+            assistive tech so each brand is announced only once (§8.4). */}
+        <ul class="marquee__track marquee__track--clone" role="list" aria-hidden="true">
+          {visible.map((logo) => (
+            <li class="marquee__item">
+              <img class="marquee__logo" src={`/logos/${logo.asset}`} alt="" loading="lazy" decoding="async" />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .marquee {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  /* Names the landmark for assistive tech without adding a visible title. */
+  .marquee__heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .marquee__viewport {
+    display: flex;
+    width: max-content;
+    padding-block: 2.5rem;
+  }
+
+  .marquee__track {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    margin: 0;
+    padding: 0 1.5rem;
+    list-style: none;
+    animation: marquee-scroll 40s linear infinite;
+  }
+
+  .marquee__item {
+    flex: 0 0 auto;
+  }
+
+  .marquee__logo {
+    display: block;
+    height: 2rem;
+    width: auto;
+  }
+
+  @keyframes marquee-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* Static wrapped grid when motion is unwelcome: stop the scroll, drop the
+     seamless duplicate, and let the real set wrap (§8.4). */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__viewport {
+      width: auto;
+    }
+
+    .marquee__track {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem 3rem;
+      animation: none;
+    }
+
+    .marquee__track--clone {
+      display: none;
+    }
+  }
+</style>
