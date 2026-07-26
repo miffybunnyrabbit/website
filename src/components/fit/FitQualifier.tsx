@@ -25,10 +25,34 @@ import {
   type FitNode,
 } from "./fitFlow";
 import { primaryCta } from "../../config/cta";
+import { fitResultEvent, track, type AnalyticsEvent } from "../../utils/analytics";
 
 export interface FitQualifierProps {
   /** Answers to replay before the first paint; defaults to the start. */
   initialAnswers?: readonly Answer[];
+}
+
+/**
+ * The analytics events an answer should emit, in order (implementation plan
+ * R-011). Answering the first question opens the funnel (`fit_flow_started`);
+ * an answer that lands on an outcome closes it (`fit_flow_completed`) and
+ * reports which outcome was reached (`fit_result_*`). Pure — derived only from
+ * the prior answers and the choice — so every branch is unit-testable without a
+ * DOM. The component just tracks whatever this returns.
+ */
+export function analyticsEventsForAnswer(
+  prevAnswers: readonly Answer[],
+  choice: Answer,
+): AnalyticsEvent[] {
+  const events: AnalyticsEvent[] = [];
+  if (prevAnswers.length === 0) events.push("fit_flow_started");
+  const node = resolve([...prevAnswers, choice]);
+  if (!isQuestion(node)) {
+    events.push("fit_flow_completed");
+    const result = fitResultEvent(node.id);
+    if (result) events.push(result);
+  }
+  return events;
 }
 
 /** The current node plus its 1-based question position for the progress line. */
@@ -54,6 +78,8 @@ export default function FitQualifier({
     if (!isQuestion(state.node)) return;
     // Confirm the transition exists before committing it.
     next(state.node.id, choice);
+    // Report funnel progress (no-op until a provider is configured, §R-011).
+    for (const event of analyticsEventsForAnswer(answers, choice)) track(event);
     setAnswers([...answers, choice]);
   };
 

@@ -79,5 +79,13 @@ if (structuredData) assertStructuredDataValid(structuredData);
       <slot />
     </main>
     <slot name="footer" />
+
+    {/* One delegated listener tracks every `cta_click` (P5-006, D-006 outbound
+        tracking). It is a no-op until a provider is configured for D-011, so no
+        visitor data is collected until that decision lands. */}
+    <script>
+      import { trackAnalyticsClicks } from "../utils/analytics";
+      trackAnalyticsClicks();
+    </script>
   </body>
 </html>

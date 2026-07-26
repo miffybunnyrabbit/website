@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import FitQualifier from "./FitQualifier";
+import FitQualifier, { analyticsEventsForAnswer } from "./FitQualifier";
 import {
   FIT_NODES,
   resolve,
@@ -95,4 +95,47 @@ describe("FitQualifier island", () => {
       expect(html).not.toContain(primaryCta.label);
     },
   );
+});
+
+describe("analyticsEventsForAnswer (funnel instrumentation, R-011)", () => {
+  it("opens the funnel only on the first answer", () => {
+    expect(analyticsEventsForAnswer([], "yes")).toContain("fit_flow_started");
+    expect(analyticsEventsForAnswer(["yes"], "no")).not.toContain(
+      "fit_flow_started",
+    );
+  });
+
+  it("emits nothing terminal while still on a question", () => {
+    // First answer moves to another question, not an outcome.
+    expect(analyticsEventsForAnswer([], "yes")).toEqual(["fit_flow_started"]);
+    expect(analyticsEventsForAnswer([], "no")).toEqual(["fit_flow_started"]);
+  });
+
+  it("completes the funnel and reports the outcome when an answer lands on a result", () => {
+    // yes -> yes reaches growth-fit in two answers.
+    expect(analyticsEventsForAnswer(["yes"], "yes")).toEqual([
+      "fit_flow_completed",
+      "fit_result_growth",
+    ]);
+    // no -> yes reaches idea-fit.
+    expect(analyticsEventsForAnswer(["no"], "yes")).toEqual([
+      "fit_flow_completed",
+      "fit_result_idea",
+    ]);
+    // no -> no -> no reaches no-fit; the deepest branch keeps the completed pair.
+    expect(analyticsEventsForAnswer(["no", "no"], "no")).toEqual([
+      "fit_flow_completed",
+      "fit_result_no_fit",
+    ]);
+  });
+
+  it("emits both start and completion when the flow resolves on the first answer", () => {
+    // No single-answer path reaches an outcome in this graph, so a start answer
+    // is never also a completion; guard that invariant.
+    for (const choice of ["yes", "no"] as Answer[]) {
+      const events = analyticsEventsForAnswer([], choice);
+      expect(events).toContain("fit_flow_started");
+      expect(events).not.toContain("fit_flow_completed");
+    }
+  });
 });

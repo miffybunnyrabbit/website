@@ -41,7 +41,11 @@ const { brand, items, ctaLabel } = headerNav;
       )
     }
 
-    <a class="site-header__cta" href={primaryCta.href}>{ctaLabel}</a>
+    <a
+      class="site-header__cta"
+      href={primaryCta.href}
+      data-analytics-event={primaryCta.analyticsEvent}>{ctaLabel}</a
+    >
   </div>
 </header>
 

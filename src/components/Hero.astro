@@ -24,7 +24,11 @@ const supportingCopy = heroSupportingCopy(hero);
     <h1 class="hero__headline" id="hero-headline">{headline}</h1>
     <p class="hero__supporting">{supportingCopy}</p>
     {supportingLine && <p class="hero__line">{supportingLine}</p>}
-    <a class="hero__cta" href={primaryCta.href}>{ctaLabel}</a>
+    <a
+      class="hero__cta"
+      href={primaryCta.href}
+      data-analytics-event={primaryCta.analyticsEvent}>{ctaLabel}</a
+    >
   </div>
 </section>
 
