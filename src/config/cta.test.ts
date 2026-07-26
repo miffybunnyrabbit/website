@@ -4,10 +4,14 @@ import {
   CTA_ANALYTICS_EVENT,
   PRIMARY_CTA_LABEL,
   assertPrimaryCtaValid,
+  assertFinalCtaCopyValid,
+  finalCtaCopy,
   findInconsistentCtaLabels,
   primaryCta,
+  validateFinalCtaCopy,
   validatePrimaryCta,
   type CtaConfig,
+  type FinalCtaCopy,
 } from "./cta";
 
 /** A well-formed CTA config for tests to start from and mutate. */
@@ -125,5 +129,38 @@ describe("findInconsistentCtaLabels", () => {
 describe("approved hosts", () => {
   it("includes calendly.com", () => {
     expect(APPROVED_CTA_HOSTS).toContain("calendly.com");
+  });
+});
+
+describe("finalCtaCopy", () => {
+  it("ships a non-empty headline and supporting line", () => {
+    expect(finalCtaCopy.headline.trim().length).toBeGreaterThan(0);
+    expect(finalCtaCopy.supportingLine.trim().length).toBeGreaterThan(0);
+    expect(validateFinalCtaCopy()).toEqual([]);
+    expect(() => assertFinalCtaCopyValid()).not.toThrow();
+  });
+
+  it("rejects a missing headline or supporting line", () => {
+    const copy: FinalCtaCopy = { headline: "  ", supportingLine: "" };
+    const errors = validateFinalCtaCopy(copy);
+    expect(errors.some((e) => e.includes("headline is missing"))).toBe(true);
+    expect(errors.some((e) => e.includes("supporting line is missing"))).toBe(
+      true,
+    );
+  });
+
+  it("rejects placeholder/draft copy", () => {
+    const copy: FinalCtaCopy = {
+      headline: "TODO: write this",
+      supportingLine: "lorem ipsum dolor",
+    };
+    const errors = validateFinalCtaCopy(copy);
+    expect(errors.some((e) => e.includes("draft marker"))).toBe(true);
+  });
+
+  it("assertFinalCtaCopyValid throws on invalid copy", () => {
+    expect(() =>
+      assertFinalCtaCopyValid({ headline: "", supportingLine: "" }),
+    ).toThrow(/Invalid final CTA copy/);
   });
 });

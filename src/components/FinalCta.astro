@@ -1,0 +1,81 @@
+---
+/**
+ * Homepage closing call-to-action (implementation plan §13, Phase 4 item 8).
+ *
+ * The plan replaces the old "build something" / "invest in ventures" split with
+ * one action, so this section renders exactly one headline, one supporting
+ * line, and the single approved `primaryCta` button. The button reads its URL,
+ * label, and analytics event from the central `primaryCta` config rather than
+ * hardcoding them here (§13), so the whole site funnels to one conversion
+ * event. `assertFinalCtaCopyValid()` runs at render time, turning a missing or
+ * placeholder headline into a build failure rather than a published mistake.
+ *
+ * The section is static Astro HTML and CSS: no React and no client-side state,
+ * so the conversion action works with JavaScript disabled. The CTA URL itself
+ * is injected at build time via `PUBLIC_CALENDLY_URL`; the production build's
+ * `assertPrimaryCtaValid()` guards that it is present, HTTPS, and on Calendly.
+ */
+import {
+  primaryCta,
+  finalCtaCopy as defaultCopy,
+  assertFinalCtaCopyValid,
+  type FinalCtaCopy,
+} from "../config/cta";
+
+export interface Props {
+  /** Defaults to the site's closing-CTA copy; overridable for testing. */
+  copy?: FinalCtaCopy;
+}
+
+const { copy = defaultCopy } = Astro.props;
+
+assertFinalCtaCopyValid(copy);
+---
+
+<section class="final-cta" aria-labelledby="final-cta-heading">
+  <div class="final-cta__inner">
+    <h2 class="final-cta__headline" id="final-cta-heading">
+      {copy.headline}
+    </h2>
+    <p class="final-cta__supporting">{copy.supportingLine}</p>
+    <a
+      class="final-cta__button"
+      href={primaryCta.href}
+      data-analytics-event={primaryCta.analyticsEvent}>{primaryCta.label}</a
+    >
+  </div>
+</section>
+
+<style>
+  .final-cta {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .final-cta__inner {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 4rem 1.5rem;
+    text-align: center;
+  }
+
+  .final-cta__headline {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    line-height: 1.1;
+    margin: 0 auto 1rem;
+    max-width: 24ch;
+  }
+
+  .final-cta__supporting {
+    font-size: 1.125rem;
+    max-width: 48ch;
+    margin: 0 auto 2rem;
+  }
+
+  .final-cta__button {
+    display: inline-block;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+</style>

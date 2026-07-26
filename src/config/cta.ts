@@ -49,6 +49,79 @@ export const primaryCta: CtaConfig = {
   analyticsEvent: CTA_ANALYTICS_EVENT,
 };
 
+/**
+ * Copy for the single closing call-to-action section (section 13). The plan
+ * replaces the old "build something" / "invest in ventures" split with one
+ * action, so this section carries one headline, one supporting line, and the
+ * one `primaryCta` button — never a second competing action. The button itself
+ * always reads its URL and label from `primaryCta` above rather than from here,
+ * keeping the conversion action in exactly one place (section 13).
+ */
+export interface FinalCtaCopy {
+  /** Section heading, in the plan's shouty display case. */
+  headline: string;
+  /** Supporting line shown beneath the heading. */
+  supportingLine: string;
+}
+
+/** The approved closing-CTA copy (section 13 working draft). */
+export const finalCtaCopy: FinalCtaCopy = {
+  headline: "SEE A CREDIBLE PATH TO MORE ENTERPRISE VALUE?",
+  supportingLine:
+    "Let’s work out whether Helix is the right partner to move it.",
+};
+
+/**
+ * Draft markers and obvious placeholders that must never reach a production
+ * build (kept lowercase; matching is case-insensitive).
+ */
+const CTA_DRAFT_MARKERS: readonly string[] = [
+  "draft",
+  "not for publication",
+  "todo",
+  "tbd",
+  "placeholder",
+  "lorem ipsum",
+];
+
+/**
+ * Validate the closing-CTA copy. Returns the list of problems; an empty list
+ * means the copy is well-formed. The production build should treat any
+ * non-empty result as fatal so a missing or placeholder headline cannot ship.
+ */
+export function validateFinalCtaCopy(
+  copy: FinalCtaCopy = finalCtaCopy,
+): string[] {
+  const errors: string[] = [];
+
+  if (!copy.headline.trim()) {
+    errors.push("Final CTA headline is missing.");
+  }
+  if (!copy.supportingLine.trim()) {
+    errors.push("Final CTA supporting line is missing.");
+  }
+
+  const haystack = `${copy.headline} ${copy.supportingLine}`.toLowerCase();
+  for (const marker of CTA_DRAFT_MARKERS) {
+    if (haystack.includes(marker)) {
+      errors.push(`Final CTA copy contains a forbidden draft marker "${marker}".`);
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Assert the closing-CTA copy is valid, throwing on failure. Intended for use
+ * at render/build time so broken copy fails the build instead of shipping.
+ */
+export function assertFinalCtaCopyValid(copy: FinalCtaCopy = finalCtaCopy): void {
+  const errors = validateFinalCtaCopy(copy);
+  if (errors.length > 0) {
+    throw new Error(`Invalid final CTA copy:\n- ${errors.join("\n- ")}`);
+  }
+}
+
 /** True when `host` is an approved host exactly or a subdomain of one. */
 function isApprovedHost(host: string): boolean {
   const lower = host.toLowerCase();
