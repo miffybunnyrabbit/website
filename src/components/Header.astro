@@ -1,0 +1,82 @@
+---
+/**
+ * Site header (implementation plan §8.1 Header, Phase 4 step 1).
+ *
+ * The header is deliberately restrained: the Helix Collective brand/home link,
+ * one optional in-page anchor nav (Work, How we work, Fit), and the single
+ * approved primary CTA. All structure and copy come from the validated
+ * `headerNav` content model and the single `primaryCta` config — this component
+ * renders that model and invents no labels, links, or extra actions of its own.
+ *
+ * `assertNavValid()` runs at render time so a header that has drifted off the
+ * §8.1 rules (a reintroduced team/investor link, an off-spec CTA label, an
+ * anchor pointing at a non-existent section) fails the build instead of
+ * shipping.
+ */
+import { headerNav, anchorHref, assertNavValid } from "../config/navigation";
+import { primaryCta } from "../config/cta";
+
+assertNavValid(headerNav);
+
+const { brand, items, ctaLabel } = headerNav;
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-header__brand" href={brand.href}>{brand.label}</a>
+
+    {
+      items.length > 0 && (
+        <nav class="site-header__nav" aria-label="Primary">
+          <ul class="site-header__nav-list">
+            {
+              items.map((item) => (
+                <li>
+                  <a href={anchorHref(item)}>{item.label}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      )
+    }
+
+    <a class="site-header__cta" href={primaryCta.href}>{ctaLabel}</a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 1rem 1.5rem;
+  }
+
+  .site-header__brand {
+    font-weight: 700;
+    text-decoration: none;
+    margin-inline-end: auto;
+  }
+
+  .site-header__nav-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-header__cta {
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+</style>
