@@ -1,13 +1,41 @@
 ---
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_TITLE,
+  SITE_LOCALE,
+  ORGANIZATION_NAME,
+  canonicalUrl,
+  structuredDataGraph,
+  assertStructuredDataValid,
+  assertPageMetaValid,
+} from "../config/siteMeta";
+
 export interface Props {
-  title: string;
+  title?: string;
   description?: string;
+  /** Root-relative path of this page, used for the canonical URL. */
+  canonicalPath?: string;
+  /** Ask search engines not to index this page (e.g. the 404 page). */
+  noindex?: boolean;
 }
 
 const {
-  title,
-  description = "Helix Collective partners deeply with businesses to create meaningful growth in enterprise value through product, technology and commercial execution.",
+  title = DEFAULT_TITLE,
+  description = DEFAULT_DESCRIPTION,
+  canonicalPath = "/",
+  noindex = false,
 } = Astro.props;
+
+// Fail the build on placeholder copy or an off-root canonical path rather than
+// shipping broken metadata (P7-001/P7-002).
+assertPageMetaValid({ title, description, canonicalPath });
+
+const canonical = canonicalUrl(canonicalPath);
+
+// Indexable pages carry the site's structured data; the 404 page does not
+// (P7-004). Validate it so a forbidden node never reaches the markup.
+const structuredData = noindex ? null : structuredDataGraph();
+if (structuredData) assertStructuredDataValid(structuredData);
 ---
 
 <!doctype html>
@@ -16,8 +44,32 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    {noindex ? (
+      <meta name="robots" content="noindex, follow" />
+    ) : (
+      <link rel="canonical" href={canonical} />
+    )}
+
+    <!-- Open Graph (P7-003 image is added once the approved artwork exists). -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={ORGANIZATION_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={SITE_LOCALE} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    {structuredData && (
+      <script
+        is:inline
+        type="application/ld+json"
+        set:html={JSON.stringify(structuredData)}
+      />
+    )}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
