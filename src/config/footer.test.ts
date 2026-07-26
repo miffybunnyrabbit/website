@@ -21,14 +21,14 @@ function validFooter(): FooterContent {
         label: "Legal entity",
         value: "[VERIFY: registered legal entity name]",
         approval: "pending",
-        queueItem: "Q-0001",
+        queueItem: "Q-0010-footer-identity",
       },
       {
         id: "registered-office",
         label: "Registered office",
         value: "Level 1, 2–14 Vine Street, Redfern NSW 2016",
         approval: "pending",
-        queueItem: "Q-0003",
+        queueItem: "Q-0010-footer-identity",
       },
     ],
     socialLinks: [],
@@ -104,14 +104,14 @@ describe("publishedFooter", () => {
           label: "ABN",
           value: "12 345 678 901",
           approval: "approved",
-          queueItem: "Q-0002",
+          queueItem: "Q-0010-footer-identity",
         },
         {
           id: "legal-entity",
           label: "Legal entity",
           value: "[VERIFY: registered legal entity name]",
           approval: "pending",
-          queueItem: "Q-0001",
+          queueItem: "Q-0010-footer-identity",
         },
       ],
     };
@@ -126,14 +126,14 @@ describe("publishedFooter", () => {
         label: "Privacy",
         href: "https://www.helixcollective.com/privacy",
         approval: "pending",
-        queueItem: "Q-0005",
+        queueItem: "Q-0010-footer-identity",
       },
       contactEmail: {
         id: "email",
         label: "Email",
         value: "hello@helixcollective.com",
         approval: "approved",
-        queueItem: "Q-0006",
+        queueItem: "Q-0010-footer-identity",
       },
     };
     const published = publishedFooter(content);
@@ -192,7 +192,7 @@ describe("validateFooter guardrails", () => {
           label: "ABN",
           value: "[VERIFY: Australian Business Number]",
           approval: "approved",
-          queueItem: "Q-0002",
+          queueItem: "Q-0010-footer-identity",
         },
       ],
     };
@@ -206,8 +206,8 @@ describe("validateFooter guardrails", () => {
     const content: FooterContent = {
       ...validFooter(),
       facts: [
-        { id: "abn", label: "ABN", value: "1", approval: "pending", queueItem: "Q-0002" },
-        { id: "abn", label: "ABN", value: "2", approval: "pending", queueItem: "Q-0002" },
+        { id: "abn", label: "ABN", value: "1", approval: "pending", queueItem: "Q-0010-footer-identity" },
+        { id: "abn", label: "ABN", value: "2", approval: "pending", queueItem: "Q-0010-footer-identity" },
       ],
     };
     const errors = validateFooter(content);
@@ -223,7 +223,7 @@ describe("validateFooter guardrails", () => {
           label: "Our team",
           value: "Meet the team",
           approval: "pending",
-          queueItem: "Q-0009",
+          queueItem: "Q-0010-footer-identity",
         },
       ],
     };
@@ -240,7 +240,7 @@ describe("validateFooter guardrails", () => {
           label: "Invest with us",
           value: "Back our ventures",
           approval: "pending",
-          queueItem: "Q-0009",
+          queueItem: "Q-0010-footer-identity",
         },
       ],
     };
@@ -267,7 +267,7 @@ describe("validateFooter guardrails", () => {
           label: "Our staff",
           value: "40 employees across three offices",
           approval: "pending",
-          queueItem: "Q-0009",
+          queueItem: "Q-0010-footer-identity",
         },
       ],
     };
@@ -292,7 +292,7 @@ describe("validateFooter guardrails", () => {
           label: "LinkedIn",
           href: "http://linkedin.com/company/helix",
           approval: "approved",
-          queueItem: "Q-0004",
+          queueItem: "Q-0010-footer-identity",
         },
       ],
     };
@@ -308,7 +308,7 @@ describe("validateFooter guardrails", () => {
         label: "Email",
         value: "call us",
         approval: "approved",
-        queueItem: "Q-0006",
+        queueItem: "Q-0010-footer-identity",
       },
     };
     const errors = validateFooter(content);

@@ -12,6 +12,7 @@ import {
   type QueueItem,
 } from "./approvalQueue";
 import { caseStudies } from "./caseStudies";
+import { footer } from "./footer";
 import { logos } from "./logos";
 import { proofBanner } from "./proofBanner";
 
@@ -123,6 +124,42 @@ describe("completeness cross-checks against live content", () => {
     const errors = validateApprovalQueue(queue);
     expect(errors.join("\n")).toMatch(/proof figure.*no open queue item/i);
   });
+
+  it("tracks the pending footer identity facts (§14, §23)", () => {
+    // The footer's identity facts publish withheld and pending, so the queue
+    // must carry an open item covering them.
+    expect(footer.facts.some((f) => f.approval === "pending")).toBe(true);
+    const openKinds = openQueueItems().flatMap((i) => i.coverage);
+    expect(openKinds.some((c) => c.kind === "footer-identity")).toBe(true);
+  });
+
+  it("every footer fact references its footer-identity queue item", () => {
+    const footerIds = new Set(
+      approvalQueue
+        .filter((i) => i.coverage.some((c) => c.kind === "footer-identity"))
+        .map((i) => i.id),
+    );
+    expect(footerIds.size).toBeGreaterThan(0);
+    for (const fact of footer.facts) {
+      expect(footerIds.has(fact.queueItem), fact.id).toBe(true);
+    }
+  });
+
+  it("fails when the only footer-identity item is resolved", () => {
+    const queue = cloneQueue().map((i) =>
+      i.id === "Q-0010-footer-identity"
+        ? {
+            ...i,
+            status: "approved" as const,
+            decision: "Entity, ABN, and Redfern office confirmed.",
+            decisionDate: "2026-07-22",
+            decidedBy: "helix-owner",
+          }
+        : i,
+    );
+    const errors = validateApprovalQueue(queue);
+    expect(errors.join("\n")).toMatch(/footer identity.*no open queue item/i);
+  });
 });
 
 describe("structural validation", () => {
@@ -216,7 +253,7 @@ describe("structural validation", () => {
 describe("build warning surface", () => {
   it("lists every open item on one line each", () => {
     const warning = formatOpenQueueWarning();
-    expect(warning).toMatch(/9 open item/);
+    expect(warning).toMatch(/10 open item/);
     for (const item of openQueueItems()) {
       expect(warning).toContain(item.id);
     }

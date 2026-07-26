@@ -24,6 +24,7 @@
  */
 
 import { caseStudies, type CaseStudy } from "./caseStudies";
+import { footer } from "./footer";
 import { logos, type LogoEntry } from "./logos";
 import { proofBanner, type ProofMetricId } from "./proofBanner";
 
@@ -93,6 +94,7 @@ export type CoverageKind =
   | "case-study"
   | "proof-metric"
   | "logo-permissions"
+  | "footer-identity"
   | "strategic-copy"
   | "launch-review";
 
@@ -224,6 +226,23 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "Product/strategy, design, development, copy, finance/legal, and the final owner each review before and after launch; findings are applied as content updates.",
     requiredApprovers: REQUIRED_APPROVERS.D,
+    status: "open",
+  },
+  {
+    // The footer's institutional-identity facts (§14) — legal entity name, ABN,
+    // and registered office — are owner-approved legitimacy facts with no
+    // recorded decision yet. `publishedFooter()` withholds each until it clears,
+    // so an unverified ABN or office never reaches `dist`; this item keeps that
+    // pending content tracked. Category A (the single Helix-owner gate) is the
+    // right approver: the registered office is the open D-007 locations decision,
+    // and the entity/ABN are the owner's institutional facts.
+    id: "Q-0010-footer-identity",
+    category: "A",
+    title: "Footer institutional identity: legal entity, ABN, registered office",
+    coverage: [{ kind: "footer-identity" }],
+    publishedWording:
+      "Legal entity name and ABN publish as [VERIFY:] drafts and the registered office as the §12 Redfern address — all withheld from the rendered footer until the Helix owner confirms them (§14, D-007).",
+    requiredApprovers: REQUIRED_APPROVERS.A,
     status: "open",
   },
 ];
@@ -408,6 +427,42 @@ export function validateApprovalQueue(
     errors.push(
       `Retained logos publish under pending permission but no open queue item covers logo permissions.`,
     );
+  }
+
+  // The footer's institutional-identity facts (legal entity, ABN, registered
+  // office, any social/privacy link, contact email) publish withheld until owner
+  // sign-off (§14). Like every other pending content model, they must be tracked
+  // by an open queue item, or the governance record and the site drift apart.
+  const footerFacts = [
+    ...footer.facts,
+    ...footer.socialLinks,
+    ...(footer.privacyLink ? [footer.privacyLink] : []),
+    ...(footer.contactEmail ? [footer.contactEmail] : []),
+  ];
+  if (
+    footerFacts.some((f) => f.approval === "pending") &&
+    !isCovered(openRefs, "footer-identity")
+  ) {
+    errors.push(
+      `Footer identity facts publish under pending approval but no open queue item covers footer identity.`,
+    );
+  }
+
+  // Every footer fact must reference a real footer-identity queue item, so its
+  // `queueItem` id can never collide with an unrelated item (e.g. a case-study
+  // valuation) or dangle. Resolved items still count — an approved fact keeps
+  // pointing at the item that cleared it.
+  const footerIdentityIds = new Set(
+    queue
+      .filter((item) => item.coverage.some((c) => c.kind === "footer-identity"))
+      .map((item) => item.id),
+  );
+  for (const fact of footerFacts) {
+    if (!footerIdentityIds.has(fact.queueItem)) {
+      errors.push(
+        `Footer fact references approval-queue item "${fact.queueItem}", which is not a footer-identity queue item.`,
+      );
+    }
   }
 
   return errors;

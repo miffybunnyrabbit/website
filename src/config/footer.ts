@@ -29,8 +29,13 @@ import { scanForbiddenCopy } from "./forbiddenCopy";
 /** Whether an identity fact has cleared its approval-queue item (section 23). */
 export type FactApproval = "pending" | "approved";
 
-/** Format of an approval-queue item id, e.g. `Q-0003` (section 23). */
-export const QUEUE_ITEM_PATTERN = /^Q-\d{4}$/;
+/**
+ * Format of an approval-queue item id, e.g. `Q-0010-footer-identity`
+ * (section 23). This is the canonical `Q-NNNN-short-title` shape used by
+ * `src/config/approvalQueue.ts`, so a footer fact references a *real* queue item
+ * rather than a bare number that could collide with an unrelated item.
+ */
+export const QUEUE_ITEM_PATTERN = /^Q-\d{4}-[a-z0-9-]+$/;
 
 /**
  * A single institutional identity fact (entity, ABN, registered office, …)
@@ -47,7 +52,7 @@ export interface FooterFact {
   value: string;
   /** Whether the fact has cleared its approval-queue item. */
   approval: FactApproval;
-  /** The `docs/approvals/queue` item tracking this fact, e.g. "Q-0003". */
+  /** The `docs/approvals/queue` item tracking this fact, e.g. "Q-0010-footer-identity". */
   queueItem: string;
 }
 
@@ -150,9 +155,12 @@ function hasDraftMarker(text: string): boolean {
  *
  * The registered-office draft uses the one concrete address in the plan
  * (section 12); whether the footer ultimately lists that address or the current
- * Sydney/Melbourne/Brisbane offices is itself an open decision, tracked by
- * Q-0003. No LinkedIn URL is documented anywhere, so `socialLinks` is
- * deliberately empty rather than carrying an invented link.
+ * Sydney/Melbourne/Brisbane offices is itself an open decision (D-007). All
+ * three institutional-identity facts are tracked by a single approval-queue
+ * item, `Q-0010-footer-identity`, which the queue model cross-checks so this
+ * pending content can never lose its tracking (section 23). No LinkedIn URL is
+ * documented anywhere, so `socialLinks` is deliberately empty rather than
+ * carrying an invented link.
  */
 export const footer: FooterContent = {
   brand: { label: "Helix Collective", href: "/" },
@@ -162,21 +170,21 @@ export const footer: FooterContent = {
       label: "Legal entity",
       value: "[VERIFY: registered legal entity name]",
       approval: "pending",
-      queueItem: "Q-0001",
+      queueItem: "Q-0010-footer-identity",
     },
     {
       id: "abn",
       label: "ABN",
       value: "[VERIFY: Australian Business Number]",
       approval: "pending",
-      queueItem: "Q-0002",
+      queueItem: "Q-0010-footer-identity",
     },
     {
       id: "registered-office",
       label: "Registered office",
       value: "Level 1, 2–14 Vine Street, Redfern NSW 2016",
       approval: "pending",
-      queueItem: "Q-0003",
+      queueItem: "Q-0010-footer-identity",
     },
   ],
   socialLinks: [],
