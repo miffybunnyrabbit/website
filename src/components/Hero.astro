@@ -1,0 +1,72 @@
+---
+/**
+ * Homepage hero (implementation plan §8.2 Hero, Phase 4).
+ *
+ * The hero carries the site's single most important statement, so — like the
+ * header — it invents nothing: eyebrow, headline, supporting copy and CTA all
+ * come from the validated `hero` content model and the single `primaryCta`
+ * config. `assertHeroValid()` runs at render time so a softened headline, an
+ * off-label CTA, or an unconfirmed D-009 performance-linked claim fails the
+ * build instead of shipping.
+ */
+import { hero, heroSupportingCopy, assertHeroValid } from "../config/hero";
+import { primaryCta } from "../config/cta";
+
+assertHeroValid(hero);
+
+const { eyebrow, headline, supportingLine, ctaLabel } = hero;
+const supportingCopy = heroSupportingCopy(hero);
+---
+
+<section class="hero" id="top" aria-labelledby="hero-headline">
+  <div class="hero__inner">
+    <p class="hero__eyebrow">{eyebrow}</p>
+    <h1 class="hero__headline" id="hero-headline">{headline}</h1>
+    <p class="hero__supporting">{supportingCopy}</p>
+    {supportingLine && <p class="hero__line">{supportingLine}</p>}
+    <a class="hero__cta" href={primaryCta.href}>{ctaLabel}</a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .hero__inner {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 4rem 1.5rem;
+  }
+
+  .hero__eyebrow {
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin: 0 0 1rem;
+  }
+
+  .hero__headline {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.05;
+    margin: 0 0 1.5rem;
+    max-width: 20ch;
+  }
+
+  .hero__supporting {
+    font-size: 1.125rem;
+    max-width: 48ch;
+    margin: 0 0 0.75rem;
+  }
+
+  .hero__line {
+    max-width: 48ch;
+    margin: 0 0 2rem;
+  }
+
+  .hero__cta {
+    display: inline-block;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+</style>
