@@ -3,12 +3,18 @@ import {
   FIT_NODES,
   REDFERN_ADDRESS,
   START_NODE_ID,
+  fitSectionCopy,
   getNode,
   isQuestion,
   isResult,
   next,
+  questionNodes,
   resolve,
   resultNodes,
+  validateFitSectionCopy,
+  assertFitSectionCopyValid,
+  validateFitFlow,
+  assertFitFlowValid,
   type Answer,
   type NodeId,
 } from "./fitFlow";
@@ -101,5 +107,50 @@ describe("resolve() — every branch to a leaf", () => {
 describe("getNode()", () => {
   it("throws on an unknown id", () => {
     expect(() => getNode("nope" as NodeId)).toThrow();
+  });
+});
+
+describe("questionNodes()", () => {
+  it("returns exactly the four question nodes", () => {
+    const questions = questionNodes();
+    expect(questions).toHaveLength(4);
+    expect(questions.every((q) => q.type === "question")).toBe(true);
+    expect(questions.map((q) => q.id)).toContain(START_NODE_ID);
+  });
+});
+
+describe("fitSectionCopy", () => {
+  it("is a complete, non-empty framing", () => {
+    expect(fitSectionCopy.eyebrow.trim().length).toBeGreaterThan(0);
+    expect(fitSectionCopy.headline.trim().length).toBeGreaterThan(0);
+    expect(fitSectionCopy.intro.trim().length).toBeGreaterThan(0);
+  });
+
+  it("validates clean and asserts without throwing", () => {
+    expect(validateFitSectionCopy()).toEqual([]);
+    expect(() => assertFitSectionCopyValid()).not.toThrow();
+  });
+
+  it("rejects a blank field", () => {
+    const errors = validateFitSectionCopy({ ...fitSectionCopy, headline: "  " });
+    expect(errors.some((e) => e.includes("headline is missing"))).toBe(true);
+    expect(() =>
+      assertFitSectionCopyValid({ ...fitSectionCopy, headline: "  " }),
+    ).toThrow();
+  });
+
+  it("rejects a draft marker in any field", () => {
+    const errors = validateFitSectionCopy({
+      ...fitSectionCopy,
+      intro: "TODO: write this",
+    });
+    expect(errors.some((e) => e.includes("draft marker"))).toBe(true);
+  });
+});
+
+describe("validateFitFlow()", () => {
+  it("passes for the shipped graph", () => {
+    expect(validateFitFlow()).toEqual([]);
+    expect(() => assertFitFlowValid()).not.toThrow();
   });
 });

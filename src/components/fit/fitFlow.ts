@@ -130,6 +130,33 @@ export const FIT_NODES: Readonly<Record<NodeId, FitNode>> = {
   },
 };
 
+/**
+ * Section framing copy for the qualifier (implementation plan §12.1). The
+ * headline and intro are a working baseline pending D-004; they live here as
+ * data so the render layer invents no copy of its own and a validator can keep
+ * a blank or placeholder heading out of the build.
+ */
+export interface FitSectionCopy {
+  /** Eyebrow above the heading, in the plan's shouty display case. */
+  eyebrow: string;
+  /** Section heading. */
+  headline: string;
+  /** Short line inviting the visitor into the flow. */
+  intro: string;
+}
+
+/** The approved fit-section framing (§12.1 working draft). */
+export const fitSectionCopy: FitSectionCopy = {
+  eyebrow: "ARE WE A FIT?",
+  headline: "LET’S FIND OUT BEFORE WE WASTE EACH OTHER’S TIME.",
+  intro: "Follow the path. It takes less than a minute.",
+};
+
+/** Every question node in the graph, in declaration order. */
+export function questionNodes(): QuestionNode[] {
+  return Object.values(FIT_NODES).filter(isQuestion);
+}
+
 /** Look up a node by id. Throws on an unknown id so bugs surface early. */
 export function getNode(id: NodeId): FitNode {
   const node = FIT_NODES[id];
@@ -175,4 +202,157 @@ export function resolve(answers: readonly Answer[]): FitNode {
 /** Every result node reachable in the graph. */
 export function resultNodes(): ResultNode[] {
   return Object.values(FIT_NODES).filter(isResult);
+}
+
+/**
+ * Draft markers and obvious placeholders that must never reach a production
+ * build (kept lowercase; matching is case-insensitive). Mirrors the guard used
+ * for the CTA copy so no half-finished qualifier wording can ship.
+ */
+const FIT_DRAFT_MARKERS: readonly string[] = [
+  "draft",
+  "not for publication",
+  "todo",
+  "tbd",
+  "placeholder",
+  "lorem ipsum",
+];
+
+function containsDraftMarker(text: string): string | undefined {
+  const lower = text.toLowerCase();
+  return FIT_DRAFT_MARKERS.find((marker) => lower.includes(marker));
+}
+
+/**
+ * Validate the section framing copy. Returns the list of problems; an empty
+ * list means the copy is well-formed. The render layer treats any non-empty
+ * result as fatal so a missing or placeholder heading cannot ship.
+ */
+export function validateFitSectionCopy(
+  copy: FitSectionCopy = fitSectionCopy,
+): string[] {
+  const errors: string[] = [];
+  const fields: Array<[keyof FitSectionCopy, string]> = [
+    ["eyebrow", copy.eyebrow],
+    ["headline", copy.headline],
+    ["intro", copy.intro],
+  ];
+  for (const [name, value] of fields) {
+    if (!value.trim()) {
+      errors.push(`Fit section ${name} is missing.`);
+      continue;
+    }
+    const marker = containsDraftMarker(value);
+    if (marker) {
+      errors.push(
+        `Fit section ${name} contains a forbidden draft marker "${marker}".`,
+      );
+    }
+  }
+  return errors;
+}
+
+/** Assert the section framing copy is valid, throwing on failure. */
+export function assertFitSectionCopyValid(
+  copy: FitSectionCopy = fitSectionCopy,
+): void {
+  const errors = validateFitSectionCopy(copy);
+  if (errors.length > 0) {
+    throw new Error(`Invalid fit section copy:\n- ${errors.join("\n- ")}`);
+  }
+}
+
+/**
+ * Validate the decision graph's structural invariants (§12.2, §12.3). Returns
+ * the list of problems; an empty list means the graph is well-formed. Guards
+ * that every node is reachable from the start, every transition points at a
+ * real node, there are exactly the five specified outcomes with the right
+ * qualified split, and the Redfern address appears only on the two
+ * non-qualifying outcomes.
+ */
+export function validateFitFlow(): string[] {
+  const errors: string[] = [];
+
+  const start = FIT_NODES[START_NODE_ID];
+  if (!start) {
+    errors.push(`Start node "${START_NODE_ID}" is missing.`);
+    return errors;
+  }
+  if (!isQuestion(start)) {
+    errors.push(`Start node "${START_NODE_ID}" must be a question.`);
+  }
+
+  // Every question transition must resolve to a real node.
+  for (const node of questionNodes()) {
+    for (const target of [node.yes, node.no]) {
+      if (!FIT_NODES[target]) {
+        errors.push(
+          `Question "${node.id}" points at unknown node "${target}".`,
+        );
+      }
+    }
+    if (!node.prompt.trim()) {
+      errors.push(`Question "${node.id}" has an empty prompt.`);
+    }
+  }
+
+  // Every node must be reachable from the start so no outcome is orphaned.
+  const reachable = new Set<NodeId>([START_NODE_ID]);
+  const queue: NodeId[] = [START_NODE_ID];
+  while (queue.length > 0) {
+    const node = FIT_NODES[queue.shift()!];
+    if (node && isQuestion(node)) {
+      for (const target of [node.yes, node.no]) {
+        if (FIT_NODES[target] && !reachable.has(target)) {
+          reachable.add(target);
+          queue.push(target);
+        }
+      }
+    }
+  }
+  for (const id of Object.keys(FIT_NODES) as NodeId[]) {
+    if (!reachable.has(id)) {
+      errors.push(`Node "${id}" is unreachable from the start.`);
+    }
+  }
+
+  // Exactly the five specified outcomes, three qualifying and two not.
+  const results = resultNodes();
+  if (results.length !== 5) {
+    errors.push(`Expected 5 outcomes, found ${results.length}.`);
+  }
+  const qualified = results.filter((r) => r.qualified).length;
+  if (qualified !== 3) {
+    errors.push(`Expected 3 qualifying outcomes, found ${qualified}.`);
+  }
+  const notQualified = results.length - qualified;
+  if (notQualified !== 2) {
+    errors.push(`Expected 2 non-qualifying outcomes, found ${notQualified}.`);
+  }
+
+  for (const result of results) {
+    if (!result.headline.trim() || !result.body.trim()) {
+      errors.push(`Outcome "${result.id}" is missing a headline or body.`);
+    }
+    // The Redfern address belongs only on the two non-qualifying outcomes; a
+    // qualifying outcome routes to the CTA instead (§12.3, D-007).
+    if (result.qualified && result.address !== undefined) {
+      errors.push(`Qualifying outcome "${result.id}" must not show an address.`);
+    }
+    if (!result.qualified && result.address !== REDFERN_ADDRESS) {
+      errors.push(
+        `Non-qualifying outcome "${result.id}" must show the Redfern address.`,
+      );
+    }
+  }
+
+  return errors;
+}
+
+/** Assert the decision graph is structurally valid, throwing on failure. */
+export function assertFitFlowValid(): void {
+  const errors = validateFitFlow();
+  if (errors.length > 0) {
+    throw new Error(`Invalid fit flow graph:\n- ${errors.join("\n- ")}`);
+  }
 }
