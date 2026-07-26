@@ -10,6 +10,17 @@ import HowWeWork from "../components/HowWeWork.astro";
 import Fit from "../components/Fit.astro";
 import FinalCta from "../components/FinalCta.astro";
 import Footer from "../components/Footer.astro";
+import {
+  assertApprovalQueueValid,
+  formatOpenQueueWarning,
+} from "../config/approvalQueue";
+
+// Governance gate (§23, P6-002): the queue must be internally consistent and
+// must track every content item that still needs sign-off, or the build fails.
+// Approval never blocks publication, so the still-open items are only surfaced
+// as a non-fatal warning listing what publishes in draft form (§20.1).
+assertApprovalQueueValid();
+console.warn(formatOpenQueueWarning());
 ---
 
 <BaseLayout title="Helix Collective — Enterprise Value Growth Partner">
