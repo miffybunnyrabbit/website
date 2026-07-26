@@ -1,0 +1,109 @@
+---
+/**
+ * Homepage proof banner (implementation plan §8.3 Proof banner, Phase 4 step 3).
+ *
+ * A deliberately narrow two-column proof strip — `$500M+` enterprise value
+ * created and `10+` years in operation — and nothing else. Structure and copy
+ * come from the validated `proofBanner` content model; this component invents no
+ * metrics of its own, so the removed `50+ ventures` count, any human/team count,
+ * or a vanity metric bolted on to refill the old four-column layout cannot creep
+ * back in through markup.
+ *
+ * `assertProofBannerValid()` runs at render time so a drifted banner fails the
+ * build instead of shipping. Publication is gated: the `$500M+` figure uses a
+ * bare `$`, and D-001 requires the currency to be confirmed before publication,
+ * so `publishedProofBanner()` returns `null` until then. When it is null this
+ * component renders nothing at all — the honest default, so an unconfirmed
+ * currency figure never leaks into a production build. The banner reappears
+ * automatically once the model is marked published.
+ */
+import {
+  proofBanner as defaultBanner,
+  publishedProofBanner,
+  assertProofBannerValid,
+  type ProofBanner,
+} from "../config/proofBanner";
+
+export interface Props {
+  /** Defaults to the site's `proofBanner` model; overridable for testing. */
+  banner?: ProofBanner;
+}
+
+const { banner = defaultBanner } = Astro.props;
+
+assertProofBannerValid(banner);
+
+const published = publishedProofBanner(banner);
+---
+
+{
+  published && (
+    <section class="proof" aria-labelledby="proof-heading">
+      <h2 class="proof__heading" id="proof-heading">
+        Proof
+      </h2>
+      <dl class="proof__list">
+        {published.metrics.map((metric) => (
+          <div class="proof__metric">
+            <dt class="proof__value">{metric.value}</dt>
+            <dd class="proof__label">{metric.label}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  )
+}
+
+<style>
+  .proof {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  /* The banner is a proof strip, not a titled section; the heading names the
+     landmark for assistive tech without competing with the metrics visually. */
+  .proof__heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .proof__list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 3rem 1.5rem;
+  }
+
+  /* Two equal columns from the small-tablet breakpoint up; stacked with equal
+     visual weight below it (§8.3). */
+  @media (min-width: 40rem) {
+    .proof__list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .proof__metric {
+    text-align: center;
+  }
+
+  .proof__value {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    margin: 0 0 0.5rem;
+  }
+
+  .proof__label {
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin: 0;
+  }
+</style>
