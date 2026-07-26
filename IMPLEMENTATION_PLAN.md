@@ -1,7 +1,7 @@
 # Helix Collective Website Rebuild — Implementation Plan
 
 **Document:** `IMPLEMENTATION_PLAN.md`  
-**Status:** Ready for implementation, subject to the publishing decisions and evidence gates in this document  
+**Status:** Ready for implementation. The website is built and published without waiting for approvals; every item needing sign-off is tracked in the approval queue (section 23) and updated on approval  
 **Last updated:** 26 July 2026  
 **Target site:** `https://www.helixcollective.com/`  
 **Recommended production platform:** Cloudflare Pages, connected directly to GitHub  
@@ -103,13 +103,13 @@ These requirements should be treated as accepted unless superseded by an explici
 | Booking | Send the visitor to Calendly | Use an external link, not an embedded Calendly iframe, unless scope changes |
 | Deployment | Push to Git and deploy automatically | Use a private GitHub repository connected to Cloudflare Pages |
 | Visual identity | Preserve tone and brand colours | Recreate the brand system in code; do not copy the Webflow implementation blindly |
-| Review | Final case-study wording requires owner approval | Production builds must not publish unapproved claims |
+| Review | Final case-study wording requires owner approval, tracked asynchronously in the approval queue | Pending claims publish in their current draft or fallback form with an open queue item, and are updated on approval (section 23) |
 
 ---
 
 ## 6. Important ambiguities and decisions required before publication
 
-Implementation can begin before all of these are resolved, but production publication cannot.
+Implementation and publication both proceed before these are resolved. Each unresolved item gets a decision file and a corresponding approval-queue item (section 23); published copy uses the recommended default until the decision lands, then is updated.
 
 Create one decision file per item in `docs/decisions/`, using the format `NNNN-short-title.md`.
 
@@ -505,7 +505,7 @@ Do not publish “valued at `$500m`” until internal evidence distinguishes:
 
 > Helix helped shape the technology and anchor early fundraising, supporting Ferovinum through the formative `0 → 1 → 10` stage. `[VERIFY: approximately 10× value growth and approximately $300m created during the engagement.]`
 
-Use a quantified headline only after the evidence gate passes.
+Publish a qualitative draft headline while the claim's approval-queue item is open; swap in the quantified headline once the evidence is approved.
 
 ### 9.3 13SICK
 
@@ -1177,7 +1177,7 @@ Every animation must have a reduced-motion alternative.
 
 ## 17. Research-first workflow
 
-Research is a dependency, not an informal prelude. Any developer or copywriter who discovers information required by later work must write it into the repository before implementation continues.
+Research runs in parallel with implementation and never blocks it. Any developer or copywriter who discovers information required by later work must still write it into the repository as they go, but the site is built and published with best-available content in the meantime. Items awaiting evidence or sign-off are tracked in the approval queue (section 23) and the published content is updated when they are approved or revised.
 
 ### 17.1 Required research directory
 
@@ -1210,6 +1210,8 @@ docs/
     homepage.md
     case-studies/
   approvals/
+    queue/
+      Q-0001-example-item.md
     copy-signoff.md
     claims-signoff.md
     launch-signoff.md
@@ -1362,7 +1364,7 @@ Possible `publish_status` values:
 - `approved`
 - `rejected`
 
-Only `approved` claims may appear in a production build.
+Claims may appear in a production build at any `publish_status` except `rejected`. Every claim not yet `approved` must have an open approval-queue item (section 23), and its public copy is updated when the status changes. `rejected` claims must not appear.
 
 ### 17.8 R-007 — Case-study dossiers
 
@@ -1738,12 +1740,12 @@ type CaseStudy = {
 
 The production build must fail when:
 
-- `publish: true` and `approvalStatus !== "approved"`;
 - a quantified string has no `claimIds`;
-- `clientApproval` is pending where required;
-- `assetApproval !== "approved"`;
 - a required case study is missing;
-- a removed case study is present.
+- a removed case study is present;
+- content requiring approval has no corresponding approval-queue item.
+
+Approval status no longer fails the build. Entries with `publish: true` and `approvalStatus !== "approved"`, pending `clientApproval`, or pending `assetApproval` build and publish in their current draft form; the build emits a warning listing their open queue items so the queue and the published site stay in sync.
 
 ### 20.2 Logo schema
 
@@ -1836,7 +1838,7 @@ Validation must fail if:
 - stage two omits current delivery compensation, back-end upside, or executive/board alignment;
 - stage three omits embedded, objective-led delivery;
 - stage four omits sustainability, handover, or gain-share realisation;
-- draft markers or unapproved commercial claims appear in a production build.
+- a draft marker or unapproved commercial claim appears in a production build without a corresponding open approval-queue item.
 
 Render the structure as a semantic `<ol>`. The configuration is content, not a workflow engine; no client-side state is required.
 
@@ -1887,7 +1889,7 @@ No implementation work should begin without the plan in the repository.
 
 ### P0-003 — Create decision, research, copy, and approval directories
 
-Add templates so contributors do not invent incompatible formats.
+Add templates so contributors do not invent incompatible formats. Include the approval-queue directory (`docs/approvals/queue/`) and a queue-item template (section 23).
 
 ### P0-004 — Establish branch rules
 
@@ -1935,7 +1937,7 @@ Priority order:
 11. SEO/redirect audit
 12. Analytics/privacy decision
 
-**Gate:** enough evidence exists to distinguish approved public facts from placeholders. Development may use placeholder content, but final copy may not be represented as approved.
+**Checkpoint (non-blocking):** enough evidence exists to distinguish approved public facts from drafts. Development and publication proceed with best-available content; anything not yet approved must carry an approval-queue item and must not be represented as approved. This phase runs in parallel with phases 2–7 and never blocks them.
 
 ---
 
@@ -2029,7 +2031,7 @@ Build in this order:
 8. Final CTA
 9. Footer
 
-Use temporary approved-safe copy where claims are pending.
+Where claims are pending, publish the current draft or safe fallback copy and create the corresponding approval-queue items (section 23).
 
 ### P4-001 — Remove people-led content
 
@@ -2056,7 +2058,7 @@ Render the four stages from `src/config/howWeWork.ts` as a semantic ordered list
 
 Delete the investment CTA and ensure all primary actions resolve to the shared Calendly config.
 
-**Gate:** the static homepage is complete and responsive; both model sections are visibly distinct; all four operating stages are present in the correct order; and no unapproved numeric or commercial claim is published.
+**Gate:** the static homepage is complete and responsive; both model sections are visibly distinct; all four operating stages are present in the correct order; and every published numeric or commercial claim is either approved or covered by an open approval-queue item.
 
 ---
 
@@ -2096,17 +2098,19 @@ No-op when analytics is disabled.
 
 ## Phase 6 — Integrate researched content
 
+This phase runs in parallel with the approval queue (section 23). Content integration and deployment never wait for approval.
+
 ### P6-001 — Populate case-study content collection
 
-Every case-study file must reference claim IDs and approval status.
+Every case-study file must reference claim IDs, approval status, and its approval-queue items.
 
-### P6-002 — Implement draft visibility rules
+### P6-002 — Wire content to the approval queue
 
 Recommended behaviour:
 
-- local development may show draft copy with an obvious `DRAFT — NOT FOR PUBLICATION` marker;
-- Cloudflare preview builds should exclude confidential or unapproved claims unless previews are protected with Cloudflare Access;
-- production must include approved copy only.
+- every claim, case study, logo, and strategic-copy block that requires sign-off gets a queue item created in the same PR that authors it;
+- unapproved content publishes in its current draft wording (or the safe fallback wording where this plan defines one) rather than being excluded; confidential material that must never be public still stays out of all builds;
+- when a queue item is approved or its wording revised, the content model is updated and the site redeployed.
 
 ### P6-003 — Final copy edit
 
@@ -2122,11 +2126,11 @@ Review for:
 - readability;
 - no hidden people-led narrative.
 
-### P6-004 — Client and owner approval
+### P6-004 — Client and owner approval (asynchronous)
 
-Capture approvals in the repository. An email or signed PDF may be referenced by secure document ID if it should not be committed.
+Capture approvals in the queue-item files. An email or signed PDF may be referenced by secure document ID if it should not be committed. Approval updates published content; its absence does not block publication.
 
-**Gate:** all five case studies are either approved for production or deliberately omitted with owner approval. No placeholder syntax remains.
+**Checkpoint (non-blocking):** all five case studies are live in their current best-available form, and every pending claim, asset, and copy block has an open queue item. No unresolved placeholder syntax remains.
 
 ---
 
@@ -2487,9 +2491,29 @@ Rollback steps:
 
 ---
 
-## 23. Content and legal approval gates
+## 23. Content and legal approval queue
 
-### Gate A — Strategic copy
+Approval is asynchronous and never blocks building or publishing the website. Every item that previously required sign-off before publication is instead recorded as an approval item in `docs/approvals/queue/`, one file per item, named `Q-NNNN-short-title.md`.
+
+Each queue item records:
+
+- queue ID and category (A–D below);
+- the content it covers (section, component, claim IDs, or asset paths);
+- the currently published draft wording or asset;
+- the required approvers for its category;
+- status: `open`, `changes-requested`, `approved`, or `withdrawn`;
+- the decision, decision date, and any revised wording.
+
+Queue lifecycle:
+
+1. When content that needs sign-off is authored, the author creates its queue item in the same PR. The content publishes immediately in its current best-available draft form (using the safe fallback wording defined elsewhere in this plan where one exists).
+2. Approvers work the queue in parallel with development and after launch.
+3. When an item is approved, the content model is marked approved and the site is redeployed with the approved wording (or unchanged, if the draft already matched).
+4. When an approver requests changes, the copy is updated, the site is redeployed with the revision, and the item returns to `open`.
+
+The categories and their required approvers are unchanged from the original gates:
+
+### Category A — Strategic copy
 
 Required approver: Helix owner.
 
@@ -2502,7 +2526,7 @@ Covers:
 - no-fit humour;
 - profanity decision.
 
-### Gate B — Financial claims
+### Category B — Financial claims
 
 Required approvers:
 
@@ -2519,7 +2543,7 @@ Covers:
 - enterprise-value terminology;
 - currency.
 
-### Gate C — Client representation
+### Category C — Client representation
 
 Required approver: relevant client or authorised internal owner, depending on agreements.
 
@@ -2532,9 +2556,9 @@ Covers:
 - current valuation;
 - confidential product information.
 
-### Gate D — Publication
+### Category D — Launch review
 
-Required approvers:
+Required reviewers:
 
 - product/strategy;
 - design;
@@ -2543,7 +2567,7 @@ Required approvers:
 - finance/legal;
 - final owner.
 
-No one approval substitutes for all of them.
+No one review substitutes for all of them. Category D runs as a standing queue item rather than a launch blocker: the site may go live while the review is in progress, and its findings are applied as content updates.
 
 ---
 
@@ -2573,8 +2597,8 @@ The rebuild is complete only when all of the following are true.
 - Perion is absent.
 - Synaptico is absent.
 - Xylo is absent as a case study.
-- Neara, Ferovinum, Origami, 13SICK, and Veyor are represented according to approved copy.
-- No case-study claim is unapproved.
+- Neara, Ferovinum, Origami, 13SICK, and Veyor are represented according to the latest queue state — approved copy where approved, tracked draft copy otherwise.
+- Every case-study claim is either approved or covered by an open approval-queue item.
 - No people/team section remains.
 - No old “market domination” copy remains.
 
@@ -2612,12 +2636,12 @@ The rebuild is complete only when all of the following are true.
 ### Operational
 
 - Research and decisions are in the repository.
-- `docs/research/engagement-model.md` is approved by commercial, finance, legal, and owner reviewers.
+- `docs/research/engagement-model.md` is in the approval queue for commercial, finance, legal, and owner review (approved or open).
 - Claims ledger is complete.
 - Asset permissions are recorded.
 - Calendly is tested.
 - Webflow rollback remains available for the agreed period.
-- Launch sign-off is recorded.
+- The Category D launch-review queue item exists; sign-off may complete after launch.
 
 ---
 
@@ -2625,12 +2649,12 @@ The rebuild is complete only when all of the following are true.
 
 | Risk | Consequence | Mitigation |
 |---|---|---|
-| Company valuation is confused with funding capacity | Misleading public claim | Claims methodology, finance/legal review, Ferovinum evidence gate |
+| Company valuation is confused with funding capacity | Misleading public claim | Claims methodology, finance/legal review, Ferovinum claim queue item |
 | Equity valuation is called enterprise value | Credibility and legal risk | Define terminology or change wording |
 | Helix is credited with all subsequent growth | Over-attribution | Use engagement dates and “during our engagement” wording |
 | Mixed currencies are added together | Invalid `$500m+` claim | Document currency and conversion method |
 | Confidential data appears in preview | Client/reputational harm | Private repo, safe preview copy, Cloudflare Access if needed |
-| Old logo use is not authorised | Trademark/client issue | Asset register and permission gate |
+| Old logo use is not authorised | Trademark/client issue | Asset register and permission queue items |
 | Original font is unlicensed | Copyright/licensing issue | Audit licence and use approved fallback |
 | React flow is inaccessible | Excludes users and harms quality | Semantic state machine, keyboard tests, no-JS fallback |
 | Marquee causes motion discomfort | Accessibility issue | Reduced-motion static layout |
@@ -2638,7 +2662,7 @@ The rebuild is complete only when all of the following are true.
 | Removing `/contact-us` breaks links | SEO and user friction | Permanent redirect |
 | Hotlinked Webflow assets disappear | Broken site | Store approved local assets |
 | Native Pages deploy publishes bad main commit | Production regression | Branch protection and build-time validation |
-| Generic rewrite loses Helix character | Brand dilution | Tone audit and owner copy gate |
+| Generic rewrite loses Helix character | Brand dilution | Tone audit and owner copy queue item |
 | “Get paid when you get paid” is not universally true | Misrepresentation | Commercial-model decision and qualified language |
 | “At our own cost” is not true for every pre-engagement process | Misleading promise or scope dispute | Define the boundary between unpaid underwriting and paid discovery |
 | “Become part of the team” implies employment, agency, or fiduciary status | Legal and governance confusion | Describe embedded operating behaviour without assigning a legal status that is not agreed |
@@ -2647,6 +2671,7 @@ The rebuild is complete only when all of the following are true.
 | Board alignment is asserted without a real governance mechanism | Delivery failure or credibility risk | Define objectives, decision rights, reporting, and approvals before engagement |
 | Q1 fit ranges are ambiguous | Wrong prospect qualification | Resolve EBITA/EBITDA, currency, and OR/AND logic |
 | Site becomes a team story again over time | Strategic drift | Forbidden-copy checks and content guidelines |
+| Draft or unapproved content is publicly visible before sign-off | Legal, client, or credibility exposure | Approval queue with named approvers per category, conservative fallback wording for pending claims, rapid update-and-redeploy path (section 23) |
 
 ---
 
