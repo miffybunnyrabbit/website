@@ -15,10 +15,15 @@ repository. That module is canonical: it cross-checks the live content models
 that still needs sign-off has no open queue item tracking it, and it **warns**
 (non-fatally) with a list of everything currently publishing in draft form.
 
-To add or change a queue item, edit `src/config/approvalQueue.ts` and its tests.
-Use `TEMPLATE.md` in this directory as the shape for a one-file-per-item record if
-a printable/exportable copy is needed for an approver; the code model remains the
-authority.
+The one-file-per-item records in this directory (`Q-NNNN-short-title.md`) are
+**generated from that model**, not hand-maintained. `approvalQueue.test.ts`
+asserts every committed record matches `renderQueueItemMarkdown()` and that no
+orphan record exists, so the printable/exportable approver copies can never drift
+from the code. `TEMPLATE.md` shows the shape they follow.
+
+To add or change a queue item, edit `src/config/approvalQueue.ts` and its tests,
+then regenerate the records (do not edit the `Q-*.md` files by hand). The code
+model remains the authority.
 
 ## Categories and required approvers (section 23)
 

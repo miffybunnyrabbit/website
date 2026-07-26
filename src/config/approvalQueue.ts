@@ -482,6 +482,70 @@ export function assertApprovalQueueValid(
   }
 }
 
+/** Directory, relative to the repository root, holding the generated records. */
+export const QUEUE_DOC_DIR = "docs/approvals/queue";
+
+/** Filename, within {@link QUEUE_DOC_DIR}, of a queue item's generated record. */
+export function queueItemFilename(item: QueueItem): string {
+  return `${item.id}.md`;
+}
+
+/** Comment written into each generated record to discourage hand-edits. */
+const QUEUE_DOC_COMMENT =
+  "<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->";
+
+/** Render a coverage list as a readable, comma-separated string. */
+function formatCoverage(coverage: readonly CoverageRef[]): string {
+  return coverage
+    .map((c) => (c.ref ? `${c.kind} (${c.ref})` : c.kind))
+    .join(", ");
+}
+
+/**
+ * Render the exact markdown text of the one-file-per-item record described in
+ * §23, generated from this canonical model rather than hand-maintained in
+ * parallel. `docs/approvals/queue/Q-*.md` is the rendered output and
+ * `approvalQueue.test.ts` asserts the committed files still match, so the
+ * printable/exportable approver records can never drift from the code. The shape
+ * follows `docs/approvals/queue/TEMPLATE.md`. Ends with a trailing newline.
+ */
+export function renderQueueItemMarkdown(item: QueueItem): string {
+  const lines: string[] = [
+    `# ${item.id} — ${item.title}`,
+    "",
+    QUEUE_DOC_COMMENT,
+    "",
+    `- **Category:** ${item.category} — ${CATEGORY_LABELS[item.category]}`,
+    `- **Covers:** ${formatCoverage(item.coverage)}`,
+    `- **Required approvers:** ${item.requiredApprovers.join(", ")}`,
+    `- **Status:** ${item.status}`,
+    "",
+    "## Currently published draft wording or asset",
+    "",
+    item.publishedWording,
+    "",
+    "## Decision",
+    "",
+  ];
+
+  if (isDecided(item)) {
+    // The model's validation guarantees these three fields are present once an
+    // item is decided, so render them straight through.
+    lines.push(
+      item.decision as string,
+      "",
+      `- **Decision date:** ${item.decisionDate}`,
+      `- **Decided by:** ${item.decidedBy}`,
+    );
+  } else {
+    lines.push(
+      "_No decision recorded yet — this item is still open and publishing in draft form._",
+    );
+  }
+
+  return lines.join("\n") + "\n";
+}
+
 /**
  * A single-line-per-item summary of the open queue, for the build to print as a
  * non-fatal warning. Approval never blocks publication (§23); this only keeps the

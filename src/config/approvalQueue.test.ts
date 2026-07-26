@@ -1,3 +1,5 @@
+import { readFileSync, readdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   approvalQueue,
@@ -6,6 +8,8 @@ import {
   formatOpenQueueWarning,
   isResolved,
   openQueueItems,
+  queueItemFilename,
+  renderQueueItemMarkdown,
   REQUIRED_APPROVERS,
   validateApprovalQueue,
   type ApprovalCategory,
@@ -247,6 +251,61 @@ describe("structural validation", () => {
     expect(validateApprovalQueue(queue).join("\n")).toMatch(
       /must not carry a recorded decision/,
     );
+  });
+});
+
+describe("generated one-file-per-item records (§23)", () => {
+  /** Absolute path of a file in the committed `docs/approvals/queue/` directory. */
+  function queueDocPath(name: string): string {
+    return fileURLToPath(
+      new URL(`../../docs/approvals/queue/${name}`, import.meta.url),
+    );
+  }
+
+  it("renders each record from the model with the expected shape", () => {
+    const item = approvalQueue[0];
+    const text = renderQueueItemMarkdown(item);
+    expect(text).toContain(`# ${item.id} — ${item.title}`);
+    expect(text).toContain("do not edit by hand");
+    expect(text).toContain(`- **Status:** ${item.status}`);
+    expect(text).toContain(item.publishedWording);
+    expect(text).toMatch(/\n$/);
+  });
+
+  it("shows the decision block only once an item is decided", () => {
+    const open = approvalQueue[0];
+    expect(renderQueueItemMarkdown(open)).toContain("No decision recorded yet");
+
+    const decided: QueueItem = {
+      ...open,
+      status: "approved",
+      decision: "AUD confirmed; multiple verified.",
+      decisionDate: "2026-07-21",
+      decidedBy: "finance-owner",
+    };
+    const text = renderQueueItemMarkdown(decided);
+    expect(text).not.toContain("No decision recorded yet");
+    expect(text).toContain("AUD confirmed; multiple verified.");
+    expect(text).toContain("- **Decision date:** 2026-07-21");
+    expect(text).toContain("- **Decided by:** finance-owner");
+  });
+
+  it("has a committed record for every queue item that matches the model", () => {
+    for (const item of approvalQueue) {
+      const committed = readFileSync(
+        queueDocPath(queueItemFilename(item)),
+        "utf8",
+      );
+      expect(committed, item.id).toBe(renderQueueItemMarkdown(item));
+    }
+  });
+
+  it("has no orphan Q-*.md record without a queue item", () => {
+    const onDisk = readdirSync(queueDocPath("."))
+      .filter((n) => /^Q-.*\.md$/.test(n))
+      .sort();
+    const expected = approvalQueue.map(queueItemFilename).sort();
+    expect(onDisk).toEqual(expected);
   });
 });
 
