@@ -1,0 +1,238 @@
+/**
+ * Site-wide forbidden-copy guard (implementation plan §21 `validate:copy`,
+ * enforcing the Fixed Requirements in §5 and the Non-goals in §4).
+ *
+ * The content models each police their own data, but several of the plan's hard
+ * rules are about *language that must never reach a visitor* regardless of which
+ * component emits it: removed brand names, the abandoned people-led positioning,
+ * venture/human counts, and the marketing clichés the tone system bans (§15.3).
+ * This module is the single, testable place that knows those rules, so a build
+ * step can scan rendered pages (or any copy string) and fail before an
+ * unapproved phrase ships.
+ *
+ * It is pure text analysis: no UI, no I/O. A `validate-forbidden-copy` build
+ * script feeds it the emitted HTML/text; the unit tests feed it fixtures.
+ *
+ * Deliberate exclusions, to avoid false positives:
+ *  - "Xylo" is *not* forbidden here. Only its *case study* is removed (D-008);
+ *    its logo is legitimately retained in the marquee register (see logos.ts),
+ *    and caseStudies.ts already guards Xylo-as-a-case-study. A blanket ban would
+ *    flag the approved logo.
+ *  - Context-dependent terms the plan only bans "when unsupported by detail"
+ *    (e.g. "innovation partner") or "unless intentional" (e.g. "free
+ *    consulting") are omitted, because a keyword scan cannot judge intent and
+ *    would produce noise. Those remain a human review responsibility (Gate A).
+ */
+
+/** A rule describing copy that must never appear in shipped output. */
+export interface ForbiddenPattern {
+  /** Stable, kebab-case identifier for the rule. */
+  id: string;
+  /** Case-insensitive matcher. Must NOT carry the global flag (see below). */
+  pattern: RegExp;
+  /** Why this is forbidden, phrased for a developer reading a failed build. */
+  reason: string;
+  /** The section of the implementation plan that mandates the rule. */
+  planRef: string;
+}
+
+/** One occurrence of forbidden copy found in a scanned string. */
+export interface CopyViolation {
+  /** The `id` of the rule that matched. */
+  id: string;
+  /** The exact substring that triggered the match. */
+  match: string;
+  /** Zero-based character index of the match within the scanned text. */
+  index: number;
+  reason: string;
+  planRef: string;
+}
+
+/**
+ * The rule set. Each `pattern` is case-insensitive and matches on word
+ * boundaries where a bare substring would over-match. Whitespace inside phrases
+ * is written as `\s+` so line wraps and doubled spaces in rendered HTML still
+ * match. Patterns are declared WITHOUT the global flag; the scanner clones each
+ * with `g` per call so `lastIndex` is never shared between scans (a classic
+ * stateful-RegExp bug).
+ */
+export const FORBIDDEN_PATTERNS: readonly ForbiddenPattern[] = [
+  // --- Removed brands (§5 logo marquee, §8.4). Must not appear as visible copy. ---
+  {
+    id: "brand-awayco",
+    pattern: /\bawayco\b/i,
+    reason: 'Awayco was removed from the site; its name must not appear in copy.',
+    planRef: "§5 (Logo marquee), §8.4",
+  },
+  {
+    id: "brand-perion",
+    pattern: /\bperion\b/i,
+    reason: 'Perion was removed from the site; its name must not appear in copy.',
+    planRef: "§5 (Logo marquee), §8.4",
+  },
+  {
+    id: "brand-synaptico",
+    pattern: /\bsynaptico\b/i,
+    reason: 'Synaptico was removed from the site; its name must not appear in copy.',
+    planRef: "§5 (Logo marquee), §8.4",
+  },
+
+  // --- People-led positioning is abandoned (§5 Institutional positioning, §4). ---
+  {
+    id: "humans-of-helix",
+    pattern: /\bhumans\s+of\s+helix\b/i,
+    reason:
+      'The "humans of Helix" people-led framing is removed; trade on the business, not individuals.',
+    planRef: "§5 (Institutional positioning), §15.3",
+  },
+  {
+    id: "greatest-asset",
+    pattern: /\bour\s+people\s+are\s+our\s+greatest\s+asset\b/i,
+    reason: 'Founder/people-worship language is banned by the tone system.',
+    planRef: "§15.3",
+  },
+
+  // --- Venture / human counts must be removed entirely (§5 Proof banner). ---
+  // "10+ years" is REQUIRED and intentionally not matched (different noun).
+  {
+    id: "venture-count",
+    pattern: /\b\d+\s*\+?\s+ventures\b/i,
+    reason:
+      'The venture count is removed; the proof banner shows only "$500m+" and "10+ years".',
+    planRef: "§5 (Proof banner), §15.3",
+  },
+  {
+    id: "human-count",
+    pattern: /\b\d+\s*\+?\s+humans\b/i,
+    reason: 'The human count is removed from the proof banner.',
+    planRef: "§5 (Proof banner)",
+  },
+
+  // --- Banned positioning clichés (§15.3 words and themes to avoid). ---
+  {
+    id: "market-domination",
+    pattern: /\bmarket\s+domination\b/i,
+    reason:
+      'The "zero to market domination" framing is replaced by the interactive fit flow.',
+    planRef: "§5 (Qualification), §15.3",
+  },
+  {
+    id: "digital-transformation",
+    pattern: /\bdigital\s+transformation\b/i,
+    reason: 'Generic consultancy cliché the tone system bans.',
+    planRef: "§15.3",
+  },
+  {
+    id: "end-to-end-solutions",
+    pattern: /\bend[\s-]to[\s-]end\s+solutions?\b/i,
+    reason: 'Generic consultancy cliché the tone system bans.',
+    planRef: "§15.3",
+  },
+  {
+    id: "world-class",
+    pattern: /\bworld[\s-]class\b/i,
+    reason: 'Empty superlative the tone system bans.',
+    planRef: "§15.3",
+  },
+  {
+    id: "best-in-class",
+    pattern: /\bbest[\s-]in[\s-]class\b/i,
+    reason: 'Empty superlative the tone system bans.',
+    planRef: "§15.3",
+  },
+  {
+    id: "resource-augmentation",
+    pattern: /\bresource\s+augmentation\b/i,
+    reason:
+      'Helix sells enterprise-value growth, not staff/resource augmentation.',
+    planRef: "§4, §15.3",
+  },
+
+  // --- Claims that overpromise outcomes Helix cannot control (§4, §5, §11.7). ---
+  {
+    id: "guaranteed-upside",
+    pattern: /\bguarantee(?:d|s)?\s+(?:upside|enterprise\s+value|returns?|growth)\b/i,
+    reason:
+      'The site must never guarantee enterprise-value growth or upside Helix cannot control.',
+    planRef: "§4, §5, §15.3",
+  },
+  {
+    id: "forced-exit",
+    pattern: /\bforced\s+exit\b/i,
+    reason: 'Helix does not force exits; this framing is banned.',
+    planRef: "§15.3",
+  },
+];
+
+/**
+ * Scan a single string and return every forbidden-copy occurrence, in the order
+ * they appear. An empty array means the text is clean.
+ */
+export function scanForbiddenCopy(
+  text: string,
+  patterns: readonly ForbiddenPattern[] = FORBIDDEN_PATTERNS,
+): CopyViolation[] {
+  const violations: CopyViolation[] = [];
+
+  for (const rule of patterns) {
+    // Clone with the global flag so we can walk every occurrence without
+    // mutating the shared, declared pattern's `lastIndex`.
+    const flags = rule.pattern.flags.includes("g")
+      ? rule.pattern.flags
+      : rule.pattern.flags + "g";
+    const re = new RegExp(rule.pattern.source, flags);
+    for (let m = re.exec(text); m !== null; m = re.exec(text)) {
+      violations.push({
+        id: rule.id,
+        match: m[0],
+        index: m.index,
+        reason: rule.reason,
+        planRef: rule.planRef,
+      });
+      // Guard against zero-width matches looping forever.
+      if (m.index === re.lastIndex) {
+        re.lastIndex += 1;
+      }
+    }
+  }
+
+  return violations.sort((a, b) => a.index - b.index);
+}
+
+/** True when the text contains no forbidden copy. */
+export function isCopyClean(
+  text: string,
+  patterns: readonly ForbiddenPattern[] = FORBIDDEN_PATTERNS,
+): boolean {
+  return scanForbiddenCopy(text, patterns).length === 0;
+}
+
+/** A named chunk of copy to scan — e.g. one rendered page. */
+export interface CopySource {
+  /** Human-readable label, such as a route or file path. */
+  label: string;
+  text: string;
+}
+
+/**
+ * Assert that none of the supplied sources contain forbidden copy, throwing a
+ * single readable report listing every violation. Intended for the
+ * `validate-forbidden-copy` build step so a banned phrase fails the build
+ * before it can ship (§21).
+ */
+export function assertNoForbiddenCopy(
+  sources: readonly CopySource[],
+  patterns: readonly ForbiddenPattern[] = FORBIDDEN_PATTERNS,
+): void {
+  const lines: string[] = [];
+  for (const source of sources) {
+    for (const v of scanForbiddenCopy(source.text, patterns)) {
+      lines.push(
+        `${source.label}: "${v.match}" [${v.id}] — ${v.reason} (${v.planRef})`,
+      );
+    }
+  }
+  if (lines.length > 0) {
+    throw new Error(`Forbidden copy found:\n- ${lines.join("\n- ")}`);
+  }
+}
