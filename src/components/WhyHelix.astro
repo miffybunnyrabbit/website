@@ -1,0 +1,112 @@
+---
+/**
+ * Homepage "We're different because…" manifesto (implementation plan §10).
+ *
+ * A concise, high-level statement of *why* the Helix model is different: an
+ * eyebrow, headline, intro, and three fixed proof points. Everything comes from
+ * the validated `whyHelix` content model, so this component invents no copy of
+ * its own — the removed "service laundry list" (§10) cannot creep back in
+ * through markup, and the required concepts behind each point survive editing
+ * because the model enforces them.
+ *
+ * `assertWhyHelixValid()` runs at render time so a drifted manifesto — a lost
+ * proof point, a dropped concept, forbidden copy, or wording lifted from the
+ * separate "How we work" operating sequence (P4-003) — fails the build instead
+ * of shipping. This section carries no publication gate, so unlike the hero and
+ * proof banner it always renders.
+ */
+import {
+  whyHelixPoints as defaultPoints,
+  whyHelixCopy as defaultCopy,
+  assertWhyHelixValid,
+  type WhyHelixPoint,
+  type WhyHelixCopy,
+} from "../config/whyHelix";
+
+export interface Props {
+  /** Defaults to the site's `whyHelix` model; overridable for testing. */
+  points?: readonly WhyHelixPoint[];
+  copy?: WhyHelixCopy;
+}
+
+const { points = defaultPoints, copy = defaultCopy } = Astro.props;
+
+assertWhyHelixValid(points, copy);
+---
+
+<section class="why" aria-labelledby="why-heading">
+  <div class="why__inner">
+    <p class="why__eyebrow">{copy.eyebrow}</p>
+    <h2 class="why__headline" id="why-heading">{copy.headline}</h2>
+    <p class="why__intro">{copy.intro}</p>
+    <ul class="why__points" role="list">
+      {
+        points.map((point) => (
+          <li class="why__point">
+            <h3 class="why__point-title">{point.title}</h3>
+            <p class="why__point-body">{point.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .why {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .why__inner {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 4rem 1.5rem;
+  }
+
+  .why__eyebrow {
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin: 0 0 1rem;
+  }
+
+  .why__headline {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    line-height: 1.1;
+    margin: 0 0 1.5rem;
+    max-width: 24ch;
+  }
+
+  .why__intro {
+    font-size: 1.125rem;
+    max-width: 56ch;
+    margin: 0 0 3rem;
+  }
+
+  .why__points {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Three columns on wider viewports; a single vertical sequence in ordinary
+     reading order below the breakpoint (§10 keeps this short and scannable). */
+  @media (min-width: 48rem) {
+    .why__points {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .why__point-title {
+    font-size: 1.125rem;
+    line-height: 1.2;
+    margin: 0 0 0.75rem;
+  }
+
+  .why__point-body {
+    margin: 0;
+    max-width: 40ch;
+  }
+</style>
