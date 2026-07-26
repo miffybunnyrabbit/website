@@ -7,7 +7,9 @@
  * stage must express (§11, §20.5) survive editing and a drifted or reordered
  * sequence cannot ship. `assertHowWeWorkValid()` runs at render time, turning a
  * broken configuration (wrong count, wrong order, a dropped concept, or a draft
- * marker) into a build failure rather than a published mistake.
+ * marker) into a build failure rather than a published mistake, and
+ * `assertHowWeWorkCopyValid()` does the same for the section's framing copy so a
+ * blanked line or a dropped commitment (§11.5, §24) cannot ship either.
  *
  * Per §11.6 the progression is an accessible semantic process, not a decorative
  * graphic: a real ordered list with visible `01`–`04` numbers, static
@@ -21,6 +23,7 @@ import {
   howWeWorkSteps as defaultSteps,
   howWeWorkCopy as defaultCopy,
   assertHowWeWorkValid,
+  assertHowWeWorkCopyValid,
   type HowWeWorkStep,
 } from "../config/howWeWork";
 
@@ -33,6 +36,7 @@ export interface Props {
 const { steps = defaultSteps, copy = defaultCopy } = Astro.props;
 
 assertHowWeWorkValid(steps);
+assertHowWeWorkCopyValid(copy);
 ---
 
 <section class="how" aria-labelledby="how-heading">

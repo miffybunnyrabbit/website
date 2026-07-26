@@ -74,6 +74,18 @@ export const howWeWorkSteps: readonly HowWeWorkStep[] = [
   },
 ];
 
+/** The section's framing copy: eyebrow, headline, intro, and closing line. */
+export interface HowWeWorkCopy {
+  /** Small label above the headline. */
+  eyebrow: string;
+  /** Section headline. */
+  headline: string;
+  /** Introductory paragraph beneath the headline. */
+  intro: string;
+  /** Single closing line beneath the four stages (section 11.5). */
+  closing: string;
+}
+
 /** The eyebrow, headline, intro, and closing line for the section (section 11). */
 export const howWeWorkCopy = {
   eyebrow: "HOW WE WORK",
@@ -111,6 +123,22 @@ const DRAFT_MARKERS: readonly string[] = [
   "tbd",
   "placeholder",
   "lorem ipsum",
+];
+
+/**
+ * Distinctive fragments of the commitment the section must communicate:
+ *
+ * > OTHERS PROMISE. WE PUT OUR MONEY WHERE OUR MOUTH IS.
+ *
+ * Section 24 requires that "the 'How we work' headline *or* its closing line
+ * communicates" this message, so the check looks across both carriers rather
+ * than pinning one exact string — a rewrite that moves the line from the
+ * headline to the closing (or vice versa) still passes, but dropping it from
+ * both fails the build. Matched case-insensitively.
+ */
+export const REQUIRED_COMMITMENT_FRAGMENTS: readonly string[] = [
+  "others promise",
+  "money where our mouth",
 ];
 
 /**
@@ -187,5 +215,76 @@ export function assertHowWeWorkValid(
     throw new Error(
       `Invalid "How we work" configuration:\n- ${errors.join("\n- ")}`,
     );
+  }
+}
+
+/**
+ * Validate the section's framing copy (eyebrow, headline, intro, closing line)
+ * against the section 11 / 11.5 rules and the section 24 acceptance criterion.
+ * The four stages carry their own concept and draft-marker guards; this copy is
+ * rendered straight into the page but had no gate of its own, so a blanked line,
+ * a stray draft marker, or a rewrite that drops the required commitment could
+ * ship unnoticed. Returns the list of problems; an empty list means the copy is
+ * well-formed. The production build should treat any non-empty result as fatal.
+ */
+export function validateHowWeWorkCopy(
+  copy: HowWeWorkCopy = howWeWorkCopy,
+): string[] {
+  const errors: string[] = [];
+
+  const fields: readonly [keyof HowWeWorkCopy, string][] = [
+    ["eyebrow", copy.eyebrow],
+    ["headline", copy.headline],
+    ["intro", copy.intro],
+    ["closing", copy.closing],
+  ];
+
+  for (const [name, value] of fields) {
+    if (!value.trim()) {
+      errors.push(`How-we-work ${name} copy is missing.`);
+    }
+    const lower = value.toLowerCase();
+    for (const marker of DRAFT_MARKERS) {
+      if (lower.includes(marker)) {
+        errors.push(
+          `How-we-work ${name} copy contains a forbidden draft marker "${marker}".`,
+        );
+      }
+    }
+  }
+
+  // Section 11.5: show one closing statement, not the headline repeated at equal
+  // weight as a second sign-off.
+  if (copy.closing.trim() && copy.closing.trim() === copy.headline.trim()) {
+    errors.push(
+      "How-we-work closing line must not repeat the headline at equal weight (section 11.5).",
+    );
+  }
+
+  // Section 24: the required commitment must live in the headline or the closing
+  // line. Either may carry it, so both are scanned together.
+  const carrier = `${copy.headline} ${copy.closing}`.toLowerCase();
+  for (const fragment of REQUIRED_COMMITMENT_FRAGMENTS) {
+    if (!carrier.includes(fragment)) {
+      errors.push(
+        `How-we-work headline or closing line must communicate "${fragment}" (section 24) but neither does.`,
+      );
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Assert the section's framing copy is valid, throwing on the first failure.
+ * Intended for use at build time so broken copy fails the production build,
+ * mirroring `assertHowWeWorkValid` for the stages.
+ */
+export function assertHowWeWorkCopyValid(
+  copy: HowWeWorkCopy = howWeWorkCopy,
+): void {
+  const errors = validateHowWeWorkCopy(copy);
+  if (errors.length > 0) {
+    throw new Error(`Invalid "How we work" copy:\n- ${errors.join("\n- ")}`);
   }
 }

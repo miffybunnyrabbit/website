@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  assertHowWeWorkCopyValid,
   assertHowWeWorkValid,
   howWeWorkCopy,
   howWeWorkSteps,
   validateHowWeWork,
+  validateHowWeWorkCopy,
+  type HowWeWorkCopy,
   type HowWeWorkStep,
 } from "./howWeWork";
 
@@ -13,6 +16,11 @@ function cloneSteps(): HowWeWorkStep[] {
     ...step,
     requiredConcepts: [...step.requiredConcepts],
   }));
+}
+
+/** Shallow-clone the canonical copy so a test can mutate it safely. */
+function cloneCopy(): HowWeWorkCopy {
+  return { ...howWeWorkCopy };
 }
 
 describe("howWeWork configuration", () => {
@@ -109,6 +117,61 @@ describe("validateHowWeWork guardrails", () => {
     const steps = cloneSteps().slice(0, 2);
     expect(() => assertHowWeWorkValid(steps)).toThrow(
       /Invalid "How we work" configuration/,
+    );
+  });
+});
+
+describe("validateHowWeWorkCopy guardrails", () => {
+  it("passes the authored framing copy", () => {
+    expect(validateHowWeWorkCopy()).toEqual([]);
+    expect(() => assertHowWeWorkCopyValid()).not.toThrow();
+  });
+
+  it("rejects a blanked framing line", () => {
+    const copy = cloneCopy();
+    copy.intro = "   ";
+    const errors = validateHowWeWorkCopy(copy);
+    expect(errors.some((e) => e.includes("intro copy is missing"))).toBe(true);
+  });
+
+  it("rejects a draft marker left in the copy", () => {
+    const copy = cloneCopy();
+    copy.eyebrow = `${copy.eyebrow} (TBD)`;
+    const errors = validateHowWeWorkCopy(copy);
+    expect(errors.some((e) => e.includes("draft marker"))).toBe(true);
+  });
+
+  it("rejects a closing line that merely repeats the headline (section 11.5)", () => {
+    const copy = cloneCopy();
+    copy.closing = copy.headline;
+    const errors = validateHowWeWorkCopy(copy);
+    expect(
+      errors.some((e) => e.includes("must not repeat the headline")),
+    ).toBe(true);
+  });
+
+  it("rejects dropping the required commitment from both headline and closing (section 24)", () => {
+    const copy = cloneCopy();
+    copy.headline = "HOW WE WORK, STAGE BY STAGE.";
+    copy.closing =
+      "THE EXACT MECHANICS CHANGE. THE PRINCIPLE DOESN’T: WE PUT REAL TIME, UPSIDE, AND REPUTATION BEHIND THE CASE.";
+    const errors = validateHowWeWorkCopy(copy);
+    expect(errors.some((e) => e.includes("money where our mouth"))).toBe(true);
+    expect(errors.some((e) => e.includes("others promise"))).toBe(true);
+  });
+
+  it("accepts the commitment carried by the closing line instead of the headline (section 24)", () => {
+    const copy = cloneCopy();
+    copy.headline = "HOW WE WORK, STAGE BY STAGE.";
+    copy.closing = "OTHERS PROMISE. WE PUT OUR MONEY WHERE OUR MOUTH IS.";
+    expect(validateHowWeWorkCopy(copy)).toEqual([]);
+  });
+
+  it("assertHowWeWorkCopyValid throws with an aggregated message on bad copy", () => {
+    const copy = cloneCopy();
+    copy.headline = "";
+    expect(() => assertHowWeWorkCopyValid(copy)).toThrow(
+      /Invalid "How we work" copy/,
     );
   });
 });
