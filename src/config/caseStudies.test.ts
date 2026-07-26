@@ -6,6 +6,8 @@ import {
   publishedCaseStudies,
   REMOVED_CASE_STUDY_SLUGS,
   REQUIRED_CASE_STUDY_SLUGS,
+  STAGE_LABELS,
+  stageLabel,
   validateCaseStudies,
   type CaseStudy,
 } from "./caseStudies";
@@ -248,5 +250,22 @@ describe("validateCaseStudies guardrails", () => {
     studies[idx] = approvedStudy("neara");
     expect(validateCaseStudies(studies)).toEqual([]);
     expect(publishedCaseStudies(studies).map((s) => s.slug)).toEqual(["neara"]);
+  });
+
+  it("maps every engagement stage to a human-facing label", () => {
+    // Every stage a study can carry must resolve to a non-empty display tag, so
+    // no card can render a blank stage (section 8.5 visual pattern).
+    for (const study of caseStudies) {
+      expect(stageLabel(study.engagementStage)).toBe(
+        STAGE_LABELS[study.engagementStage],
+      );
+      expect(stageLabel(study.engagementStage).trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it("uses the plan's `0 → 1 → 10` worked example as a stage label", () => {
+    expect(stageLabel("0-to-1-to-10")).toBe("0 → 1 → 10");
+    expect(stageLabel("0-to-1")).toBe("0 → 1");
+    expect(stageLabel("scale")).toBe("Scale");
   });
 });

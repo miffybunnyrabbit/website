@@ -62,6 +62,25 @@ export interface CaseStudy {
   assetApproval: AssetApproval;
 }
 
+/**
+ * Human-facing labels for each formative stage (section 8.5 visual pattern uses
+ * `0 → 1 → 10` as its worked example). Kept here, beside the `EngagementStage`
+ * type, so the tag shown on a card is validated content rather than copy a
+ * component invents in markup; `stageLabel()` is the single source the render
+ * layer reads. Using a `Record` keyed on the union means adding a stage without
+ * a label is a compile error, not a silently blank tag.
+ */
+export const STAGE_LABELS: Record<EngagementStage, string> = {
+  "0-to-1": "0 → 1",
+  "0-to-1-to-10": "0 → 1 → 10",
+  scale: "Scale",
+};
+
+/** The display tag for a study's formative stage (section 8.5). */
+export function stageLabel(stage: EngagementStage): string {
+  return STAGE_LABELS[stage];
+}
+
 /** Section eyebrow, headline, and intro (section 8.5). */
 export const caseStudyCopy = {
   eyebrow: "VALUE, BUILT",

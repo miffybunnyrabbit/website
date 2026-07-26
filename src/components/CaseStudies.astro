@@ -1,0 +1,237 @@
+---
+/**
+ * Homepage enterprise-value case studies (implementation plan §8.5, §9, §20.1).
+ *
+ * This section is the site's primary proof of the proposition, so — like every
+ * other section — it invents no copy: the framing and every card come from the
+ * validated `caseStudies` content model. `assertCaseStudiesValid()` runs at
+ * render time so a drifted collection (a missing required study, the removed
+ * Xylo study reappearing, or an entry published before its section-9 research
+ * and approval gates pass) fails the build instead of shipping.
+ *
+ * Publication is gated per study: every quantified figure is still a working
+ * draft carrying `[VERIFY:]`/`[RESEARCH:]` markers, so each entry is
+ * `publish: false` and `publishedCaseStudies()` returns an empty list. Following
+ * the proof banner's honest default, when nothing is published this component
+ * renders nothing at all — a case-study section with no case studies is not
+ * proof — and the section reappears automatically as studies are approved.
+ *
+ * Each rendered card answers the four §8.5 questions: where the company was, what
+ * changed, what Helix actually did, and the evidence. Large numbers are
+ * prominent, but the causal mechanism ("How we moved it") gets equal attention.
+ */
+import {
+  caseStudies as defaultStudies,
+  caseStudyCopy as defaultCopy,
+  publishedCaseStudies,
+  assertCaseStudiesValid,
+  stageLabel,
+  type CaseStudy,
+} from "../config/caseStudies";
+
+export interface Props {
+  /** Defaults to the site's `caseStudies` model; overridable for testing. */
+  studies?: readonly CaseStudy[];
+  copy?: typeof defaultCopy;
+}
+
+const { studies = defaultStudies, copy = defaultCopy } = Astro.props;
+
+assertCaseStudiesValid(studies);
+
+const published = publishedCaseStudies(studies);
+---
+
+{
+  published.length > 0 && (
+    <section class="cases" aria-labelledby="cases-heading">
+      <div class="cases__inner">
+        <p class="cases__eyebrow">{copy.eyebrow}</p>
+        <h2 class="cases__headline" id="cases-heading">
+          {copy.headline}
+        </h2>
+        <p class="cases__intro">{copy.intro}</p>
+        <ul class="cases__list" role="list">
+          {published.map((study) => (
+            <li class="cases__card">
+              <div class="cases__brand">
+                <img
+                  class="cases__logo"
+                  src={`/logos/${study.logo}`}
+                  alt={`${study.name} logo`}
+                  width="120"
+                  height="32"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="cases__stage">{stageLabel(study.engagementStage)}</span>
+              </div>
+              <p class="cases__outcome">{study.outcomeHeadline}</p>
+              {study.valueMultiple && (
+                <p class="cases__multiple">{study.valueMultiple}</p>
+              )}
+              {study.currentOutcome && (
+                <p class="cases__current">{study.currentOutcome}</p>
+              )}
+              {study.image && (
+                <img
+                  class="cases__image"
+                  src={`/case-studies/${study.image}`}
+                  alt={study.imageAlt ?? ""}
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
+              <p class="cases__how-label">How we moved it</p>
+              <p class="cases__summary">{study.summary}</p>
+              {study.helixContribution.length > 0 && (
+                <ul class="cases__contribution" role="list">
+                  {study.helixContribution.map((point) => (
+                    <li>{point}</li>
+                  ))}
+                </ul>
+              )}
+              {study.claimIds.length > 0 && (
+                <p class="cases__claim">
+                  Evidence: {study.claimIds.join(", ")}
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .cases {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .cases__inner {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 4rem 1.5rem;
+  }
+
+  .cases__eyebrow {
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin: 0 0 1rem;
+  }
+
+  .cases__headline {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    line-height: 1.1;
+    margin: 0 0 1.5rem;
+    max-width: 24ch;
+  }
+
+  .cases__intro {
+    font-size: 1.125rem;
+    max-width: 56ch;
+    margin: 0 0 3rem;
+  }
+
+  .cases__list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Two columns on wider viewports; a single vertical sequence in ordinary
+     reading order below the breakpoint (§8.5, §16.4 layout). */
+  @media (min-width: 48rem) {
+    .cases__list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3rem;
+    }
+  }
+
+  .cases__card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cases__brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 0 1.5rem;
+  }
+
+  .cases__logo {
+    height: 2rem;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .cases__stage {
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* Large numbers are prominent (§8.5). */
+  .cases__outcome {
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0 0 0.5rem;
+    max-width: 18ch;
+  }
+
+  .cases__multiple {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+  }
+
+  .cases__current {
+    margin: 0 0 1.5rem;
+    max-width: 48ch;
+  }
+
+  .cases__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 0 1.5rem;
+  }
+
+  /* The causal mechanism gets equal attention to the numbers (§8.5). */
+  .cases__how-label {
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .cases__summary {
+    margin: 0 0 1rem;
+    max-width: 48ch;
+  }
+
+  .cases__contribution {
+    margin: 0 0 1rem;
+    padding-left: 1.25rem;
+    max-width: 48ch;
+  }
+
+  .cases__contribution li {
+    margin: 0 0 0.375rem;
+  }
+
+  .cases__claim {
+    font-size: 0.875rem;
+    opacity: 0.7;
+    margin: auto 0 0;
+  }
+</style>
