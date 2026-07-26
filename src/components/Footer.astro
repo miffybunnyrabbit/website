@@ -1,0 +1,158 @@
+---
+/**
+ * Institutional footer (implementation plan §14, homepage section 10).
+ *
+ * The footer's job is to establish institutional legitimacy *without*
+ * reintroducing people. All structure and copy come from the validated `footer`
+ * content model; this component renders that model and invents no facts, links,
+ * or actions of its own. Following the model's honest default, it renders
+ * `publishedFooter()` — the always-safe brand mark and copyright line plus only
+ * those identity facts and links that have cleared approval — so an unverified
+ * ABN, entity, or office never reaches `dist` (§14, §23).
+ *
+ * `assertFooterValid()` runs at render time against the *full* model (including
+ * still-pending drafts) so a footer that has drifted off the §14 rules — a
+ * reintroduced team/investor link, old venture-volume positioning, a human
+ * count, or a malformed approval-queue id — fails the build instead of shipping.
+ *
+ * The section is static Astro HTML and CSS: no React and no client-side state.
+ * The copyright year defaults to the current year (generated at build time, §14)
+ * but is overridable so the render stays deterministic under test.
+ */
+import {
+  footer as defaultFooter,
+  assertFooterValid,
+  publishedFooter,
+  copyrightLine,
+  type FooterContent,
+} from "../config/footer";
+
+export interface Props {
+  /** Defaults to the site's footer model; overridable for testing. */
+  content?: FooterContent;
+  /** Copyright year; defaults to the current build year (§14). */
+  year?: number;
+}
+
+const { content = defaultFooter, year = new Date().getFullYear() } = Astro.props;
+
+// Validate the full model — pending drafts included — before publishing.
+assertFooterValid(content);
+
+const published = publishedFooter(content);
+const { brand, facts, socialLinks, privacyLink, contactEmail } = published;
+const copyright = copyrightLine(year, published);
+---
+
+<footer class="site-footer" aria-labelledby="site-footer-heading">
+  <h2 class="visually-hidden" id="site-footer-heading">Helix Collective</h2>
+  <div class="site-footer__inner">
+    <a class="site-footer__brand" href={brand.href}>{brand.label}</a>
+
+    {
+      facts.length > 0 && (
+        <dl class="site-footer__facts">
+          {facts.map((fact) => (
+            <div class="site-footer__fact">
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+
+    {
+      (socialLinks.length > 0 || privacyLink || contactEmail) && (
+        <ul class="site-footer__links">
+          {socialLinks.map((link) => (
+            <li>
+              <a href={link.href} rel="noopener noreferrer">
+                {link.label}
+              </a>
+            </li>
+          ))}
+          {privacyLink && (
+            <li>
+              <a href={privacyLink.href} rel="noopener noreferrer">
+                {privacyLink.label}
+              </a>
+            </li>
+          )}
+          {contactEmail && (
+            <li>
+              <a href={`mailto:${contactEmail.value}`}>{contactEmail.value}</a>
+            </li>
+          )}
+        </ul>
+      )
+    }
+
+    <p class="site-footer__copyright">{copyright}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .site-footer__inner {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 3rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .site-footer__brand {
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .site-footer__facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1rem 2rem;
+    margin: 0;
+  }
+
+  .site-footer__fact dt {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+
+  .site-footer__fact dd {
+    margin: 0.25rem 0 0;
+  }
+
+  .site-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-footer__copyright {
+    font-size: 0.875rem;
+    opacity: 0.75;
+    margin: 0;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
