@@ -2,16 +2,16 @@ import { describe, it, expect, beforeAll } from "vitest";
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import reactRenderer from "@astrojs/react/server.js";
 import type { AstroComponentFactory } from "astro/runtime/server/index.js";
-import IndexPage from "./index.astro";
-import NotFoundPage from "./404.astro";
+import IndexPage from "./pages/index.astro";
+import NotFoundPage from "./pages/404.astro";
 import {
   assertNoForbiddenCopy,
   scanForbiddenCopy,
   type CopySource,
-} from "../config/forbiddenCopy";
-import { HERO_HEADLINE } from "../config/hero";
-import { PRIMARY_CTA_LABEL } from "../config/cta";
-import { proofBanner } from "../config/proofBanner";
+} from "./config/forbiddenCopy";
+import { HERO_HEADLINE } from "./config/hero";
+import { PRIMARY_CTA_LABEL } from "./config/cta";
+import { proofBanner } from "./config/proofBanner";
 
 /**
  * End-to-end forbidden-copy gate (implementation plan §8.6, §21 `validate:copy`).
@@ -29,6 +29,11 @@ import { proofBanner } from "../config/proofBanner";
  * that module was written to power.
  *
  * The pre-commit hook runs the test suite, so a failure here blocks the commit.
+ *
+ * This file deliberately lives at `src/` rather than `src/pages/`: Astro treats
+ * every file under `src/pages/` as a route and bundles it into the SSR entry, so
+ * a `.test.ts` there pulls `vitest` into `astro build` and crashes it. It still
+ * runs under the `src/**` vitest glob; it just must not sit in the routed tree.
  */
 async function renderPage(Component: AstroComponentFactory): Promise<string> {
   const container = await AstroContainer.create();
