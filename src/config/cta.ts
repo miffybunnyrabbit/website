@@ -10,9 +10,13 @@
  * variable so the approved production link is never committed to source and can
  * differ between preview and production.
  *
- * This module is pure configuration plus validation. The production build should
- * call `assertPrimaryCtaValid()` so a missing, insecure, or off-domain booking
- * URL fails the build instead of shipping a dead or wrong conversion action.
+ * This module is pure configuration plus validation. The homepage build gate
+ * calls `assertConfiguredCtaValid()` so an insecure or off-domain booking URL
+ * fails the build instead of shipping a wrong conversion action. Presence of the
+ * URL is enforced by the deploy environment rather than the build, because a
+ * local `astro build` runs in the same `production` mode as the deploy with the
+ * variable unset; `assertPrimaryCtaValid()` is the stricter check that also
+ * treats an absent URL as fatal, for callers that require one.
  */
 
 /** The single approved CTA label, in the plan's shouty display case (section 13). */
@@ -131,16 +135,14 @@ function isApprovedHost(host: string): boolean {
 }
 
 /**
- * Validate a CTA configuration against the section 20.3 rules. Returns the list
- * of problems; an empty list means the configuration is well-formed. The
- * production build should treat any non-empty result as fatal.
+ * Validate the label and analytics event — the parts of the CTA that are
+ * compile-time constants and so must be consistent in every build regardless of
+ * environment. A differing label means a component has introduced its own
+ * wording (the "inconsistent primary CTA labels" failure the plan calls out).
  */
-export function validatePrimaryCta(cta: CtaConfig = primaryCta): string[] {
+function validateCtaMeta(cta: CtaConfig): string[] {
   const errors: string[] = [];
 
-  // The label must match the single approved label. A differing label means a
-  // component has introduced its own wording — the "inconsistent primary CTA
-  // labels" failure the plan calls out.
   if (!cta.label.trim()) {
     errors.push("CTA label is missing.");
   } else if (cta.label !== PRIMARY_CTA_LABEL) {
@@ -153,14 +155,15 @@ export function validatePrimaryCta(cta: CtaConfig = primaryCta): string[] {
     errors.push("CTA analytics event is missing.");
   }
 
-  // The booking URL must be present, HTTPS, and on an approved host.
-  const href = cta.href;
-  if (!href || !href.trim()) {
-    errors.push(
-      "CTA URL is missing. Set PUBLIC_CALENDLY_URL to the approved Calendly booking link.",
-    );
-    return errors;
-  }
+  return errors;
+}
+
+/**
+ * Validate a booking URL that is already known to be present: it must be an
+ * absolute HTTPS URL on an approved Calendly host. Returns the list of problems.
+ */
+function validateCtaUrl(href: string): string[] {
+  const errors: string[] = [];
 
   let url: URL;
   try {
@@ -183,12 +186,73 @@ export function validatePrimaryCta(cta: CtaConfig = primaryCta): string[] {
   return errors;
 }
 
+/** True when a booking URL has actually been supplied (a non-blank string). */
+export function isCtaConfigured(cta: CtaConfig = primaryCta): boolean {
+  return typeof cta.href === "string" && cta.href.trim().length > 0;
+}
+
+/**
+ * Validate a CTA configuration against the section 20.3 rules, treating an
+ * absent booking URL as a failure. Returns the list of problems; an empty list
+ * means the configuration is fully deploy-ready. Use this where a booking URL is
+ * required (for example an environment that is meant to have one).
+ */
+export function validatePrimaryCta(cta: CtaConfig = primaryCta): string[] {
+  const errors = validateCtaMeta(cta);
+
+  if (!isCtaConfigured(cta)) {
+    errors.push(
+      "CTA URL is missing. Set PUBLIC_CALENDLY_URL to the approved Calendly booking link.",
+    );
+    return errors;
+  }
+
+  return [...errors, ...validateCtaUrl(cta.href as string)];
+}
+
+/**
+ * Validate the CTA as it stands in the current build. The booking URL is
+ * injected at build time via `PUBLIC_CALENDLY_URL`; a production deploy always
+ * sets it (Phase 9.3), but a local or preview `astro build` runs in the same
+ * `production` mode with the variable unset. Failing the build on an *absent*
+ * URL would therefore break every env-less build, so presence is left to the
+ * deploy environment. What we can — and must — catch here is a URL that is
+ * present but wrong: an insecure (`http:`) or off-domain booking link that would
+ * ship a broken or hijacked conversion action. So this validates the URL only
+ * once it is configured, while always guarding the constant label and event.
+ */
+export function validateConfiguredCta(cta: CtaConfig = primaryCta): string[] {
+  const errors = validateCtaMeta(cta);
+
+  if (isCtaConfigured(cta)) {
+    errors.push(...validateCtaUrl(cta.href as string));
+  }
+
+  return errors;
+}
+
 /**
  * Assert the primary CTA configuration is valid, throwing on failure. Intended
  * for use at build time so a broken CTA configuration fails the production build.
  */
 export function assertPrimaryCtaValid(cta: CtaConfig = primaryCta): void {
   const errors = validatePrimaryCta(cta);
+  if (errors.length > 0) {
+    throw new Error(`Invalid primary CTA configuration:\n- ${errors.join("\n- ")}`);
+  }
+}
+
+/**
+ * Assert the CTA is safe to render in the current build, throwing on failure.
+ * This is the guard the production build actually runs (from the page that
+ * mounts the CTA): it fails the build on an inconsistent label/event or a
+ * configured-but-insecure/off-domain booking URL, but tolerates an absent URL
+ * so env-less local and preview builds still succeed (see
+ * {@link validateConfiguredCta}). Deploy environments set `PUBLIC_CALENDLY_URL`,
+ * so the absent-URL case does not arise in production.
+ */
+export function assertConfiguredCtaValid(cta: CtaConfig = primaryCta): void {
+  const errors = validateConfiguredCta(cta);
   if (errors.length > 0) {
     throw new Error(`Invalid primary CTA configuration:\n- ${errors.join("\n- ")}`);
   }

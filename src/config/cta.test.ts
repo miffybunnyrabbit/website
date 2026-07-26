@@ -3,11 +3,14 @@ import {
   APPROVED_CTA_HOSTS,
   CTA_ANALYTICS_EVENT,
   PRIMARY_CTA_LABEL,
+  assertConfiguredCtaValid,
   assertPrimaryCtaValid,
   assertFinalCtaCopyValid,
   finalCtaCopy,
   findInconsistentCtaLabels,
+  isCtaConfigured,
   primaryCta,
+  validateConfiguredCta,
   validateFinalCtaCopy,
   validatePrimaryCta,
   type CtaConfig,
@@ -105,6 +108,61 @@ describe("validatePrimaryCta guardrails", () => {
     expect(() => assertPrimaryCtaValid(cta)).toThrow(
       /Invalid primary CTA configuration/,
     );
+  });
+});
+
+describe("isCtaConfigured", () => {
+  it("is true for a supplied URL and false for an absent or blank one", () => {
+    expect(isCtaConfigured(validConfig())).toBe(true);
+    expect(isCtaConfigured({ ...validConfig(), href: undefined })).toBe(false);
+    expect(isCtaConfigured({ ...validConfig(), href: "   " })).toBe(false);
+  });
+});
+
+describe("validateConfiguredCta (build-time gate)", () => {
+  it("accepts a fully configured, well-formed CTA", () => {
+    expect(validateConfiguredCta(validConfig())).toEqual([]);
+    expect(() => assertConfiguredCtaValid(validConfig())).not.toThrow();
+  });
+
+  it("tolerates an absent URL so env-less builds still pass", () => {
+    // A local or preview `astro build` runs in production mode with
+    // PUBLIC_CALENDLY_URL unset; the deploy environment supplies it, so an
+    // absent URL must not fail the build here.
+    const cta = { ...validConfig(), href: undefined };
+    expect(validateConfiguredCta(cta)).toEqual([]);
+    expect(() => assertConfiguredCtaValid(cta)).not.toThrow();
+  });
+
+  it("fails a configured but insecure booking URL", () => {
+    const cta = { ...validConfig(), href: "http://calendly.com/helix/intro" };
+    expect(validateConfiguredCta(cta).some((e) => e.includes("must use HTTPS"))).toBe(
+      true,
+    );
+    expect(() => assertConfiguredCtaValid(cta)).toThrow(
+      /Invalid primary CTA configuration/,
+    );
+  });
+
+  it("fails a configured but off-domain booking URL", () => {
+    const cta = { ...validConfig(), href: "https://evil.example.com/book" };
+    expect(() => assertConfiguredCtaValid(cta)).toThrow(
+      /not an approved Calendly host/,
+    );
+  });
+
+  it("still guards a drifted label even when no URL is configured", () => {
+    const cta = { ...validConfig(), href: undefined, label: "BOOK A CALL" };
+    expect(validateConfiguredCta(cta).some((e) => e.includes("does not match"))).toBe(
+      true,
+    );
+    expect(() => assertConfiguredCtaValid(cta)).toThrow(/does not match/);
+  });
+
+  it("matches the live primaryCta against the same gate the build runs", () => {
+    // Whatever PUBLIC_CALENDLY_URL is (set or unset) in this environment, the
+    // shipped config must pass the exact gate the homepage build applies.
+    expect(() => assertConfiguredCtaValid()).not.toThrow();
   });
 });
 

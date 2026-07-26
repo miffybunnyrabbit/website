@@ -14,6 +14,7 @@ import {
   assertApprovalQueueValid,
   formatOpenQueueWarning,
 } from "../config/approvalQueue";
+import { assertConfiguredCtaValid, isCtaConfigured } from "../config/cta";
 
 // Governance gate (§23, P6-002): the queue must be internally consistent and
 // must track every content item that still needs sign-off, or the build fails.
@@ -21,6 +22,17 @@ import {
 // as a non-fatal warning listing what publishes in draft form (§20.1).
 assertApprovalQueueValid();
 console.warn(formatOpenQueueWarning());
+
+// Conversion gate (§13, §20.3, D-006): the single site-wide CTA must never ship
+// a wrong action. A configured booking URL that is insecure or off a Calendly
+// host fails the build here; an unset URL (env-less local/preview build) only
+// warns, since the deploy environment injects PUBLIC_CALENDLY_URL.
+assertConfiguredCtaValid();
+if (!isCtaConfigured()) {
+  console.warn(
+    "CTA: PUBLIC_CALENDLY_URL is not set — the primary conversion action will render without a booking link. Set it before deploying.",
+  );
+}
 ---
 
 <BaseLayout title="Helix Collective — Enterprise Value Growth Partner">

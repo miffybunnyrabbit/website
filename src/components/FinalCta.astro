@@ -12,8 +12,9 @@
  *
  * The section is static Astro HTML and CSS: no React and no client-side state,
  * so the conversion action works with JavaScript disabled. The CTA URL itself
- * is injected at build time via `PUBLIC_CALENDLY_URL`; the production build's
- * `assertPrimaryCtaValid()` guards that it is present, HTTPS, and on Calendly.
+ * is injected at build time via `PUBLIC_CALENDLY_URL`; the homepage build gate's
+ * `assertConfiguredCtaValid()` fails the build if a configured URL is insecure
+ * or off Calendly, so this button never renders a wrong booking link.
  */
 import {
   primaryCta,
