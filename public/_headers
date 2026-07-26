@@ -1,0 +1,7 @@
+# Generated from src/config/securityHeaders.ts — do not edit by hand.
+# Cloudflare Pages response headers: <path> then indented <Name: value> lines.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-Frame-Options: DENY
