@@ -1,0 +1,252 @@
+import { describe, expect, it } from "vitest";
+import {
+  assertCaseStudiesValid,
+  caseStudies,
+  looksQuantified,
+  publishedCaseStudies,
+  REMOVED_CASE_STUDY_SLUGS,
+  REQUIRED_CASE_STUDY_SLUGS,
+  validateCaseStudies,
+  type CaseStudy,
+} from "./caseStudies";
+
+/** Deep-clone the canonical studies so a test can mutate them safely. */
+function cloneStudies(): CaseStudy[] {
+  return caseStudies.map((study) => ({
+    ...study,
+    helixContribution: [...study.helixContribution],
+    claimIds: [...study.claimIds],
+  }));
+}
+
+/**
+ * Return a fully-publishable version of one study so a test can flip a single
+ * gate and prove that gate is what fails. Mirrors an entry that has cleared all
+ * of its section-9 research and approval gates.
+ */
+function approvedStudy(slug: string): CaseStudy {
+  const base = cloneStudies().find((s) => s.slug === slug);
+  if (!base) throw new Error(`no such study: ${slug}`);
+  return {
+    ...base,
+    publish: true,
+    approvalStatus: "approved",
+    clientApproval: "approved",
+    assetApproval: "approved",
+    outcomeHeadline: "FROM IDEA TO A$1B+",
+    currentOutcome: undefined,
+    valueMultiple: undefined,
+    valueCreated: undefined,
+    summary: "Helix shaped the core technology and early business development.",
+    helixContribution: ["Shaped the core technology."],
+    claimIds: ["CLAIM-NEARA-001"],
+  };
+}
+
+describe("caseStudies configuration", () => {
+  it("features exactly the five required studies in the recommended order", () => {
+    expect(caseStudies.map((s) => s.slug)).toEqual([
+      "neara",
+      "ferovinum",
+      "13sick",
+      "origami",
+      "veyor",
+    ]);
+    // Neara and Ferovinum lead (section 8.5).
+    expect(caseStudies[0].slug).toBe("neara");
+    expect(caseStudies[1].slug).toBe("ferovinum");
+  });
+
+  it("uses the brand spelling 'Veyor', not 'Veyordigital'", () => {
+    const veyor = caseStudies.find((s) => s.slug === "veyor");
+    expect(veyor?.name).toBe("Veyor Digital");
+    expect(veyor?.name.toLowerCase()).not.toContain("veyordigital");
+  });
+
+  it("does not include Xylo as a case study", () => {
+    const slugs = caseStudies.map((s) => s.slug.toLowerCase());
+    const names = caseStudies.map((s) => s.name.toLowerCase());
+    expect(slugs).not.toContain("xylo");
+    expect(names).not.toContain("xylo");
+  });
+
+  it("keeps every quantified study unpublished until its research gate passes", () => {
+    // All five carry unresolved [VERIFY:]/[RESEARCH:] markers, so none may ship.
+    expect(caseStudies.every((s) => s.publish === false)).toBe(true);
+  });
+
+  it("passes its own validation as authored", () => {
+    expect(validateCaseStudies()).toEqual([]);
+    expect(() => assertCaseStudiesValid()).not.toThrow();
+  });
+
+  it("renders nothing until an entry is approved and published", () => {
+    expect(publishedCaseStudies()).toEqual([]);
+  });
+
+  it("keeps the required and removed slug lists disjoint", () => {
+    for (const removed of REMOVED_CASE_STUDY_SLUGS) {
+      expect(REQUIRED_CASE_STUDY_SLUGS).not.toContain(removed);
+    }
+  });
+});
+
+describe("looksQuantified", () => {
+  it("detects currency amounts and multiples", () => {
+    expect(looksQuantified("FROM IDEA TO A$1B+")).toBe(true);
+    expect(looksQuantified("$300m created")).toBe(true);
+    expect(looksQuantified("approximately 20× growth")).toBe(true);
+    expect(looksQuantified("5x value")).toBe(true);
+  });
+
+  it("does not flag unquantified prose", () => {
+    expect(looksQuantified("FROM IDEA TO A GLOBAL CAPITAL PLATFORM")).toBe(
+      false,
+    );
+    expect(looksQuantified("Helix shaped the core technology.")).toBe(false);
+  });
+});
+
+describe("validateCaseStudies guardrails", () => {
+  it("rejects a missing required case study", () => {
+    const studies = cloneStudies().filter((s) => s.slug !== "neara");
+    const errors = validateCaseStudies(studies);
+    expect(errors.some((e) => e.includes('Required case study "neara"'))).toBe(
+      true,
+    );
+  });
+
+  it("rejects a removed case study reappearing", () => {
+    const studies = cloneStudies();
+    studies.push({
+      ...approvedStudy("neara"),
+      name: "Xylo",
+      slug: "xylo",
+      order: 99,
+      publish: false,
+    });
+    const errors = validateCaseStudies(studies);
+    expect(errors.some((e) => e.includes("Xylo") && e.includes("removed"))).toBe(
+      true,
+    );
+  });
+
+  it("rejects a removed study matched by name even under a different slug", () => {
+    const studies = cloneStudies();
+    studies.push({
+      ...approvedStudy("neara"),
+      name: "Xylo",
+      slug: "xylo-inc",
+      order: 98,
+      publish: false,
+    });
+    const errors = validateCaseStudies(studies);
+    expect(errors.some((e) => e.includes("removed"))).toBe(true);
+  });
+
+  it("rejects a publish:true study that is not approved", () => {
+    const studies = cloneStudies();
+    const idx = studies.findIndex((s) => s.slug === "neara");
+    studies[idx] = { ...approvedStudy("neara"), approvalStatus: "researching" };
+    const errors = validateCaseStudies(studies);
+    expect(
+      errors.some(
+        (e) => e.includes("neara") && e.includes("approval status"),
+      ),
+    ).toBe(true);
+  });
+
+  it("rejects a published study with pending client approval", () => {
+    const studies = cloneStudies();
+    const idx = studies.findIndex((s) => s.slug === "neara");
+    studies[idx] = { ...approvedStudy("neara"), clientApproval: "pending" };
+    const errors = validateCaseStudies(studies);
+    expect(
+      errors.some((e) => e.includes("client approval is still pending")),
+    ).toBe(true);
+  });
+
+  it("rejects a published study with unapproved assets", () => {
+    const studies = cloneStudies();
+    const idx = studies.findIndex((s) => s.slug === "neara");
+    studies[idx] = { ...approvedStudy("neara"), assetApproval: "pending" };
+    const errors = validateCaseStudies(studies);
+    expect(errors.some((e) => e.includes("asset approval"))).toBe(true);
+  });
+
+  it("rejects a published quantified claim with no claim IDs", () => {
+    const studies = cloneStudies();
+    const idx = studies.findIndex((s) => s.slug === "neara");
+    studies[idx] = { ...approvedStudy("neara"), claimIds: [] };
+    const errors = validateCaseStudies(studies);
+    expect(
+      errors.some((e) => e.includes("quantified claim") && e.includes("neara")),
+    ).toBe(true);
+  });
+
+  it("allows a published study whose copy carries no quantified claim without claim IDs", () => {
+    const studies = cloneStudies();
+    const idx = studies.findIndex((s) => s.slug === "neara");
+    studies[idx] = {
+      ...approvedStudy("neara"),
+      outcomeHeadline: "FROM IDEA TO A GLOBAL PLATFORM",
+      claimIds: [],
+    };
+    const errors = validateCaseStudies(studies);
+    expect(errors.some((e) => e.includes("quantified claim"))).toBe(false);
+  });
+
+  it("rejects a published study that still carries a [VERIFY:] placeholder", () => {
+    const studies = cloneStudies();
+    const idx = studies.findIndex((s) => s.slug === "neara");
+    studies[idx] = {
+      ...approvedStudy("neara"),
+      summary: "Value grew [VERIFY: 20×] during the engagement.",
+      claimIds: ["CLAIM-NEARA-001"],
+    };
+    const errors = validateCaseStudies(studies);
+    expect(errors.some((e) => e.includes("placeholder"))).toBe(true);
+  });
+
+  it("rejects a published study that does not say what Helix did", () => {
+    const studies = cloneStudies();
+    const idx = studies.findIndex((s) => s.slug === "neara");
+    studies[idx] = { ...approvedStudy("neara"), helixContribution: [] };
+    const errors = validateCaseStudies(studies);
+    expect(
+      errors.some((e) => e.includes("what Helix actually did")),
+    ).toBe(true);
+  });
+
+  it("rejects duplicate slugs and duplicate orders", () => {
+    const studies = cloneStudies();
+    studies.push({ ...cloneStudies()[0] });
+    const errors = validateCaseStudies(studies);
+    expect(errors.some((e) => e.includes("Duplicate case-study slug"))).toBe(
+      true,
+    );
+    expect(errors.some((e) => e.includes("Duplicate case-study order"))).toBe(
+      true,
+    );
+  });
+
+  it("lets an unpublished draft keep its placeholders and pending approvals", () => {
+    // The canonical collection is entirely unpublished drafts and must pass.
+    expect(validateCaseStudies(cloneStudies())).toEqual([]);
+  });
+
+  it("assertCaseStudiesValid throws an aggregated message on bad content", () => {
+    const studies = cloneStudies().filter((s) => s.slug !== "neara");
+    expect(() => assertCaseStudiesValid(studies)).toThrow(
+      /Invalid case-study content/,
+    );
+  });
+
+  it("accepts a fully-approved, well-formed published study", () => {
+    const studies = cloneStudies();
+    const idx = studies.findIndex((s) => s.slug === "neara");
+    studies[idx] = approvedStudy("neara");
+    expect(validateCaseStudies(studies)).toEqual([]);
+    expect(publishedCaseStudies(studies).map((s) => s.slug)).toEqual(["neara"]);
+  });
+});
