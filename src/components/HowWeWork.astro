@@ -1,0 +1,177 @@
+---
+/**
+ * Homepage "How we work" four-stage operating model (implementation plan §11).
+ *
+ * The section renders the four fixed stages from the validated `howWeWork`
+ * content model — it invents no copy of its own, so the required concepts each
+ * stage must express (§11, §20.5) survive editing and a drifted or reordered
+ * sequence cannot ship. `assertHowWeWorkValid()` runs at render time, turning a
+ * broken configuration (wrong count, wrong order, a dropped concept, or a draft
+ * marker) into a build failure rather than a published mistake.
+ *
+ * Per §11.6 the progression is an accessible semantic process, not a decorative
+ * graphic: a real ordered list with visible `01`–`04` numbers, static
+ * Astro-rendered HTML and CSS (no React), a vertical sequence on mobile and a
+ * connected path on wider viewports. Connector lines are decorative and hidden
+ * from assistive technology, all meaning survives with JavaScript and animation
+ * disabled, and `prefers-reduced-motion` is honoured. A single closing line is
+ * shown, not both plan alternatives at equal weight (§11.5).
+ */
+import {
+  howWeWorkSteps as defaultSteps,
+  howWeWorkCopy as defaultCopy,
+  assertHowWeWorkValid,
+  type HowWeWorkStep,
+} from "../config/howWeWork";
+
+export interface Props {
+  /** Defaults to the site's `howWeWork` model; overridable for testing. */
+  steps?: readonly HowWeWorkStep[];
+  copy?: typeof defaultCopy;
+}
+
+const { steps = defaultSteps, copy = defaultCopy } = Astro.props;
+
+assertHowWeWorkValid(steps);
+---
+
+<section class="how" aria-labelledby="how-heading">
+  <div class="how__inner">
+    <p class="how__eyebrow">{copy.eyebrow}</p>
+    <h2 class="how__headline" id="how-heading">{copy.headline}</h2>
+    <p class="how__intro">{copy.intro}</p>
+    <ol class="how__steps" role="list">
+      {
+        steps.map((step) => (
+          <li class="how__step">
+            <span class="how__connector" aria-hidden="true"></span>
+            <span class="how__number">{step.number}</span>
+            <h3 class="how__step-title">{step.title}</h3>
+            <p class="how__step-body">{step.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="how__closing">{copy.closing}</p>
+  </div>
+</section>
+
+<style>
+  .how {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .how__inner {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 4rem 1.5rem;
+  }
+
+  .how__eyebrow {
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin: 0 0 1rem;
+  }
+
+  .how__headline {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    line-height: 1.1;
+    margin: 0 0 1.5rem;
+    max-width: 24ch;
+  }
+
+  .how__intro {
+    font-size: 1.125rem;
+    max-width: 56ch;
+    margin: 0 0 3rem;
+  }
+
+  /* Mobile: a single vertical sequence in ordinary reading order (§11.6). */
+  .how__steps {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    margin: 0 0 3rem;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+
+  .how__step {
+    position: relative;
+  }
+
+  /* Connector lines are decorative only and hidden from assistive tech; the
+     ordered list already conveys the progression to screen readers (§11.6). */
+  .how__connector {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.12);
+  }
+
+  /* Vertical connector down the left edge between stacked stages on mobile. */
+  .how__connector {
+    left: 0.85rem;
+    top: 2rem;
+    bottom: -2.5rem;
+    width: 2px;
+  }
+
+  .how__step:last-child .how__connector {
+    display: none;
+  }
+
+  .how__number {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0 0 0.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .how__step-title {
+    font-size: 1.125rem;
+    line-height: 1.2;
+    margin: 0 0 0.75rem;
+    max-width: 32ch;
+  }
+
+  .how__step-body {
+    margin: 0;
+    max-width: 44ch;
+  }
+
+  .how__closing {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-size: 1.125rem;
+    max-width: 48ch;
+    margin: 0;
+  }
+
+  /* Desktop: a connected horizontal path with generous space, keeping the sense
+     of progression rather than four generic cards (§11.6). */
+  @media (min-width: 48rem) {
+    .how__steps {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+
+    .how__connector {
+      left: 2.25rem;
+      right: -2rem;
+      top: 0.75rem;
+      bottom: auto;
+      width: auto;
+      height: 2px;
+    }
+  }
+
+  /* Restrained active-stage cue only; all meaning is present without it, and it
+     is suppressed entirely for readers who prefer reduced motion (§11.6). */
+  @media (prefers-reduced-motion: no-preference) {
+    .how__number {
+      transition: color 200ms ease;
+    }
+  }
+</style>
