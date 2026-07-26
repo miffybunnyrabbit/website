@@ -14,7 +14,8 @@
     "preview": "astro preview",
     "typecheck": "astro check && tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepare": "git config core.hooksPath .githooks || true"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",

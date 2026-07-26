@@ -1,0 +1,13 @@
+#!/bin/sh
+# Run the full test suite before every commit.
+# Bypass with: git commit --no-verify
+
+echo "Running tests before commit..."
+npm test
+
+status=$?
+if [ $status -ne 0 ]; then
+  echo ""
+  echo "Tests failed — commit aborted. Fix the failures or use 'git commit --no-verify' to skip."
+  exit $status
+fi
