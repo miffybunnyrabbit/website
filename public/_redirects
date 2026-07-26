@@ -1,0 +1,3 @@
+# Generated from src/config/redirects.ts — do not edit by hand.
+# Cloudflare Pages redirect rules: <source> <destination> <status>
+/contact-us  /  301
