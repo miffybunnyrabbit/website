@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   assertPageMetaValid,
@@ -16,6 +18,12 @@ import {
   websiteSchema,
   type PageMeta,
 } from "./siteMeta";
+
+/** Read a committed file at a path relative to the repository root. */
+function readRepo(relative: string): string {
+  const path = fileURLToPath(new URL(`../../${relative}`, import.meta.url));
+  return readFileSync(path, "utf8");
+}
 
 /** A well-formed page-meta fixture. */
 function goodMeta(overrides: Partial<PageMeta> = {}): PageMeta {
@@ -55,6 +63,22 @@ describe("canonicalUrl (P7-002)", () => {
   it("keeps the canonical origin on the www domain (P7-002)", () => {
     expect(SITE_ORIGIN).toBe("https://www.helixcollective.com");
     expect(canonicalUrl("/").startsWith("https://")).toBe(true);
+  });
+
+  // SITE_ORIGIN documents that it "Must match `site` in astro.config.mjs", but
+  // nothing enforced it. Astro derives its own absolute URLs (e.g. anything
+  // built from `Astro.site`) from `astro.config.mjs`, while our canonical links,
+  // JSON-LD @ids, and sitemap all derive from SITE_ORIGIN. If the two drift, the
+  // site advertises two competing origins for the same pages — exactly the
+  // single-canonical-origin failure P7-002 exists to prevent. Guard it the same
+  // way the sitemap/headers/CI drift tests guard their committed artifacts.
+  it("stays in lock-step with `site` in astro.config.mjs (P7-002)", () => {
+    const config = readRepo("astro.config.mjs");
+    const match = config.match(/\bsite:\s*["']([^"']+)["']/);
+    expect(match, "astro.config.mjs must declare a `site` origin").not.toBeNull();
+    // Compare origin-to-origin so a trailing slash on either side is not drift.
+    const configOrigin = (match as RegExpMatchArray)[1].replace(/\/$/, "");
+    expect(configOrigin).toBe(SITE_ORIGIN);
   });
 });
 
