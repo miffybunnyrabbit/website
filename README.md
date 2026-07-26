@@ -26,6 +26,7 @@ local development currently pins to the installed Node 20 LTS.
 | `npm run typecheck` | `astro check` + `tsc --noEmit` |
 | `npm test` | Run unit tests once |
 | `npm run test:watch` | Run unit tests in watch mode |
+| `npm run verify` | Full gate: typecheck + tests + build (what CI runs) |
 
 ## Status
 
@@ -35,5 +36,8 @@ Early scaffold. Implemented so far:
   layout, homepage, and branded 404.
 - Pure fit-qualifier state graph (`src/components/fit/fitFlow.ts`) with unit
   tests covering every branch (plan §12.2 / §20.4, P5-001).
+- GitHub Actions CI (`.github/workflows/ci.yml`) that runs `npm run verify` on
+  every push to `main` and pull request, rendered from a validated model
+  (`src/config/ci.ts`, plan §9.1).
 
 Upcoming work follows the phases in `IMPLEMENTATION_PLAN.md`.
