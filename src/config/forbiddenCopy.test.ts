@@ -209,7 +209,7 @@ describe("live content is free of forbidden copy", () => {
 
   it("keeps published case-study copy clean", () => {
     for (const cs of caseStudies) {
-      const text = [cs.name, cs.headline ?? "", cs.summary ?? ""]
+      const text = [cs.name, cs.outcomeHeadline ?? "", cs.summary ?? ""]
         .filter(Boolean)
         .join(" ");
       expect(scanForbiddenCopy(text), cs.name).toEqual([]);
