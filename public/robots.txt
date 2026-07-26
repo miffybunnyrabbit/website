@@ -1,0 +1,5 @@
+# Generated from src/config/sitemap.ts — do not edit by hand.
+User-agent: *
+Allow: /
+
+Sitemap: https://www.helixcollective.com/sitemap.xml
