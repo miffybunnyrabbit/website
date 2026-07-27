@@ -1,0 +1,24 @@
+asset_id,company,type,filename,source,owner,permission_status,usage,alt_text,contains_people,contains_confidential_ui,remove_from_site,notes
+A-canva,Canva,logo,canva.svg,live-site,external-brand,pending,logo-marquee,Canva,no,no,no,
+A-google,Google,logo,google.svg,live-site,external-brand,pending,logo-marquee,Google,no,no,no,
+A-13sick,13SICK,logo,13sick.svg,live-site,external-brand,pending,logo-marquee,13SICK,no,no,no,
+A-bcg,BCG,logo,bcg.svg,live-site,external-brand,pending,logo-marquee,BCG,no,no,no,
+A-commbank,CommBank,logo,commbank.svg,live-site,external-brand,pending,logo-marquee,CommBank,no,no,no,
+A-australia-post,Australia Post,logo,australia-post.svg,live-site,external-brand,pending,logo-marquee,Australia Post,no,no,no,
+A-eftpos,eftpos,logo,eftpos.svg,live-site,external-brand,pending,logo-marquee,eftpos,no,no,no,
+A-sydney-airport,Sydney Airport,logo,sydney-airport.svg,live-site,external-brand,pending,logo-marquee,Sydney Airport,no,no,no,
+A-macquarie,Macquarie,logo,macquarie.svg,live-site,external-brand,pending,logo-marquee,Macquarie,no,no,no,
+A-neara,Neara,logo,neara.svg,live-site,external-brand,pending,logo-marquee,Neara,no,no,no,
+A-filecoin,Filecoin,logo,filecoin.svg,live-site,external-brand,pending,logo-marquee,Filecoin,no,no,no,
+A-veyor,Veyor,logo,veyor.svg,live-site,external-brand,pending,logo-marquee,Veyor,no,no,no,
+A-ferovinum,Ferovinum,logo,ferovinum.svg,live-site,external-brand,pending,logo-marquee,Ferovinum,no,no,no,
+A-agonics,Agonics,logo,agonics.svg,live-site,external-brand,pending,logo-marquee,Agonics,no,no,no,
+A-spec,Spec,logo,spec.svg,live-site,external-brand,pending,logo-marquee,Spec,no,no,no,
+A-jubi,Jubi,logo,jubi.svg,live-site,external-brand,pending,logo-marquee,Jubi,no,no,no,
+A-xylo,Xylo,logo,xylo.svg,live-site,external-brand,pending,logo-marquee,Xylo,no,no,no,
+A-origami,Origami,logo,origami.svg,live-site,external-brand,pending,logo-marquee,Origami,no,no,no,
+A-awayco,Awayco,logo,awayco.svg,live-site,external-brand,pending,logo-marquee,Awayco,no,no,yes,"Removed brand (§5, §8.4); retained as an auditable record (P4-002)."
+A-perion,Perion,logo,perion.svg,live-site,external-brand,pending,logo-marquee,Perion,no,no,yes,"Removed brand (§5, §8.4); retained as an auditable record (P4-002)."
+A-synaptico,Synaptico,logo,synaptico.svg,live-site,external-brand,pending,logo-marquee,Synaptico,no,no,yes,"Removed brand (§5, §8.4); retained as an auditable record (P4-002)."
+A-xylo-case-study,Xylo,legacy,xylo-case-study.png,live-site,Xylo,pending,removed-case-study-panel,,no,no,yes,Xylo case-study panel removed (§9.6); its marquee logo is retained separately (D-008).
+A-humans-of-helix,Helix Collective,legacy,humans-of-helix.jpg,live-site,Helix Collective,pending,removed-team-section,,yes,no,yes,"People/team imagery removed with the institutional repositioning (§5, §14)."
