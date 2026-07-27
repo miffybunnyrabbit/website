@@ -9,7 +9,7 @@
 
 ## Currently published draft wording or asset
 
-$500M+ ENTERPRISE VALUE CREATED — held out of production until the D-001 currency decision is recorded.
+$500M+ ENTERPRISE VALUE CREATED publishes in its safe, deliberately currency-neutral draft form; confirming the currency behind the figure is the open D-001 decision this item tracks.
 
 ## Decision
 

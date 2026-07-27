@@ -7,8 +7,8 @@ import { proofBanner, type ProofBanner as ProofBannerModel } from "../config/pro
  * Renders `ProofBanner.astro` through Astro's Container API and asserts the
  * output faithfully reflects the validated `proofBanner` model (§8.3). The
  * content model has its own unit tests; here we only guard the render layer —
- * that the component renders that model when it is cleared for publication,
- * renders nothing while the currency (D-001) is still pending, and adds nothing
+ * that the component renders the shipped model in its published draft form,
+ * renders nothing when a model is explicitly held back, and adds nothing
  * off-spec.
  */
 async function renderBanner(banner?: ProofBannerModel): Promise<string> {
@@ -18,24 +18,32 @@ async function renderBanner(banner?: ProofBannerModel): Promise<string> {
   });
 }
 
-/** A copy of the model cleared for publication — the D-001 currency approved. */
-const publishedModel: ProofBannerModel = {
+/** The shipped model publishes in draft form (D-001 currency still pending). */
+const publishedModel = proofBanner;
+
+/** A copy explicitly held back from production (`publish: false`). */
+const heldBackModel: ProofBannerModel = {
   ...proofBanner,
-  currencyApproval: "approved",
-  publish: true,
+  publish: false,
 };
 
 describe("ProofBanner.astro", () => {
-  it("renders nothing while the banner is unpublished (D-001 pending)", async () => {
-    // The shipped model stays unpublished until the currency is confirmed, so
-    // the unconfirmed `$500M+` figure must not reach the output.
-    expect(proofBanner.publish).toBe(false);
+  it("renders the shipped model's figures in its published draft form", async () => {
+    // The banner publishes in its safe currency-neutral draft while Q-0007
+    // tracks the D-001 currency decision (§23), so `$500M+` reaches the output.
+    expect(proofBanner.publish).toBe(true);
     const html = await renderBanner();
+    expect(html).toContain("$500M+");
+    expect(html).toContain("<section");
+  });
+
+  it("renders nothing when the model is explicitly held back", async () => {
+    const html = await renderBanner(heldBackModel);
     expect(html).not.toContain("$500M+");
     expect(html).not.toContain("<section");
   });
 
-  it("renders both approved metric figures once cleared for publication", async () => {
+  it("renders both metric figures", async () => {
     const html = await renderBanner(publishedModel);
     for (const metric of publishedModel.metrics) {
       expect(html).toContain(metric.value);

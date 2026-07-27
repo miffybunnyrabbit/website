@@ -42,11 +42,13 @@ describe("proofBanner configuration", () => {
     expect(() => assertProofBannerValid()).not.toThrow();
   });
 
-  it("stays unpublished until the currency decision (D-001) is recorded", () => {
-    // The bare "$" in "$500M+" cannot ship until currency is confirmed.
+  it("publishes in its safe currency-neutral draft form while D-001 is pending", () => {
+    // The revised approach (§5 last row, §17, §23) publishes the pending claim in
+    // its safe fallback rather than withholding it; the bare "$" is deliberately
+    // currency-neutral and the open Q-0007 item tracks confirming the currency.
     expect(proofBanner.currencyApproval).toBe("pending");
-    expect(proofBanner.publish).toBe(false);
-    expect(publishedProofBanner()).toBeNull();
+    expect(proofBanner.publish).toBe(true);
+    expect(publishedProofBanner()).toBe(proofBanner);
   });
 });
 
@@ -136,10 +138,19 @@ describe("validateProofBanner guardrails", () => {
     expect(errors.some((e) => e.includes("draft marker"))).toBe(true);
   });
 
-  it("rejects publishing before the currency is approved (D-001)", () => {
+  it("allows publishing while the currency is still pending (D-001)", () => {
+    // Currency is no longer a publication gate: the safe currency-neutral draft
+    // publishes and Q-0007 tracks the decision (§23). The async linkage is
+    // enforced in approvalQueue.ts, not here.
     const banner = cloneBanner({ publish: true, currencyApproval: "pending" });
-    const errors = validateProofBanner(banner);
-    expect(errors.some((e) => e.includes("currency"))).toBe(true);
+    expect(validateProofBanner(banner)).toEqual([]);
+    expect(publishedProofBanner(banner)).toBe(banner);
+  });
+
+  it("still renders nothing when the model is explicitly held back", () => {
+    const banner = cloneBanner({ publish: false, currencyApproval: "pending" });
+    expect(validateProofBanner(banner)).toEqual([]);
+    expect(publishedProofBanner(banner)).toBeNull();
   });
 
   it("allows publishing once the currency is approved", () => {
