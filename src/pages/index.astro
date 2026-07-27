@@ -16,6 +16,7 @@ import {
 } from "../config/approvalQueue";
 import { assertClaimsLedgerValid } from "../config/claimsLedger";
 import { assertAssetRegisterValid } from "../config/assetRegister";
+import { assertEngagementModelValid } from "../config/engagementModel";
 import { assertConfiguredCtaValid, isCtaConfigured } from "../config/cta";
 
 // Governance gate (§23, P6-002): the queue must be internally consistent and
@@ -37,6 +38,15 @@ assertClaimsLedgerValid();
 // must stay marked off-site. A register that drifts from the logo/case-study
 // models — or an asset with people or confidential UI left visible — fails here.
 assertAssetRegisterValid();
+
+// Engagement-model gate (§11.7 R-012): the "How we work" and "We're different"
+// copy makes the site's most legally sensitive promises (unpaid preparation,
+// gain-share, embedded delivery, clean exit). The documented engagement model
+// must be complete and none of the §11.7-prohibited wording (an employment
+// relationship, a guaranteed result, a universal payment claim, a mandatory
+// sale, a fiduciary/agency/directorship representation, or a guaranteed back-end
+// instrument) may reach that copy, or the build fails here.
+assertEngagementModelValid();
 
 // Conversion gate (§13, §20.3, D-006): the single site-wide CTA must never ship
 // a wrong action. A configured booking URL that is insecure or off a Calendly

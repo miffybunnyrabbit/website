@@ -27,6 +27,7 @@ import { caseStudies, type CaseStudy } from "./caseStudies";
 import { footer } from "./footer";
 import { logos, type LogoEntry } from "./logos";
 import { proofBanner, type ProofMetricId } from "./proofBanner";
+import { ENGAGEMENT_MODEL_REVIEW } from "./engagementModel";
 
 /** The four approval categories and their required approvers (section 23). */
 export type ApprovalCategory = "A" | "B" | "C" | "D";
@@ -96,6 +97,7 @@ export type CoverageKind =
   | "logo-permissions"
   | "footer-identity"
   | "strategic-copy"
+  | "engagement-model"
   | "launch-review";
 
 export interface CoverageRef {
@@ -243,6 +245,25 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "Legal entity name and ABN publish as [VERIFY:] drafts and the registered office as the §12 Redfern address — all withheld from the rendered footer until the Helix owner confirms them (§14, D-007).",
     requiredApprovers: REQUIRED_APPROVERS.A,
+    status: "open",
+  },
+  {
+    // The engagement-model validation record (§11.7, R-012,
+    // docs/research/engagement-model.md) documents the real operating model
+    // behind the "How we work" (§11) and "We're different because…" (§10) copy —
+    // the site's most legally sensitive promises (unpaid preparation, gain-share,
+    // embedded delivery, clean exit). The copy publishes as the plan's working
+    // baseline now; this item tracks the outstanding sign-off. Category B is the
+    // right gate: R-012 requires commercial, finance, and legal review plus the
+    // owner, and the category-B set (finance-owner, legal-reviewer, helix-owner)
+    // maps onto finance, legal, and the commercial owner.
+    id: "Q-0011-engagement-model",
+    category: "B",
+    title: "Engagement-model validation (How we work operating model)",
+    coverage: [{ kind: "engagement-model" }],
+    publishedWording:
+      "The four-stage 'How we work' model and its unpaid-preparation, paid-as-we-deliver, back-end gain-share, embedded-delivery, and clean-exit wording publish as the plan's working baseline, documented in docs/research/engagement-model.md and withheld from production sign-off until finance, legal, and the owner confirm it (§11.7, R-012).",
+    requiredApprovers: REQUIRED_APPROVERS.B,
     status: "open",
   },
 ];
@@ -463,6 +484,32 @@ export function validateApprovalQueue(
         `Footer fact references approval-queue item "${fact.queueItem}", which is not a footer-identity queue item.`,
       );
     }
+  }
+
+  // The engagement-model validation record (§11.7, R-012) publishes its "How we
+  // work"/"We're different" copy in draft form until finance/legal/owner sign it
+  // off. Like every other pending content model it must be tracked by an open
+  // queue item, or the governance record and the site drift apart.
+  if (
+    ENGAGEMENT_MODEL_REVIEW.status === "pending" &&
+    !isCovered(openRefs, "engagement-model")
+  ) {
+    errors.push(
+      `The engagement model (§11.7, R-012) publishes copy in draft form but no open queue item covers engagement-model.`,
+    );
+  }
+
+  // The record's declared `queueItem` must point at a real engagement-model queue
+  // item, so it can never dangle or collide with an unrelated item.
+  const engagementModelIds = new Set(
+    queue
+      .filter((item) => item.coverage.some((c) => c.kind === "engagement-model"))
+      .map((item) => item.id),
+  );
+  if (!engagementModelIds.has(ENGAGEMENT_MODEL_REVIEW.queueItem)) {
+    errors.push(
+      `The engagement model references approval-queue item "${ENGAGEMENT_MODEL_REVIEW.queueItem}", which is not an engagement-model queue item.`,
+    );
   }
 
   return errors;

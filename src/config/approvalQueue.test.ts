@@ -312,7 +312,7 @@ describe("generated one-file-per-item records (§23)", () => {
 describe("build warning surface", () => {
   it("lists every open item on one line each", () => {
     const warning = formatOpenQueueWarning();
-    expect(warning).toMatch(/10 open item/);
+    expect(warning).toMatch(/11 open item/);
     for (const item of openQueueItems()) {
       expect(warning).toContain(item.id);
     }
