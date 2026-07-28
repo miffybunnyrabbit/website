@@ -20,6 +20,7 @@ import { assertAssetRegisterValid } from "../config/assetRegister";
 import { assertCaseStudyDossiersValid } from "../config/caseStudyDossiers";
 import { assertEngagementModelValid } from "../config/engagementModel";
 import { assertDecisionsValid, formatOpenDecisionsWarning } from "../config/decisions";
+import { assertAnalyticsAndPrivacyValid } from "../config/analyticsAndPrivacy";
 import { assertConfiguredCtaValid, isCtaConfigured } from "../config/cta";
 
 // Governance gate (§23, P6-002): the queue must be internally consistent and
@@ -78,6 +79,14 @@ assertEngagementModelValid();
 // warning listing what publishes to its recommended default.
 assertDecisionsValid();
 console.warn(formatOpenDecisionsWarning());
+
+// Analytics/privacy gate (§17.12 R-011, D-011): the funnel's "events to track"
+// documentation must be exactly the no-op adapter's live ANALYTICS_EVENTS enum,
+// every provider-contingent topic must link the real D-011 decision, and the
+// record may not claim sign-off ahead of that decision. A new analytics event
+// with no R-011 documentation — or a documented event the adapter dropped —
+// fails the build here, keeping the measured surface auditable and PII-free.
+assertAnalyticsAndPrivacyValid();
 
 // Conversion gate (§13, §20.3, D-006): the single site-wide CTA must never ship
 // a wrong action. A configured booking URL that is insecure or off a Calendly
