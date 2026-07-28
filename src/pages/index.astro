@@ -16,6 +16,7 @@ import {
 } from "../config/approvalQueue";
 import { assertClaimsLedgerValid } from "../config/claimsLedger";
 import { assertClaimsMethodologyValid } from "../config/claimsMethodology";
+import { assertToneOfVoiceValid } from "../config/toneOfVoice";
 import { assertAssetRegisterValid } from "../config/assetRegister";
 import { assertCaseStudyDossiersValid } from "../config/caseStudyDossiers";
 import { assertEngagementModelValid } from "../config/engagementModel";
@@ -46,6 +47,17 @@ assertClaimsLedgerValid();
 // decisions, and define every metric type the ledger asserts. A ledger metric
 // type with no methodology basis, or a dangling decision link, fails here.
 assertClaimsMethodologyValid();
+
+// Tone-of-voice gate (§17.4 R-003, §15): the copywriter's section checklist and
+// the favour/retire vocabulary must stay in lock-step with the live copy guard.
+// Every keyword-enforced retirement must link a forbiddenCopy rule that still
+// exists and still fires; every context-dependent ban ("innovation partner … when
+// unsupported", "free consulting … unless intentional", the capital-vs-value
+// error) must stay documented as Gate A human-review; and no favoured word may be
+// caught by a ban. A dropped voice principle, a retirement whose enforcing rule
+// was deleted, a favoured word that became forbidden, or a dangling profanity
+// queue link fails the build here.
+assertToneOfVoiceValid();
 
 // Asset-rights gate (§17.9 R-008, §8.4, §16.5): every logo and case-study image
 // the site can ship must resolve to an asset-register row recording its rights,
