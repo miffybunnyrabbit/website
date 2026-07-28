@@ -22,6 +22,7 @@ import { assertEngagementModelValid } from "../config/engagementModel";
 import { assertDecisionsValid, formatOpenDecisionsWarning } from "../config/decisions";
 import { assertAnalyticsAndPrivacyValid } from "../config/analyticsAndPrivacy";
 import { assertConversionSpecValid } from "../config/conversionSpec";
+import { assertSeoAndRedirectAuditValid } from "../config/seoAndRedirectAudit";
 import { assertConfiguredCtaValid, isCtaConfigured } from "../config/cta";
 
 // Governance gate (§23, P6-002): the queue must be internally consistent and
@@ -97,6 +98,17 @@ assertAnalyticsAndPrivacyValid();
 // drifted from the code, a dangling D-006 link, an unapproved footer email, or a
 // record claiming sign-off ahead of D-006 fails the build here.
 assertConversionSpecValid();
+
+// SEO/redirect audit gate (§17.11 R-010, P7-001/002/003/004, P7-009): the R-010
+// record that audits the whole SEO surface — every indexable route, the
+// canonical domain, the default title/description, the sitemap/robots rules, the
+// conservative JSON-LD, the social-preview position, and the launch redirects —
+// must stay in lock-step with the live siteMeta/sitemap/redirects config. A
+// documented canonical origin, title, description, indexable-route set, or
+// sitemap URL that has drifted from the code, a launch redirect missing from
+// redirects.ts, forbidden schema markup, or a record claiming sign-off ahead of
+// the standing launch review fails the build here.
+assertSeoAndRedirectAuditValid();
 
 // Conversion gate (§13, §20.3, D-006): the single site-wide CTA must never ship
 // a wrong action. A configured booking URL that is insecure or off a Calendly
