@@ -21,6 +21,7 @@ import { assertCaseStudyDossiersValid } from "../config/caseStudyDossiers";
 import { assertEngagementModelValid } from "../config/engagementModel";
 import { assertDecisionsValid, formatOpenDecisionsWarning } from "../config/decisions";
 import { assertAnalyticsAndPrivacyValid } from "../config/analyticsAndPrivacy";
+import { assertConversionSpecValid } from "../config/conversionSpec";
 import { assertConfiguredCtaValid, isCtaConfigured } from "../config/cta";
 
 // Governance gate (§23, P6-002): the queue must be internally consistent and
@@ -87,6 +88,15 @@ console.warn(formatOpenDecisionsWarning());
 // with no R-011 documentation — or a documented event the adapter dropped —
 // fails the build here, keeping the measured surface auditable and PII-free.
 assertAnalyticsAndPrivacyValid();
+
+// Conversion-spec gate (§17.10 R-009, §13, §20.3, D-006): the R-009 record that
+// documents the single booking action — the CTA label, the one conversion event,
+// the approved Calendly hosts, same-tab behaviour, UTM/confirmation/notification
+// handling, and the footer email fallback — must stay in lock-step with the live
+// cta.ts config and analytics adapter. A documented label/event/host that has
+// drifted from the code, a dangling D-006 link, an unapproved footer email, or a
+// record claiming sign-off ahead of D-006 fails the build here.
+assertConversionSpecValid();
 
 // Conversion gate (§13, §20.3, D-006): the single site-wide CTA must never ship
 // a wrong action. A configured booking URL that is insecure or off a Calendly
