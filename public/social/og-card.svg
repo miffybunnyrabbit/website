@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Helix Collective — we work with businesses to create meaningful growth in enterprise value.">
+  <rect width="1200" height="630" fill="#231f20"/>
+  <rect x="90" y="176" width="120" height="6" fill="#5affba"/>
+  <text x="90" y="150" font-family="'Helvetica Neue', Arial, sans-serif" font-size="32" font-weight="600" letter-spacing="6" fill="#5affba">HELIX COLLECTIVE</text>
+  <text x="90" y="280" font-family="'Helvetica Neue', Arial, sans-serif" font-size="66" font-weight="800" letter-spacing="-1" fill="#ffffff"><tspan x="90" dy="0">WE WORK WITH</tspan><tspan x="90" dy="84">BUSINESSES TO CREATE</tspan><tspan x="90" dy="84">MEANINGFUL GROWTH IN</tspan><tspan x="90" dy="84">ENTERPRISE VALUE.</tspan></text>
+</svg>

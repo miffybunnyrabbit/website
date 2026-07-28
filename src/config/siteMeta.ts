@@ -22,10 +22,10 @@
  * than shipping an unapproved claim in a machine-readable format search engines
  * trust.
  *
- * This module is pure configuration plus validation: no UI, no I/O. It
- * deliberately omits `og:image` — the social-preview artwork is its own task
- * (P7-003) requiring design sign-off, and referencing a not-yet-created image
- * would ship a broken tag. The layout adds the image tag once the asset exists.
+ * This module is pure configuration plus validation: no UI, no I/O. The
+ * social-preview artwork (P7-003 `og:image`) lives in its own validated model,
+ * `socialCard.ts`, which the layout references; its final designed form is
+ * signed off through the standing launch review (Q-0009).
  */
 
 /**

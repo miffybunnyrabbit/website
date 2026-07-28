@@ -10,6 +10,14 @@ import {
   assertStructuredDataValid,
   assertPageMetaValid,
 } from "../config/siteMeta";
+import {
+  OG_IMAGE_PATH,
+  OG_IMAGE_WIDTH,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_TYPE,
+  OG_IMAGE_ALT,
+  assertSocialCardValid,
+} from "../config/socialCard";
 
 export interface Props {
   title?: string;
@@ -33,6 +41,13 @@ assertPageMetaValid({ title, description, canonicalPath });
 
 const canonical = canonicalUrl(canonicalPath);
 
+// The social-preview card ships in its safe brand-only draft form (P7-003); its
+// final designed artwork is signed off through the standing launch review
+// (Q-0009). Fail the build if the card ever carries a figure, a person, or
+// off-brand copy.
+assertSocialCardValid();
+const ogImage = canonicalUrl(OG_IMAGE_PATH);
+
 // Indexable pages carry the site's structured data; the 404 page does not
 // (P7-004). Validate it so a forbidden node never reaches the markup.
 const structuredData = noindex ? null : structuredDataGraph();
@@ -51,16 +66,22 @@ if (structuredData) assertStructuredDataValid(structuredData);
       <link rel="canonical" href={canonical} />
     )}
 
-    <!-- Open Graph (P7-003 image is added once the approved artwork exists). -->
+    <!-- Open Graph (P7-003 card publishes in draft; final artwork via Q-0009). -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={ORGANIZATION_NAME} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={SITE_LOCALE} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content={OG_IMAGE_TYPE} />
+    <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
+    <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
+    <meta property="og:image:alt" content={OG_IMAGE_ALT} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>

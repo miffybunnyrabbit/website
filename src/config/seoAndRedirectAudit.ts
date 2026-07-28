@@ -233,7 +233,7 @@ export const seoTopics: readonly SeoTopic[] = [
     id: "social-preview-image",
     title: "Social-preview image",
     statement:
-      "No `og:image` ships yet. The Open Graph artwork is its own task (P7-003) needing design sign-off — mint/ink/white, the enterprise-value proposition, no people, no unapproved figure — so `siteMeta.ts` deliberately omits the tag rather than reference an asset that does not exist, and the layout adds it once the artwork is approved through the standing launch review.",
+      "A safe brand-only Open Graph card ships in draft form (P7-003) — mint/ink/white, the approved enterprise-value proposition, no people, no figure — generated from `socialCard.ts` and rendered to `public/social/og-card.svg`, which `socialCard.test.ts` pins so the shipped artwork cannot drift. The card carries only already-published hero copy and embeds no raster, so it leaks no unapproved claim; its final designed artwork is signed off through the standing launch review.",
     governingReview: GOVERNING_REVIEW_ID,
   },
   {

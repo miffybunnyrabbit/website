@@ -7,6 +7,12 @@ import {
   ORGANIZATION_NAME,
   SITE_ORIGIN,
 } from "../config/siteMeta";
+import {
+  OG_IMAGE_PATH,
+  OG_IMAGE_WIDTH,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_ALT,
+} from "../config/socialCard";
 
 /**
  * Renders `BaseLayout.astro` through Astro's Container API and asserts the head
@@ -52,7 +58,17 @@ describe("BaseLayout.astro", () => {
     expect(html).toContain(`property="og:site_name" content="${ORGANIZATION_NAME}"`);
     expect(html).toContain('property="og:title" content="Helix — X"');
     expect(html).toContain(`property="og:url" content="${SITE_ORIGIN}/"`);
-    expect(html).toContain('name="twitter:card" content="summary"');
+    expect(html).toContain('name="twitter:card" content="summary_large_image"');
+  });
+
+  it("references the social-preview card as og:image and twitter:image (P7-003)", async () => {
+    const html = await renderLayout();
+    const card = `${SITE_ORIGIN}${OG_IMAGE_PATH}`;
+    expect(html).toContain(`property="og:image" content="${card}"`);
+    expect(html).toContain(`property="og:image:width" content="${OG_IMAGE_WIDTH}"`);
+    expect(html).toContain(`property="og:image:height" content="${OG_IMAGE_HEIGHT}"`);
+    expect(html).toContain(`property="og:image:alt" content="${OG_IMAGE_ALT}"`);
+    expect(html).toContain(`name="twitter:image" content="${card}"`);
   });
 
   it("embeds valid Organization + WebSite JSON-LD (P7-004)", async () => {
