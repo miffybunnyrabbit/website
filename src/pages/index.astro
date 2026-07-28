@@ -26,6 +26,7 @@ import { assertAnalyticsAndPrivacyValid } from "../config/analyticsAndPrivacy";
 import { assertConversionSpecValid } from "../config/conversionSpec";
 import { assertSeoAndRedirectAuditValid } from "../config/seoAndRedirectAudit";
 import { assertDesignTokensRecordValid } from "../config/designTokensRecord";
+import { assertCurrentSiteAuditValid } from "../config/currentSiteAudit";
 import { assertConfiguredCtaValid, isCtaConfigured } from "../config/cta";
 
 // Governance gate (§23, P6-002): the queue must be internally consistent and
@@ -144,6 +145,20 @@ assertSeoAndRedirectAuditValid();
 // labelled newly invented, the font tokens stay licence-pending and linked to the
 // real D-010 decision, and the record may not claim sign-off ahead of it.
 assertDesignTokensRecordValid();
+
+// Current-site audit gate (§17.2 R-001, §5/§7/§16): R-001 is the Phase 1
+// foundation the plan says every visual decision rests on — "Do not begin final
+// styling until this audit exists". The record documents what the live Webflow
+// site does and how the rebuild reinterprets each of the twenty §17.2 aspects,
+// and cross-checks its machine-checkable facts against the live code: the
+// documented rebuild section order must be exactly navigation.ts's
+// HOMEPAGE_SECTION_IDS, the core brand colours designTokens.ts's
+// REQUIRED_BRAND_COLORS, the removed brands logos.ts's REMOVED_BRANDS, the routes
+// sitemap.ts's INDEXABLE_ROUTES, and the title siteMeta.ts's DEFAULT_TITLE, with
+// the retired /contact-us page resolving to a real 301 rule. A drifted fact, a
+// dangling review link, or a record claiming sign-off ahead of the standing
+// launch review fails the build here.
+assertCurrentSiteAuditValid();
 
 // Conversion gate (§13, §20.3, D-006): the single site-wide CTA must never ship
 // a wrong action. A configured booking URL that is insecure or off a Calendly
