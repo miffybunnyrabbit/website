@@ -28,6 +28,7 @@ import { assertSeoAndRedirectAuditValid } from "../config/seoAndRedirectAudit";
 import { assertDesignTokensRecordValid } from "../config/designTokensRecord";
 import { assertCurrentSiteAuditValid } from "../config/currentSiteAudit";
 import { assertConfiguredCtaValid, isCtaConfigured } from "../config/cta";
+import { assertPerformanceBudgetValid } from "../config/performanceBudget";
 
 // Governance gate (§23, P6-002): the queue must be internally consistent and
 // must track every content item that still needs sign-off, or the build fails.
@@ -165,6 +166,18 @@ assertCurrentSiteAuditValid();
 // host fails the build here; an unset URL (env-less local/preview build) only
 // warns, since the deploy environment injects PUBLIC_CALENDLY_URL.
 assertConfiguredCtaValid();
+
+// Performance-budget gate (§7 P7-006): the release budget — the Lighthouse
+// category minimums, the Core Web Vitals ceilings (LCP/CLS/INP), and the
+// initial-JavaScript ceiling — must stay internally coherent, or a Lighthouse
+// run in CI would be checked against nonsense (a score outside 0–100, a
+// non-positive ceiling, a dropped target). The Lighthouse scores themselves are
+// measured in Phase 8/9 CI; the *rendered-output* invariants the budget depends
+// on (no third-party embed on initial load, hydrate only the fit qualifier, and
+// defer that island) are gated over the assembled page in
+// renderedPerformance.test.ts.
+assertPerformanceBudgetValid();
+
 if (!isCtaConfigured()) {
   console.warn(
     "CTA: PUBLIC_CALENDLY_URL is not set — the primary conversion action will render without a booking link. Set it before deploying.",
