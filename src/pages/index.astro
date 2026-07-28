@@ -17,6 +17,7 @@ import {
 import { assertClaimsLedgerValid } from "../config/claimsLedger";
 import { assertClaimsMethodologyValid } from "../config/claimsMethodology";
 import { assertToneOfVoiceValid } from "../config/toneOfVoice";
+import { assertPositioningResearchValid } from "../config/positioningResearch";
 import { assertAssetRegisterValid } from "../config/assetRegister";
 import { assertCaseStudyDossiersValid } from "../config/caseStudyDossiers";
 import { assertEngagementModelValid } from "../config/engagementModel";
@@ -58,6 +59,19 @@ assertClaimsMethodologyValid();
 // was deleted, a favoured word that became forbidden, or a dangling profanity
 // queue link fails the build here.
 assertToneOfVoiceValid();
+
+// Positioning-research gate (§17.5 R-004, §10): the strategist's record that
+// sharpens differentiation must stay tied to the live artefacts. Every
+// keyword-detectable category cliché links a forbiddenCopy rule that still exists
+// and still fires; the framings a scan cannot judge (generic venture-studio
+// language, unsupported "innovation partner") stay Gate A human-review; every
+// defensible difference is anchored to a real whyHelix pillar and every pillar is
+// defended; every objection targets a real positioning subject and every subject
+// is stress-tested; and every Helix-facing response and difference claim ships
+// clean of forbidden copy. A dropped subject, an unanchored differentiator, an
+// undefended pillar, a response that picked up a banned cliché, or a dangling
+// strategic-copy queue link fails the build here.
+assertPositioningResearchValid();
 
 // Asset-rights gate (§17.9 R-008, §8.4, §16.5): every logo and case-study image
 // the site can ship must resolve to an asset-register row recording its rights,
