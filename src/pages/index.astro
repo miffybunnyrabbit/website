@@ -17,6 +17,7 @@ import {
 import { assertClaimsLedgerValid } from "../config/claimsLedger";
 import { assertClaimsMethodologyValid } from "../config/claimsMethodology";
 import { assertAssetRegisterValid } from "../config/assetRegister";
+import { assertCaseStudyDossiersValid } from "../config/caseStudyDossiers";
 import { assertEngagementModelValid } from "../config/engagementModel";
 import { assertDecisionsValid, formatOpenDecisionsWarning } from "../config/decisions";
 import { assertConfiguredCtaValid, isCtaConfigured } from "../config/cta";
@@ -49,6 +50,15 @@ assertClaimsMethodologyValid();
 // must stay marked off-site. A register that drifts from the logo/case-study
 // models — or an asset with people or confidential UI left visible — fails here.
 assertAssetRegisterValid();
+
+// Case-study dossier gate (§17.8 R-007): each of the five case studies must have
+// a research dossier under docs/research/case-studies/ capturing its engagement
+// timeline, starting/end/current states, what Helix actually did, the valuation
+// evidence, the calculation, the attribution language, sources, and asset/client
+// approval position. §17.8 states "dependent copy may not be finalised until the
+// corresponding dossier exists", so a required study with no dossier — or a
+// published study whose dossier is missing — fails the build here.
+assertCaseStudyDossiersValid();
 
 // Engagement-model gate (§11.7 R-012): the "How we work" and "We're different"
 // copy makes the site's most legally sensitive promises (unpaid preparation,
