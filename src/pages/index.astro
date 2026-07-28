@@ -15,6 +15,7 @@ import {
   formatOpenQueueWarning,
 } from "../config/approvalQueue";
 import { assertClaimsLedgerValid } from "../config/claimsLedger";
+import { assertClaimsMethodologyValid } from "../config/claimsMethodology";
 import { assertAssetRegisterValid } from "../config/assetRegister";
 import { assertEngagementModelValid } from "../config/engagementModel";
 import { assertDecisionsValid, formatOpenDecisionsWarning } from "../config/decisions";
@@ -32,6 +33,15 @@ console.warn(formatOpenQueueWarning());
 // category-B approval item until it clears, and whose queue item actually covers
 // it. A dangling or mismatched `claimIds` reference fails the build here.
 assertClaimsLedgerValid();
+
+// Claims-methodology gate (§17.6 R-005): the methodology that defines what every
+// quantified claim *means* — enterprise value, attribution, currency, the
+// valuation-date convention, multiples, debt/funding treatment, headline
+// inclusion, double-counting, and the minimum evidence to publish — must be
+// complete, link the §6 ambiguities it resolves (D-001/D-002/D-003) to real
+// decisions, and define every metric type the ledger asserts. A ledger metric
+// type with no methodology basis, or a dangling decision link, fails here.
+assertClaimsMethodologyValid();
 
 // Asset-rights gate (§17.9 R-008, §8.4, §16.5): every logo and case-study image
 // the site can ship must resolve to an asset-register row recording its rights,
