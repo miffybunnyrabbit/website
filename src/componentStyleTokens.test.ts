@@ -258,4 +258,48 @@ describe("component styles consume the design tokens (VD-101)", () => {
     // the type scale.
     expect(consumers.length).toBeGreaterThanOrEqual(8);
   });
+
+  it("declares no eyebrow letter-spacing literal in any letter-spacing property", () => {
+    // The wide tracking that reads as an eyebrow/label lives in the tokens as
+    // `--letter-spacing-eyebrow`. A scoped `letter-spacing: 0.12em` on a section
+    // eyebrow silently forks that value: change the token and the label that kept
+    // the literal drifts off the shared tracking, exactly like a colour or
+    // spacing literal would. The token value is read from the model so this gate
+    // tracks it rather than a hand-copied number.
+    //
+    // As with the spacing and type-scale gates, the flag fires ONLY on a value
+    // that equals the token — the off-scale trackings the scale has no token for
+    // (a button's `0.04em`, the footer's `0.06em`, a `0.08em` micro-label) are
+    // left alone rather than forced onto the eyebrow value, which would change
+    // the rendered type. On-scale means: use the token.
+    const eyebrowTracking = tokenValue("--letter-spacing-eyebrow");
+    expect(eyebrowTracking, "token --letter-spacing-eyebrow must be defined").toBeTruthy();
+    const LETTER_SPACING_PROPERTY = /^\s*letter-spacing\s*:/;
+    // Match the literal only as a whole CSS value (not the tail of a longer
+    // number), so e.g. `10.12em` would not be a false positive.
+    const literal = new RegExp(`(?<![\\d.])${eyebrowTracking!.replace(".", "\\.")}(?![\\w])`);
+    const violations: string[] = [];
+    for (const { path, source } of sources) {
+      for (const body of styleBlocks(source)) {
+        for (const line of body.split("\n")) {
+          if (!LETTER_SPACING_PROPERTY.test(line)) continue;
+          if (literal.test(line)) {
+            violations.push(`${rel(path)}: eyebrow letter-spacing literal in "${line.trim()}"`);
+          }
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
+  it("routes eyebrow labels through the --letter-spacing-eyebrow token", () => {
+    // Proves the migration happened: the section eyebrows reference the tracking
+    // token rather than merely dropping the literal.
+    const consumers = sources.filter(({ source }) =>
+      styleBlocks(source).some((body) => body.includes("var(--letter-spacing-eyebrow)")),
+    );
+    // Every content section carries an eyebrow/label above its headline, plus the
+    // proof banner's metric label, so most styled sections consume the token.
+    expect(consumers.length).toBeGreaterThanOrEqual(5);
+  });
 });
