@@ -159,6 +159,44 @@ describe("component styles consume the design tokens (VD-101)", () => {
     expect(consumers.length).toBeGreaterThanOrEqual(8);
   });
 
+  it("declares no text-measure literal in any scoped <style> block", () => {
+    // Lead and body paragraphs cap their line length at the shared reading
+    // measure, which lives in the layout tokens as `--width-text`. A scoped
+    // `max-width: 48ch` silently forks that measure: change the token and the
+    // paragraph that kept the literal drifts to a different line length, exactly
+    // like the container-width literal above. Sub-measures the scale has no token
+    // for — a headline's `24ch`, a card summary's `40ch` — are genuinely
+    // off-scale and left alone; on-scale means: use the token. The token value is
+    // read from the model so this gate tracks it rather than a hand-copied number.
+    const textMeasure = tokenValue("--width-text");
+    expect(textMeasure, "layout token --width-text must be defined").toBeTruthy();
+    // Match the literal value only as a whole CSS token (not the tail of a longer
+    // number), so e.g. `148ch` would not be a false positive.
+    const literal = new RegExp(`(?<![\\d.])${textMeasure!.replace(".", "\\.")}(?![\\w])`);
+    const violations: string[] = [];
+    for (const { path, source } of sources) {
+      for (const body of styleBlocks(source)) {
+        for (const line of body.split("\n")) {
+          if (literal.test(line)) {
+            violations.push(`${rel(path)}: text-measure literal in "${line.trim()}"`);
+          }
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
+  it("routes paragraph reading measures through the layout token", () => {
+    // Proves the migration happened: the sections reference the measure token
+    // rather than merely dropping the literal.
+    const consumers = sources.filter(({ source }) =>
+      styleBlocks(source).some((body) => body.includes("var(--width-text)")),
+    );
+    // The hero, case studies, fit result, and both CTAs cap a lead paragraph at
+    // the reading measure, so several styled sections consume it.
+    expect(consumers.length).toBeGreaterThanOrEqual(4);
+  });
+
   it("declares no spacing-scale literal in any rhythm property", () => {
     // Every rhythm value — padding, margin, gap — rides the `--space-*` scale
     // (§16.4). A scoped `margin: 1.5rem` silently forks that step: change the
