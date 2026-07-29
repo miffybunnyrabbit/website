@@ -45,7 +45,7 @@ const published = publishedCaseStudies(studies);
 {
   published.length > 0 && (
     <section class="cases" aria-labelledby="cases-heading">
-      <div class="cases__inner">
+      <div class="cases__inner section-shell">
         <p class="eyebrow">{copy.eyebrow}</p>
         <h2 class="cases__headline" id="cases-heading">
           {copy.headline}
@@ -110,9 +110,7 @@ const published = publishedCaseStudies(studies);
   }
 
   .cases__inner {
-    max-width: var(--width-container);
-    margin-inline: auto;
-    padding: var(--space-16) var(--space-6);
+    padding-block: var(--space-16);
   }
 
   .cases__headline {

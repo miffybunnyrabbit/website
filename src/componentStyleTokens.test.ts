@@ -149,13 +149,16 @@ describe("component styles consume the design tokens (VD-101)", () => {
     expect(violations).toEqual([]);
   });
 
-  it("routes section-shell container widths through the layout token", () => {
-    // Proves the migration happened: the sections reference the width token
-    // rather than merely dropping the literal.
-    const consumers = sources.filter(({ source }) =>
-      styleBlocks(source).some((body) => body.includes("var(--width-container)")),
-    );
-    // The container caps every section shell, so most styled sections consume it.
+  it("routes section-shell container widths through the shared primitive", () => {
+    // Proves the migration happened. The container width, centring and inline
+    // gutter have since been centralised into the shared `.section-shell`
+    // primitive in `global.css` (VD-104, defined and gated in
+    // sectionShell.test.ts), so no section re-declares `var(--width-container)`
+    // in its own scoped block any more — the "no literal" gate above proves that,
+    // and this proves the other half: every section shell now carries the shared
+    // class instead, so they can never fork the width, centring, or gutter.
+    const consumers = sources.filter(({ source }) => /class="[^"]*\bsection-shell\b/.test(source));
+    // Every homepage section shell (plus the header and footer) rides the shell.
     expect(consumers.length).toBeGreaterThanOrEqual(8);
   });
 

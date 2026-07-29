@@ -442,6 +442,18 @@ a {
   top: var(--space-2);
 }
 
+/* Section shell — the shared horizontal frame every homepage section rides
+   (VD-104): its content is capped at the container width, centred, and guttered
+   by the same inline padding. Only the vertical rhythm (padding-block) varies by
+   section, so each section sets that alone and can never fork the width, the
+   centring, or the gutter the way nine hand-copied max-width/margin/padding
+   blocks did. */
+.section-shell {
+  max-width: var(--width-container);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
 /* Primary call-to-action button — the site's one conversion action, given the
    §16.1 mint accent (VD-102) as a shared primitive so every CTA is identical
    (VD-104). Mint is a surface colour, not a text colour: mint-on-white fails

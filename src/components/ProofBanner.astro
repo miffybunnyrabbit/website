@@ -41,7 +41,7 @@ const published = publishedProofBanner(banner);
       <h2 class="proof__heading" id="proof-heading">
         Proof
       </h2>
-      <dl class="proof__list">
+      <dl class="proof__list section-shell">
         {published.metrics.map((metric) => (
           <div class="proof__metric">
             <dt class="proof__value">{metric.value}</dt>
@@ -76,9 +76,7 @@ const published = publishedProofBanner(banner);
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-8);
-    max-width: var(--width-container);
-    margin-inline: auto;
-    padding: var(--space-12) var(--space-6);
+    padding-block: var(--space-12);
   }
 
   /* Two equal columns from the small-tablet breakpoint up; stacked with equal

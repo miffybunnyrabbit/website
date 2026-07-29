@@ -35,7 +35,7 @@ assertWhyHelixValid(points, copy);
 ---
 
 <section class="why" aria-labelledby="why-heading">
-  <div class="why__inner">
+  <div class="why__inner section-shell">
     <p class="eyebrow">{copy.eyebrow}</p>
     <h2 class="why__headline" id="why-heading">{copy.headline}</h2>
     <p class="why__intro">{copy.intro}</p>
@@ -58,9 +58,7 @@ assertWhyHelixValid(points, copy);
   }
 
   .why__inner {
-    max-width: var(--width-container);
-    margin-inline: auto;
-    padding: var(--space-16) var(--space-6);
+    padding-block: var(--space-16);
   }
 
   .why__headline {
