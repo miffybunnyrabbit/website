@@ -109,13 +109,13 @@ export const tokenProvenance: readonly TokenProvenance[] = [
   // --- Colour: §16.1 brand (observed) and §16.2 neutrals (derived). ---
   {
     name: "--color-helix-mint",
-    provenance: "approximated",
-    note: "Observed dominant brand mint (§16.1); confirm the computed value in an R-001 browser audit before locking.",
+    provenance: "exact",
+    note: "Confirmed by the 2026-07-29 computed-value audit of the live site: defined there as `--helix-green: #5affba` and rendered on the CTA and section backgrounds as rgb(90, 255, 186).",
   },
   {
     name: "--color-helix-ink",
-    provenance: "approximated",
-    note: "Observed dominant brand ink (§16.1); confirm the computed value in an R-001 browser audit before locking.",
+    provenance: "exact",
+    note: "Corrected by the 2026-07-29 computed-value audit: the live site's ink is pure black (`--black: black`; body background and heading/body text compute to rgb(0, 0, 0)). The earlier #231f20 estimate appears nowhere in the live stylesheet.",
   },
   {
     name: "--color-white",
@@ -129,13 +129,13 @@ export const tokenProvenance: readonly TokenProvenance[] = [
   },
   {
     name: "--color-ink-800",
-    provenance: "new",
-    note: "Neutral derived from the brand ink (§16.2).",
+    provenance: "exact",
+    note: "Near-black #1c1c1e taken from the live stylesheet in the 2026-07-29 audit (§16.2).",
   },
   {
     name: "--color-ink-100",
-    provenance: "new",
-    note: "Light neutral derived from ink and white (§16.2).",
+    provenance: "exact",
+    note: "Border/divider grey #dddddd taken from the live stylesheet in the 2026-07-29 audit (§16.2).",
   },
   {
     name: "--color-surface",
@@ -144,8 +144,8 @@ export const tokenProvenance: readonly TokenProvenance[] = [
   },
   {
     name: "--color-surface-soft",
-    provenance: "new",
-    note: "Soft surface derived from ink and white (§16.2).",
+    provenance: "exact",
+    note: "Light section background #f3f3f3 taken from the live stylesheet in the 2026-07-29 audit (§16.2).",
   },
   {
     name: "--color-accent",
@@ -167,13 +167,13 @@ export const tokenProvenance: readonly TokenProvenance[] = [
   {
     name: "--font-body",
     provenance: "licence-pending",
-    note: "Safe system stack; the real body family and a legal self-hosting plan are the open §16.3 audit (D-010).",
+    note: "Safe system stack. The 2026-07-29 live-site audit identifies the body family as Roboto (400/500) — a Google Font — but self-hosting waits on the D-010 rights decision.",
     governingDecision: GOVERNING_DECISION_ID,
   },
   {
     name: "--font-display",
     provenance: "licence-pending",
-    note: "Aliases the body stack; swapped for the approved condensed display face once §16.3 / D-010 resolves.",
+    note: "Aliases the body stack. The 2026-07-29 live-site audit identifies the display family as Oswald 700, uppercase (h1 58/58, h2 ~40/36) — a Google Font — pending the D-010 rights decision to self-host.",
     governingDecision: GOVERNING_DECISION_ID,
   },
   {

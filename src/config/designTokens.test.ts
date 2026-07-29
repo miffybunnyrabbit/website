@@ -101,9 +101,9 @@ describe("contrast (the §16.2 check the sample focus colour requires)", () => {
         tokens: [
           { name: "--color-white", value: "#ffffff" },
           { name: "--color-helix-mint", value: "#5affba" },
-          { name: "--color-helix-ink", value: "#231f20" },
+          { name: "--color-helix-ink", value: "#000000" },
           { name: "--color-surface", value: "#ffffff" },
-          { name: "--color-text", value: "#231f20" },
+          { name: "--color-text", value: "#000000" },
           { name: "--color-focus", value: "#eeeeee" }, // far too light on white
         ],
       },
@@ -121,10 +121,10 @@ describe("validation failure modes", () => {
       tokens: [
         { name: "--color-white", value: "#ffffff" },
         { name: "--color-surface", value: "#ffffff" },
-        { name: "--color-text", value: "#231f20" },
+        { name: "--color-text", value: "#000000" },
         { name: "--color-focus", value: "#00a864" },
         { name: focus.mintName ?? "--color-helix-mint", value: focus.mintValue ?? "#5affba" },
-        { name: "--color-helix-ink", value: "#231f20" },
+        { name: "--color-helix-ink", value: "#000000" },
       ],
     };
   }
@@ -151,10 +151,10 @@ describe("validation failure modes", () => {
         tokens: [
           { name: "--color-white", value: "#ffffff" },
           { name: "--color-surface", value: "#ffffff" },
-          { name: "--color-text", value: "#231f20" },
+          { name: "--color-text", value: "#000000" },
           { name: "--color-focus", value: "#00a864" },
           { name: "--color-helix-mint", value: "not-a-colour" },
-          { name: "--color-helix-ink", value: "#231f20" },
+          { name: "--color-helix-ink", value: "#000000" },
         ],
       },
     ];

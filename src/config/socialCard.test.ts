@@ -77,7 +77,7 @@ describe("social card safety guards (§7.3)", () => {
     const svg = renderSocialCardSvg();
     const colors = [...svg.matchAll(/#[0-9a-f]{6}/gi)].map((m) => m[0].toLowerCase());
     for (const color of colors) {
-      expect(["#231f20", "#5affba", "#ffffff"]).toContain(color);
+      expect(["#000000", "#5affba", "#ffffff"]).toContain(color);
     }
   });
 

@@ -21,7 +21,7 @@ record.
 ## Cross-checked configuration
 
 - **Rebuild section order:** top → work → how-we-work → fit → contact
-- **Core brand colours:** --color-helix-mint `#5affba`, --color-helix-ink `#231f20`, --color-white `#ffffff`
+- **Core brand colours:** --color-helix-mint `#5affba`, --color-helix-ink `#000000`, --color-white `#ffffff`
 - **Removed brands:** Awayco, Perion, Synaptico
 - **Rebuild indexable routes:** /
 - **Rebuild site title:** Helix Collective — Enterprise Value Growth Partner
@@ -66,7 +66,7 @@ The live site pairs oversized, high-impact uppercase display headings with clean
 
 ### Colour usage
 
-A current Helix brand asset uses mint `#5affba`, ink `#231f20`, and white (§16.1, §28). The rebuild recreates that identity in code as `REQUIRED_BRAND_COLORS` in `designTokens.ts` and derives supporting neutrals from ink and white (§16.2) rather than introducing unrelated brand colours. Computed live-site colours must be re-confirmed in browser dev tools before the tokens are locked.
+The 2026-07-29 computed-value audit of the live site confirms mint `#5affba` (defined there as `--helix-green`, rendered on the CTA and three full-bleed section backgrounds), pure-black ink `#000000` (`--black`; the hero and footer run white-on-black), and white (§16.1, §28). Supporting neutrals were taken exactly from the live stylesheet: near-black `#1c1c1e`, border grey `#dddddd`, and light section background `#f3f3f3`. The rebuild carries this identity as `REQUIRED_BRAND_COLORS` in `designTokens.ts`. Live-site treatments the audit recorded for VD-102: black-on-mint proof strip, mint eyebrow labels, pill-shaped mint CTAs (20px radius) with black labels, and reference screenshots in `docs/research/current-site/`.
 
 - **Governing review:** none
 

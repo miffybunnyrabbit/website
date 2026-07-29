@@ -4,16 +4,16 @@
 :root {
   /* Colour — brand (§16.1) and neutrals derived from ink and white (§16.2) */
   --color-helix-mint: #5affba;
-  --color-helix-ink: #231f20;
+  --color-helix-ink: #000000;
   --color-white: #ffffff;
-  --color-ink-900: #231f20;
-  --color-ink-800: #302c2d;
-  --color-ink-100: #ece9ea;
+  --color-ink-900: #000000;
+  --color-ink-800: #1c1c1e;
+  --color-ink-100: #dddddd;
   --color-surface: #ffffff;
-  --color-surface-soft: #f5f3f4;
+  --color-surface-soft: #f3f3f3;
   --color-accent: #5affba;
   --color-focus: #00a864; /* contrast-checked against white in designTokens.test.ts (§16.2) */
-  --color-text: #231f20;
+  --color-text: #000000;
 
   /* Typography — system stack until the §16.3 font audit and self-hosting plan (P3-003) */
   --font-body: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;

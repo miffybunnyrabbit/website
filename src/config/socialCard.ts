@@ -148,7 +148,7 @@ export function validateSocialCard(): string[] {
   }
 
   // The palette must be exactly the brand tokens (§7.3 mint/ink/white).
-  if (INK !== "#231f20" || MINT !== "#5affba" || WHITE !== "#ffffff") {
+  if (INK !== "#000000" || MINT !== "#5affba" || WHITE !== "#ffffff") {
     errors.push(
       "Social card palette has drifted from the brand tokens (§16.1 mint/ink/white).",
     );

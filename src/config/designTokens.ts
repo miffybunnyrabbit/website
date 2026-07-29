@@ -60,7 +60,7 @@ export interface TokenGroup {
  */
 export const REQUIRED_BRAND_COLORS: Readonly<Record<string, string>> = {
   "--color-helix-mint": "#5affba",
-  "--color-helix-ink": "#231f20",
+  "--color-helix-ink": "#000000",
   "--color-white": "#ffffff",
 };
 
@@ -75,20 +75,20 @@ export const TOKEN_GROUPS: readonly TokenGroup[] = [
     title: "Colour — brand (§16.1) and neutrals derived from ink and white (§16.2)",
     tokens: [
       { name: "--color-helix-mint", value: "#5affba" },
-      { name: "--color-helix-ink", value: "#231f20" },
+      { name: "--color-helix-ink", value: "#000000" },
       { name: "--color-white", value: "#ffffff" },
-      { name: "--color-ink-900", value: "#231f20" },
-      { name: "--color-ink-800", value: "#302c2d" },
-      { name: "--color-ink-100", value: "#ece9ea" },
+      { name: "--color-ink-900", value: "#000000" },
+      { name: "--color-ink-800", value: "#1c1c1e" },
+      { name: "--color-ink-100", value: "#dddddd" },
       { name: "--color-surface", value: "#ffffff" },
-      { name: "--color-surface-soft", value: "#f5f3f4" },
+      { name: "--color-surface-soft", value: "#f3f3f3" },
       { name: "--color-accent", value: "#5affba" },
       {
         name: "--color-focus",
         value: "#00a864",
         note: "contrast-checked against white in designTokens.test.ts (§16.2)",
       },
-      { name: "--color-text", value: "#231f20" },
+      { name: "--color-text", value: "#000000" },
     ],
   },
   {

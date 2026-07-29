@@ -18,19 +18,19 @@ The tokens ship from `src/config/designTokens.ts` (rendered to
 
 | Token | Value | Provenance | Note |
 | --- | --- | --- | --- |
-| `--color-helix-mint` | `#5affba` | Approximated | Observed dominant brand mint (§16.1); confirm the computed value in an R-001 browser audit before locking. |
-| `--color-helix-ink` | `#231f20` | Approximated | Observed dominant brand ink (§16.1); confirm the computed value in an R-001 browser audit before locking. |
+| `--color-helix-mint` | `#5affba` | Exact | Confirmed by the 2026-07-29 computed-value audit of the live site: defined there as `--helix-green: #5affba` and rendered on the CTA and section backgrounds as rgb(90, 255, 186). |
+| `--color-helix-ink` | `#000000` | Exact | Corrected by the 2026-07-29 computed-value audit: the live site's ink is pure black (`--black: black`; body background and heading/body text compute to rgb(0, 0, 0)). The earlier #231f20 estimate appears nowhere in the live stylesheet. |
 | `--color-white` | `#ffffff` | Exact | Unambiguous #ffffff; nothing to audit. |
-| `--color-ink-900` | `#231f20` | New | Neutral derived from the brand ink (§16.2). |
-| `--color-ink-800` | `#302c2d` | New | Neutral derived from the brand ink (§16.2). |
-| `--color-ink-100` | `#ece9ea` | New | Light neutral derived from ink and white (§16.2). |
+| `--color-ink-900` | `#000000` | New | Neutral derived from the brand ink (§16.2). |
+| `--color-ink-800` | `#1c1c1e` | Exact | Near-black #1c1c1e taken from the live stylesheet in the 2026-07-29 audit (§16.2). |
+| `--color-ink-100` | `#dddddd` | Exact | Border/divider grey #dddddd taken from the live stylesheet in the 2026-07-29 audit (§16.2). |
 | `--color-surface` | `#ffffff` | New | Page surface, set to white (§16.2). |
-| `--color-surface-soft` | `#f5f3f4` | New | Soft surface derived from ink and white (§16.2). |
+| `--color-surface-soft` | `#f3f3f3` | Exact | Light section background #f3f3f3 taken from the live stylesheet in the 2026-07-29 audit (§16.2). |
 | `--color-accent` | `#5affba` | New | Accent alias of the brand mint (§16.2). |
 | `--color-focus` | `#00a864` | New | Sample focus colour introduced for the design system; contrast-checked against white in designTokens.test.ts (§16.2). |
-| `--color-text` | `#231f20` | New | Body-text colour, set to the brand ink (§16.2). |
-| `--font-body` | `system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` | Licence-pending (D-0010-font-rights) | Safe system stack; the real body family and a legal self-hosting plan are the open §16.3 audit (D-010). |
-| `--font-display` | `var(--font-body)` | Licence-pending (D-0010-font-rights) | Aliases the body stack; swapped for the approved condensed display face once §16.3 / D-010 resolves. |
+| `--color-text` | `#000000` | New | Body-text colour, set to the brand ink (§16.2). |
+| `--font-body` | `system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` | Licence-pending (D-0010-font-rights) | Safe system stack. The 2026-07-29 live-site audit identifies the body family as Roboto (400/500) — a Google Font — but self-hosting waits on the D-010 rights decision. |
+| `--font-display` | `var(--font-body)` | Licence-pending (D-0010-font-rights) | Aliases the body stack. The 2026-07-29 live-site audit identifies the display family as Oswald 700, uppercase (h1 58/58, h2 ~40/36) — a Google Font — pending the D-010 rights decision to self-host. |
 | `--font-weight-regular` | `400` | New | Standard 400 weight for the design system. |
 | `--font-weight-bold` | `700` | New | Standard 700 weight for the design system. |
 | `--line-height-display` | `1.05` | New | Tight display leading for oversized statements (§16.4). |
