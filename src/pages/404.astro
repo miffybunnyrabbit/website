@@ -1,10 +1,32 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Footer from "../components/Footer.astro";
 ---
 
 <BaseLayout title="Page not found — Helix Collective" noindex={true}>
-  <section>
+  <section class="not-found">
     <h1>This page doesn’t exist.</h1>
-    <p><a href="/">Back to Helix Collective</a></p>
+    <p class="not-found__lead">
+      The link may be out of date, but the work isn’t. Head back to the main
+      page to see how we create meaningful growth in enterprise value.
+    </p>
+    <p><a class="not-found__home" href="/">Back to Helix Collective</a></p>
   </section>
+  <Footer slot="footer" />
 </BaseLayout>
+
+<style>
+  .not-found {
+    max-width: 44rem;
+    margin-inline: auto;
+    padding: 6rem 1.5rem;
+  }
+
+  .not-found__lead {
+    max-width: 32rem;
+  }
+
+  .not-found__home {
+    font-weight: 700;
+  }
+</style>
