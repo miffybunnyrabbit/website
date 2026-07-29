@@ -2,13 +2,21 @@
  * Interactive "Are we a fit?" qualifier island (implementation plan §12).
  *
  * This is the site's only hydrated React island (§18.5). It renders the
- * decision graph from `fitFlow` one question at a time as an accessible stepper
- * (§12.5 mobile-first treatment): a real `fieldset`/`legend` per question, large
- * keyboard-operable yes/no `<button>`s, `Back` and `Start again` controls, a
- * progress indicator, and an `aria-live` region so the outcome is announced when
- * it changes (§12.4). It invents no copy — every prompt, headline, and body
- * comes from the validated graph, and qualifying outcomes route to the single
- * `primaryCta` rather than a bespoke label (§13).
+ * decision graph from `fitFlow` one question at a time as an accessible stepper:
+ * a real `fieldset`/`legend` per question, large keyboard-operable yes/no
+ * `<button>`s, `Back` and `Start again` controls, a progress indicator, and an
+ * `aria-live` region so the outcome is announced when it changes (§12.4). It
+ * invents no copy — every prompt, headline, and body comes from the validated
+ * graph, and qualifying outcomes route to the single `primaryCta` rather than a
+ * bespoke label (§13).
+ *
+ * §12.5 sketched two presentations — a desktop whole-tree flowchart and a mobile
+ * stepper. The recorded FX-202 decision (IMPLEMENTATION_PLAN.md §5) is that this
+ * one unified stepper stands for every viewport: it keeps a single accessible
+ * surface (§12.4) rather than a second, viewport-forked view that could drift,
+ * and the whole-tree "flowchart" view is served without extra interactive DOM by
+ * the `<noscript>` fallback in `Fit.astro`, which lays the entire graph out as a
+ * flowchart-in-prose. `fitPresentation.test.ts` holds that decision.
  *
  * The component is driven entirely by the ordered list of answers, so its whole
  * state is one array. `initialAnswers` lets a caller (or a test) render the

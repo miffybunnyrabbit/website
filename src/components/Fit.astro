@@ -11,10 +11,15 @@
  *
  * A `<noscript>` block carries the full qualification summary and the single
  * CTA (§12.4): with JavaScript disabled the visitor still sees every question
- * and outcome and can reach the one conversion action. The interactive island
- * server-renders its first question, so there is a useful view before hydration
- * too. Connector styling is decorative, focus states are visible, no state is
- * communicated by colour alone, and `prefers-reduced-motion` is honoured.
+ * and outcome and can reach the one conversion action. It doubles as the
+ * whole-tree "flowchart" view §12.5 sketched — the entire graph laid out as a
+ * flowchart-in-prose — so the interactive island can stay a single unified
+ * stepper across every viewport rather than forking a second desktop view (the
+ * FX-202 decision; see IMPLEMENTATION_PLAN.md §5 and fitPresentation.test.ts).
+ * The interactive island server-renders its first question, so there is a useful
+ * view before hydration too. Connector styling is decorative, focus states are
+ * visible, no state is communicated by colour alone, and `prefers-reduced-motion`
+ * is honoured.
  */
 import {
   fitSectionCopy as defaultCopy,

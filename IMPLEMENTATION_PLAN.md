@@ -78,8 +78,8 @@ Add a dev-only `/dev/style-guide` route (excluded from production builds) demons
 ### FX-201 — Mobile horizontal overflow (confirmed bug)
 At a 320 px viewport the page renders 503 px wide. Culprits measured: `.site-header__cta` (extends to x=503), `.hero__cta`, `.final-cta__button` — long CTA labels never wrap or shrink. Fix (wrap, clamp, or restyle at narrow widths) and add a regression check: `document.documentElement.scrollWidth <= clientWidth` at 320 px and 375 px. Also reproduces at 375 px.
 
-### FX-202 — Fit qualifier presentation modes
-§12.5 of the original plan called for a desktop flowchart-style presentation and a mobile stepper. Verify the current single presentation against that intent and either implement the two modes or record a decision that the unified presentation stands.
+### FX-202 — Fit qualifier presentation modes — RESOLVED (2026-07-29): unified presentation stands
+§12.5 of the original plan called for a desktop flowchart-style presentation and a mobile stepper. **Decision: the single accessible stepper stands for every viewport.** Rationale: (1) §12.4 requires one keyboard-operable, screen-reader-announced, no-hover-hidden surface — a second viewport-forked interactive view doubles the DOM to keep accessible and can drift from the stepper; (2) the whole-tree "flowchart" intent is already served without extra interactive DOM by the `<noscript>` fallback in `Fit.astro`, which lays every question and outcome out as a flowchart-in-prose; (3) the graph is small (four questions → five outcomes), so the stepper reads cleanly at desktop widths too. The decision is held by `src/components/fit/fitPresentation.test.ts` (interactive island reveals one question at a time; a single qualifier root with no `--desktop`/`--mobile` fork) alongside the existing `Fit.test.ts` fallback coverage. Reopen deliberately if a live-site visual pass (RW-002) shows the flowchart is load-bearing for brand fidelity.
 
 ### FX-203 — Dev environment ergonomics
 - Commit a `.env.example` documenting `PUBLIC_CALENDLY_URL` (build warns and renders an unlinked CTA without it; host must be `calendly.com`).
