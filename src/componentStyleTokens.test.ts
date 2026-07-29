@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, it, expect } from "vitest";
+import { tokenValue } from "./config/designTokens";
 
 /**
  * VD-101 gate — every component consumes the design tokens instead of carrying
@@ -121,5 +122,40 @@ describe("component styles consume the design tokens (VD-101)", () => {
       styleBlocks(source).some((body) => body.includes("var(--color-ink-100)")),
     );
     expect(consumesNeutral).toBe(true);
+  });
+
+  it("declares no container-width literal in any scoped <style> block", () => {
+    // Every section shell caps its content at the shared container width, which
+    // lives in the layout tokens as `--width-container`. A scoped
+    // `max-width: 72rem` silently forks that width: change the token and the
+    // section that kept the literal drifts to a different measure, exactly like
+    // a colour or font-weight literal would. The token value is read from the
+    // model so this gate tracks it rather than a hand-copied number.
+    const containerWidth = tokenValue("--width-container");
+    expect(containerWidth, "layout token --width-container must be defined").toBeTruthy();
+    // Match the literal value only as a whole CSS token (not as the tail of a
+    // longer number), so e.g. `172rem` would not be a false positive.
+    const literal = new RegExp(`(?<![\\d.])${containerWidth!.replace(".", "\\.")}(?![\\w])`);
+    const violations: string[] = [];
+    for (const { path, source } of sources) {
+      for (const body of styleBlocks(source)) {
+        for (const line of body.split("\n")) {
+          if (literal.test(line)) {
+            violations.push(`${rel(path)}: container-width literal in "${line.trim()}"`);
+          }
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
+  it("routes section-shell container widths through the layout token", () => {
+    // Proves the migration happened: the sections reference the width token
+    // rather than merely dropping the literal.
+    const consumers = sources.filter(({ source }) =>
+      styleBlocks(source).some((body) => body.includes("var(--width-container)")),
+    );
+    // The container caps every section shell, so most styled sections consume it.
+    expect(consumers.length).toBeGreaterThanOrEqual(8);
   });
 });
