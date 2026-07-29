@@ -2,7 +2,7 @@
 /**
  * Dev-only visual style guide (implementation plan VD-106).
  *
- * The acceptance gate for VD-101…VD-105: it renders every design token and both
+ * The acceptance gate for VD-101…VD-105: it renders every design token and the
  * shared primitives on one page so the brand system can be eyeballed at desktop
  * and mobile widths before any section-level restyle is signed off. It invents
  * nothing — it iterates `TOKEN_GROUPS` from `designTokens.ts` (the same source
@@ -39,7 +39,7 @@ import { TOKEN_GROUPS } from "../config/designTokens";
         <p class="sg-eyebrow">Dev only · VD-106</p>
         <h1 class="sg-h1">Design system style guide</h1>
         <p class="sg-lede">
-          Every design token from <code>designTokens.ts</code> and both shared
+          Every design token from <code>designTokens.ts</code> and the shared
           primitives, on one page. Resize the window: the fluid type and spacing
           scales are proven at mobile and desktop widths here, not in prose.
         </p>
@@ -105,6 +105,26 @@ import { TOKEN_GROUPS } from "../config/designTokens";
           Shared primitives (VD-104)
         </h2>
         <ul class="sg-rows" role="list">
+          <li class="sg-row">
+            <div class="sg-demo sg-demo--wide">
+              <div class="sg-shell-band">
+                <div class="section-shell sg-shell-demo">
+                  Capped at --width-container, centred, guttered by --space-6.
+                </div>
+              </div>
+            </div>
+            <div class="sg-meta">
+              <code class="sg-name">.section-shell</code>
+              <span class="sg-note">
+                The shared horizontal frame every homepage section rides — content
+                capped at --width-container, centred with margin-inline: auto, and
+                guttered by --space-6 inline padding. Sections keep only their own
+                vertical rhythm, so none can fork the width, centring, or gutter.
+                Here the mint frame sits inside a full-width band so its cap and
+                inline gutter are visible.
+              </span>
+            </div>
+          </li>
           <li class="sg-row">
             <div class="sg-demo">
               <p class="eyebrow">Why Helix</p>
@@ -233,6 +253,31 @@ import { TOKEN_GROUPS } from "../config/designTokens";
 
   .sg-type {
     font-family: var(--font-display);
+  }
+
+  /* The section-shell demo is a layout frame, not a swatch, so it spans the
+     whole row and the meta wraps beneath it. */
+  .sg-demo--wide {
+    flex-basis: 100%;
+    min-inline-size: 0;
+    display: block;
+  }
+
+  /* A full-width band the shell rides inside, so its capped width and inline
+     gutter are visible against it. */
+  .sg-shell-band {
+    background: var(--color-ink-100);
+    border-radius: var(--radius-sm);
+    padding-block: var(--space-4);
+  }
+
+  .sg-shell-demo {
+    background: var(--color-accent);
+    color: var(--color-helix-ink);
+    border-radius: var(--radius-sm);
+    padding-block: var(--space-4);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
   }
 
   .sg-line {
