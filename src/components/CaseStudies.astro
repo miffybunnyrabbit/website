@@ -75,7 +75,7 @@ const published = publishedCaseStudies(studies);
               )}
               {study.image && (
                 <img
-                  class="cases__image"
+                  class="cases__image media-frame"
                   src={`/case-studies/${study.image}`}
                   alt={study.imageAlt ?? ""}
                   loading="lazy"
@@ -190,10 +190,10 @@ const published = publishedCaseStudies(studies);
     max-width: var(--width-text);
   }
 
+  /* The shared .media-frame primitive owns the responsive frame (full width,
+     intrinsic ratio, §16.4 rounded corner); this scoped hook keeps only the
+     card's own spacing beneath the picture. */
   .cases__image {
-    display: block;
-    width: 100%;
-    height: auto;
     margin: 0 0 var(--space-6);
   }
 

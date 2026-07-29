@@ -523,6 +523,22 @@ a {
   margin: 0;
 }
 
+/* Responsive media frame — the shared frame a case-study photograph, and any
+   future editorial visual, rides (VD-104): the image scales to the full width of
+   its column, keeps its intrinsic aspect ratio (height follows width so it never
+   distorts), and carries the §16.4 rounded corner the neutral case-study visuals
+   call for — the one consumer of the largest radius token. Extracted so every
+   section that places a picture renders the frame identically instead of
+   re-declaring the width, the height rule, and the rounding by hand and
+   drifting; only the surrounding spacing varies by placement, so each call site
+   sets that alone. */
+.media-frame {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

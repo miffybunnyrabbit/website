@@ -158,6 +158,27 @@ import ExternalLink from "../components/primitives/ExternalLink.astro";
           </li>
           <li class="sg-row">
             <div class="sg-demo">
+              <img
+                class="media-frame sg-media-demo"
+                src="/social/og-card.svg"
+                alt="Sample case-study visual in the responsive media frame"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="sg-meta">
+              <code class="sg-name">.media-frame</code>
+              <span class="sg-note">
+                The responsive frame a case-study photograph rides — it scales to
+                the full width of its column, keeps its intrinsic aspect ratio so
+                it never distorts, and carries the --radius-lg rounded corner the
+                §16.4 case-study visuals call for. Shared so every section placing
+                a picture renders the frame identically.
+              </span>
+            </div>
+          </li>
+          <li class="sg-row">
+            <div class="sg-demo">
               <a class="cta-button" href="#main">Book a working session</a>
             </div>
             <div class="sg-meta">
@@ -290,6 +311,12 @@ import ExternalLink from "../components/primitives/ExternalLink.astro";
 
   .sg-type {
     font-family: var(--font-display);
+  }
+
+  /* Cap the media-frame demo: the primitive itself is full-width, so bound the
+     sample so it fits the demo cell while its rounded corner stays eyeballable. */
+  .sg-media-demo {
+    max-inline-size: var(--space-16);
   }
 
   /* The section-shell demo is a layout frame, not a swatch, so it spans the
