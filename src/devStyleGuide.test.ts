@@ -80,6 +80,22 @@ describe("the dev style guide renders the whole token system (VD-106)", () => {
     expect(html).toContain("media-frame");
   });
 
+  it("demonstrates the motion system so the timing scale is eyeballable (VD-105)", async () => {
+    // Every other token group gets a live demo (a colour swatch, a spacing bar,
+    // live type), so the guide can be *eyeballed*, not just read. Motion was the
+    // one system with no demo — its tokens rendered as bare name/value rows — so
+    // the acceptance gate for VD-105 could not actually show the timing scale.
+    // The demo chips drive their transition from the tokens under test (inline
+    // `var(--duration-*)` / `var(--ease-*)`), so a chip can never drift onto a
+    // copied literal, and a motion token dropped from the model takes its demo
+    // with it.
+    const html = await renderPage(StyleGuide);
+    expect(html).toContain('class="sg-motion"');
+    // A duration row drives its own duration; an easing row drives its own curve.
+    expect(html).toContain("transition-duration: var(--duration-fast)");
+    expect(html).toContain("transition-timing-function: var(--ease-standard)");
+  });
+
   it("shows the mint accent so the brand colour is eyeballable", async () => {
     const html = await renderPage(StyleGuide);
     expect(html).toContain("#5affba");

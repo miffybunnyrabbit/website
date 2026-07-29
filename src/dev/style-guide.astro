@@ -88,6 +88,24 @@ import ExternalLink from "../components/primitives/ExternalLink.astro";
                         The quick brown fox jumps over the lazy dog.
                       </span>
                     )}
+                    {group.key === "motion" && token.name.startsWith("--duration-") && (
+                      <button
+                        type="button"
+                        class="sg-motion"
+                        style={`transition-duration: var(${token.name})`}
+                      >
+                        Hover / focus
+                      </button>
+                    )}
+                    {group.key === "motion" && token.name.startsWith("--ease-") && (
+                      <button
+                        type="button"
+                        class="sg-motion"
+                        style={`transition-timing-function: var(${token.name})`}
+                      >
+                        Hover / focus
+                      </button>
+                    )}
                   </div>
                   <div class="sg-meta">
                     <code class="sg-name">{token.name}</code>
@@ -311,6 +329,37 @@ import ExternalLink from "../components/primitives/ExternalLink.astro";
 
   .sg-type {
     font-family: var(--font-display);
+  }
+
+  /* Motion demos: a chip that slides on hover/focus so the timing scale is
+     eyeballable, not just listed. Each row rides the one token under test — a
+     duration row sets only its --duration-* inline (the shared --ease-standard
+     curve comes from the longhands below), the easing row sets only its timing
+     function (the slow duration below makes the curve legible). Longhands, not
+     the `transition` shorthand, so the inline token overrides just its own leg.
+     prefers-reduced-motion collapses the slide to a static chip, exactly as the
+     motion system requires (VD-105). */
+  .sg-motion {
+    inline-size: var(--space-16);
+    padding-block: var(--space-2);
+    background: var(--color-accent);
+    color: var(--color-helix-ink);
+    border: 0;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-align: center;
+    cursor: pointer;
+    transition-property: transform;
+    transition-duration: var(--duration-slow);
+    transition-timing-function: var(--ease-standard);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .sg-motion:hover,
+    .sg-motion:focus-visible {
+      transform: translateX(var(--space-12));
+    }
   }
 
   /* Cap the media-frame demo: the primitive itself is full-width, so bound the
