@@ -111,6 +111,8 @@ export const TOKEN_GROUPS: readonly TokenGroup[] = [
       { name: "--line-height-heading", value: "1.2" },
       { name: "--line-height-body", value: "1.5" },
       { name: "--letter-spacing-eyebrow", value: "0.12em" },
+      { name: "--letter-spacing-label", value: "0.08em", note: "uppercase micro-labels (progress, stage, kicker)" },
+      { name: "--letter-spacing-action", value: "0.04em", note: "bold CTAs and emphatic statements" },
       // Type scale (§16.4). Fluid headings clamp between a mobile floor and a
       // desktop cap; the body steps are static. Sections consume these instead
       // of carrying their own font-size literals (VD-101).

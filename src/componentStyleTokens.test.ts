@@ -297,32 +297,37 @@ describe("component styles consume the design tokens (VD-101)", () => {
     expect(consumers.length).toBeGreaterThanOrEqual(8);
   });
 
-  it("declares no eyebrow letter-spacing literal in any letter-spacing property", () => {
-    // The wide tracking that reads as an eyebrow/label lives in the tokens as
-    // `--letter-spacing-eyebrow`. A scoped `letter-spacing: 0.12em` on a section
-    // eyebrow silently forks that value: change the token and the label that kept
-    // the literal drifts off the shared tracking, exactly like a colour or
-    // spacing literal would. The token value is read from the model so this gate
-    // tracks it rather than a hand-copied number.
+  it("declares no letter-spacing-scale literal in any letter-spacing property", () => {
+    // The tracking scale lives in the tokens as `--letter-spacing-eyebrow`
+    // (0.12em section eyebrows), `--letter-spacing-label` (0.08em uppercase
+    // micro-labels) and `--letter-spacing-action` (0.04em bold CTAs and
+    // emphatic statements). A scoped `letter-spacing: 0.08em` on a label
+    // silently forks that value: change the token and the label that kept the
+    // literal drifts off the shared tracking, exactly like a colour or spacing
+    // literal would. Token values are read from the model so this gate tracks
+    // them rather than a hand-copied number.
     //
     // As with the spacing and type-scale gates, the flag fires ONLY on a value
-    // that equals the token — the off-scale trackings the scale has no token for
-    // (a button's `0.04em`, the footer's `0.06em`, a `0.08em` micro-label) are
-    // left alone rather than forced onto the eyebrow value, which would change
+    // that equals a token — an off-scale tracking the scale has no token for is
+    // left alone rather than forced onto the nearest step, which would change
     // the rendered type. On-scale means: use the token.
-    const eyebrowTracking = tokenValue("--letter-spacing-eyebrow");
-    expect(eyebrowTracking, "token --letter-spacing-eyebrow must be defined").toBeTruthy();
+    const trackings = allTokens()
+      .filter((t) => t.name.startsWith("--letter-spacing-"))
+      .map((t) => ({ name: t.name, value: tokenValue(t.name)! }));
+    expect(trackings.length, "letter-spacing tokens must be defined").toBeGreaterThanOrEqual(3);
     const LETTER_SPACING_PROPERTY = /^\s*letter-spacing\s*:/;
-    // Match the literal only as a whole CSS value (not the tail of a longer
-    // number), so e.g. `10.12em` would not be a false positive.
-    const literal = new RegExp(`(?<![\\d.])${eyebrowTracking!.replace(".", "\\.")}(?![\\w])`);
     const violations: string[] = [];
-    for (const { path, source } of sources) {
-      for (const body of styleBlocks(source)) {
-        for (const line of body.split("\n")) {
-          if (!LETTER_SPACING_PROPERTY.test(line)) continue;
-          if (literal.test(line)) {
-            violations.push(`${rel(path)}: eyebrow letter-spacing literal in "${line.trim()}"`);
+    for (const { name, value } of trackings) {
+      // Match the literal only as a whole CSS value (not the tail of a longer
+      // number), so e.g. `10.12em` would not be a false positive.
+      const literal = new RegExp(`(?<![\\d.])${value.replace(".", "\\.")}(?![\\w])`);
+      for (const { path, source } of sources) {
+        for (const body of styleBlocks(source)) {
+          for (const line of body.split("\n")) {
+            if (!LETTER_SPACING_PROPERTY.test(line)) continue;
+            if (literal.test(line)) {
+              violations.push(`${rel(path)}: ${name} literal in "${line.trim()}"`);
+            }
           }
         }
       }
@@ -342,6 +347,19 @@ describe("component styles consume the design tokens (VD-101)", () => {
       styleBlocks(source).some((body) => body.includes("var(--letter-spacing-eyebrow)")),
     );
     expect(consumers.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("routes uppercase micro-labels and CTA tracking through their tokens", () => {
+    // Proves the migration happened for the rest of the tracking scale: the
+    // 0.08em uppercase micro-labels (progress, stage, kicker) and the 0.04em
+    // bold CTAs/emphatic statements reference their tokens rather than the
+    // hand-copied literals they carried before the scale existed.
+    for (const token of ["--letter-spacing-label", "--letter-spacing-action"]) {
+      const consumers = sources.filter(({ source }) =>
+        styleBlocks(source).some((body) => body.includes(`var(${token})`)),
+      );
+      expect(consumers.length, `no component consumes ${token}`).toBeGreaterThanOrEqual(1);
+    }
   });
 
   it("declares no line-height-scale literal in any line-height property", () => {

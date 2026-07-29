@@ -207,6 +207,16 @@ export const tokenProvenance: readonly TokenProvenance[] = [
     note: "Tracking for uppercase eyebrows (§16.4).",
   },
   {
+    name: "--letter-spacing-label",
+    provenance: "new",
+    note: "Tracking for uppercase micro-labels — progress, stage, kicker (§16.4).",
+  },
+  {
+    name: "--letter-spacing-action",
+    provenance: "new",
+    note: "Tracking for bold CTAs and emphatic statements (§16.4).",
+  },
+  {
     name: "--font-size-xs",
     provenance: "new",
     note: "Type-scale step: fine print, eyebrow labels (§16.4).",

@@ -24,6 +24,8 @@
   --line-height-heading: 1.2;
   --line-height-body: 1.5;
   --letter-spacing-eyebrow: 0.12em;
+  --letter-spacing-label: 0.08em; /* uppercase micro-labels (progress, stage, kicker) */
+  --letter-spacing-action: 0.04em; /* bold CTAs and emphatic statements */
   --font-size-xs: 0.75rem; /* fine print, eyebrow labels */
   --font-size-sm: 0.875rem; /* small labels, legal copy */
   --font-size-lg: 1.125rem; /* lead paragraphs */
