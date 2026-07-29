@@ -49,9 +49,12 @@ export const REMOVED_BRANDS: readonly string[] = [
 /**
  * The reconciled logo register. Brands are the set observed on the live site
  * (section 8.4); the three removed brands carry `status: "remove"`, and every
- * kept brand stays `permission: "pending"` until its rights are confirmed in the
- * asset register (R-008). Xylo is deliberately retained here — only its
- * *case study* is removed (D-008), not its logo.
+ * retained brand now carries `permission: "approved"` — Q-0006 cleared all 18
+ * for publication on 2026-07-29, the assets sourced from the live site's own
+ * published files (asset register, R-008). The gate still stands for any future
+ * entry: an unconfirmed brand would stay `permission: "pending"` and be withheld
+ * by `marqueeLogos()`; none currently are. Xylo is deliberately retained here —
+ * only its *case study* is removed (D-008), not its logo.
  */
 export const logos: readonly LogoEntry[] = [
   { name: "Canva", asset: "canva.png", status: "retain", permission: "approved", alt: "Canva" },
