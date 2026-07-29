@@ -340,16 +340,17 @@ describe("component styles consume the design tokens (VD-101)", () => {
 
   it("routes eyebrow labels through the --letter-spacing-eyebrow token", () => {
     // Proves the migration happened: eyebrow labels reference the tracking token
-    // rather than a literal. The section eyebrows have since been centralised into
-    // the shared `.eyebrow` primitive in `global.css` (VD-102/VD-104, guarded by
-    // eyebrow.test.ts), so the only scoped consumers left are the labels that are
-    // *not* section eyebrows — the proof banner's metric label and the style
-    // guide's own page-chrome kicker — and both still ride the token, not a
-    // hand-copied `0.12em`.
+    // rather than a literal. The tracked labels have since been centralised into
+    // shared `global.css` primitives — the section eyebrows into `.eyebrow`
+    // (VD-102/VD-104, guarded by eyebrow.test.ts) and the proof banner's metric
+    // label into `.metric__label` (VD-104, guarded by metricFigure.test.ts) — so
+    // the only scoped consumer left is the label that is *not* a brand primitive:
+    // the style guide's own page-chrome kicker, and it still rides the token, not
+    // a hand-copied `0.12em`.
     const consumers = sources.filter(({ source }) =>
       styleBlocks(source).some((body) => body.includes("var(--letter-spacing-eyebrow)")),
     );
-    expect(consumers.length).toBeGreaterThanOrEqual(2);
+    expect(consumers.length).toBeGreaterThanOrEqual(1);
   });
 
   it("routes uppercase micro-labels and CTA tracking through their tokens", () => {

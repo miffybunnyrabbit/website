@@ -68,9 +68,11 @@ describe("the dev style guide renders the whole token system (VD-106)", () => {
     expect(html).toContain("cta-button");
     expect(html).toContain("skip-link");
     expect(html).toContain('class="eyebrow"');
-    // The section shell is a primitive too (the most recently extracted one), so
-    // the guide must demonstrate it or it advertises an incomplete system.
+    // The section shell is a primitive too, so the guide must demonstrate it or
+    // it advertises an incomplete system.
     expect(html).toContain('class="section-shell');
+    // The proof-metric figure is the most recently extracted primitive.
+    expect(html).toContain('class="metric"');
   });
 
   it("shows the mint accent so the brand colour is eyeballable", async () => {

@@ -43,9 +43,9 @@ const published = publishedProofBanner(banner);
       </h2>
       <dl class="proof__list section-shell">
         {published.metrics.map((metric) => (
-          <div class="proof__metric">
-            <dt class="proof__value">{metric.value}</dt>
-            <dd class="proof__label">{metric.label}</dd>
+          <div class="proof__metric metric">
+            <dt class="metric__value">{metric.value}</dt>
+            <dd class="metric__label">{metric.label}</dd>
           </div>
         ))}
       </dl>
@@ -85,22 +85,5 @@ const published = publishedProofBanner(banner);
     .proof__list {
       grid-template-columns: 1fr 1fr;
     }
-  }
-
-  .proof__metric {
-    text-align: center;
-  }
-
-  .proof__value {
-    font-size: var(--font-size-display);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--line-height-display);
-    margin: 0 0 var(--space-2);
-  }
-
-  .proof__label {
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--letter-spacing-eyebrow);
-    margin: 0;
   }
 </style>

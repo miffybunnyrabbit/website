@@ -202,6 +202,29 @@ a {
   background-color: var(--color-accent);
 }
 
+/* Proof-metric figure — an oversized value with a short tracked label beneath
+   it (VD-104), the shape the proof banner uses to state one quantified claim.
+   Extracted as a shared primitive so every section that leads with a headline
+   number renders the figure identically instead of re-declaring the display
+   size, weight, and label tracking. The value rides the display type scale; the
+   label is the same bold tracked micro-label the eyebrow carries. */
+.metric {
+  text-align: center;
+}
+
+.metric__value {
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-display);
+  margin: 0 0 var(--space-2);
+}
+
+.metric__label {
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-eyebrow);
+  margin: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
