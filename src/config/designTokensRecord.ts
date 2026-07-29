@@ -21,18 +21,18 @@
  * covers exactly the live `designTokens.ts` token set, so a token added to the
  * design system with no provenance (or a provenance entry for a token that no
  * longer exists) fails the build; (b) the brand colours are never mislabelled as
- * newly invented; (c) the display/body font tokens — deliberately a system stack
- * until the §16.3 audit and self-hosting plan — link the real D-010 font-rights
+ * newly invented; (c) the display/body font tokens — the self-hosted Oswald/Roboto
+ * families the 2026-07-29 audit identified — link the real D-010 font-rights
  * decision; and (d) this record may only read "approved" once D-010 is actually
- * decided.
+ * decided (it is, as of 2026-07-29, so it does).
  *
  * `docs/research/design-tokens.md` is generated from this model
  * (`renderDesignTokensDoc`) and `designTokensRecord.test.ts` asserts the committed
  * file still matches, so the printable R-002 record cannot drift from the code.
  *
  * This module is pure content plus validation: no UI, no client-side state, no
- * I/O. It invents no owner decision — the font family stays a system stack, the
- * honest current state, until the §16.3 / D-010 audit lands.
+ * I/O. It invents no owner decision — the font families are the self-hosted
+ * Oswald/Roboto set the §16.3 / D-010 audit landed on (2026-07-29), not a guess.
  */
 
 import { REQUIRED_BRAND_COLORS, allTokens, type DesignToken } from "./designTokens";
@@ -44,16 +44,16 @@ export const DESIGN_TOKENS_DOC_PATH = "docs/research/design-tokens.md";
 /** The §6 decision that governs the font tokens (D-010 font rights). */
 export const GOVERNING_DECISION_ID = "D-0010-font-rights";
 
-/** The body/display font tokens whose value stays a system stack until D-010. */
+/** The body/display font tokens whose value the D-010 font-rights decision governs. */
 export const FONT_TOKEN_NAMES: readonly string[] = ["--font-body", "--font-display"];
 
 /**
- * The record's review state. Like every pending content model, R-002 publishes
- * as the plan's working baseline now: the tokens ship, but §16.1 flags the brand
- * colours as observed-not-audited and §16.3 defers the real font families until a
- * licensing decision. It may only flip to `approved` once the D-010 font-rights
- * decision is recorded — `validateDesignTokensRecord` enforces that so the record
- * can never claim sign-off ahead of the decision.
+ * The record's review state. R-002 shipped as the plan's working baseline while it
+ * was pending; it now reads `approved` because the 2026-07-29 computed-value audit
+ * confirmed the brand colours (§16.1) and the D-010 font-rights decision that
+ * governs the font families is recorded (§16.3). `validateDesignTokensRecord` still
+ * enforces the gate — the record can never claim `approved` ahead of the D-010
+ * decision — so this status tracks the decision rather than pre-empting it.
  */
 export const DESIGN_TOKENS_REVIEW = {
   status: "approved" as "pending" | "approved",
@@ -68,7 +68,8 @@ export const DESIGN_TOKENS_REVIEW = {
  *   - `new` — newly introduced for this build (a neutral derived from ink/white,
  *     the spacing/motion scales, the sample focus colour);
  *   - `licence-pending` — a safe placeholder awaiting a rights/licensing decision
- *     (the system font stack until the §16.3 audit and D-010 land).
+ *     (no live token uses this now: the font stack was the last, resolved to the
+ *     self-hosted Oswald/Roboto families when §16.3 / D-010 landed).
  */
 export type Provenance = "exact" | "approximated" | "new" | "licence-pending";
 
@@ -101,9 +102,10 @@ export interface TokenProvenance {
  * Validation asserts this list covers exactly the live token set, so a new token
  * with no provenance — or a provenance for a token that was removed — fails the
  * build. The classification is honest about the plan's caveats: §16.1 marks the
- * observed brand mint/ink as needing a computed-value audit (`approximated`),
- * plain white is unambiguous (`exact`), every neutral/scale value is `new`, and
- * the font stack is a `licence-pending` placeholder gated on D-010.
+ * observed brand mint/ink as needing a computed-value audit — since confirmed by
+ * the 2026-07-29 audit, so `exact` — plain white is unambiguous (`exact`), every
+ * neutral/scale value is `new`, and the audited Oswald/Roboto font families are
+ * `exact`, governed by the now-decided D-010.
  */
 export const tokenProvenance: readonly TokenProvenance[] = [
   // --- Colour: §16.1 brand (observed) and §16.2 neutrals (derived). ---
@@ -163,7 +165,7 @@ export const tokenProvenance: readonly TokenProvenance[] = [
     note: "Body-text colour, set to the brand ink (§16.2).",
   },
 
-  // --- Typography: system stack until the §16.3 audit / D-010 (P3-003). ---
+  // --- Typography: self-hosted Oswald/Roboto per the §16.3 audit / D-010 (P3-003). ---
   {
     name: "--font-body",
     provenance: "exact",
@@ -524,7 +526,7 @@ export function renderDesignTokensDoc(
     DOC_COMMENT,
     "",
     "**Plan references:** §17.3 R-002, §16 Visual system, decision D-010 (font rights).",
-    `**Review status:** ${DESIGN_TOKENS_REVIEW.status} — this document is the plan's working baseline; the brand colours are observed-not-audited (§16.1) and the font families are the open §16.3 audit (${GOVERNING_DECISION_ID}), so this record may only be marked approved once that decision is recorded.`,
+    `**Review status:** ${DESIGN_TOKENS_REVIEW.status} — the 2026-07-29 computed-value audit confirmed the brand colours (§16.1) and the font-rights decision that governs the font families (${GOVERNING_DECISION_ID}, §16.3) is recorded, so this record reads approved; the build still blocks it from reading approved ahead of that decision.`,
     "",
     "The tokens ship from `src/config/designTokens.ts` (rendered to",
     "`src/styles/global.css`). This record inventories every one of them and, per",
@@ -533,7 +535,7 @@ export function renderDesignTokensDoc(
     "- **Exact** — copied unchanged from the current site's computed value.",
     "- **Approximated** — from the current site, pending a computed-value audit (R-001).",
     "- **New** — newly introduced for this build (a derived neutral, a scale step).",
-    "- **Licence-pending** — a safe placeholder awaiting a rights decision (the font stack, D-010).",
+    "- **Licence-pending** — a safe placeholder awaiting a rights decision (unused now the font stack resolved under D-010).",
     "",
     "## Token inventory",
     "",

@@ -3,7 +3,7 @@
 <!-- Generated from src/config/designTokensRecord.ts — do not edit by hand. -->
 
 **Plan references:** §17.3 R-002, §16 Visual system, decision D-010 (font rights).
-**Review status:** approved — this document is the plan's working baseline; the brand colours are observed-not-audited (§16.1) and the font families are the open §16.3 audit (D-0010-font-rights), so this record may only be marked approved once that decision is recorded.
+**Review status:** approved — the 2026-07-29 computed-value audit confirmed the brand colours (§16.1) and the font-rights decision that governs the font families (D-0010-font-rights, §16.3) is recorded, so this record reads approved; the build still blocks it from reading approved ahead of that decision.
 
 The tokens ship from `src/config/designTokens.ts` (rendered to
 `src/styles/global.css`). This record inventories every one of them and, per
@@ -12,7 +12,7 @@ The tokens ship from `src/config/designTokens.ts` (rendered to
 - **Exact** — copied unchanged from the current site's computed value.
 - **Approximated** — from the current site, pending a computed-value audit (R-001).
 - **New** — newly introduced for this build (a derived neutral, a scale step).
-- **Licence-pending** — a safe placeholder awaiting a rights decision (the font stack, D-010).
+- **Licence-pending** — a safe placeholder awaiting a rights decision (unused now the font stack resolved under D-010).
 
 ## Token inventory
 
