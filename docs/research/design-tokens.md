@@ -41,8 +41,10 @@ The tokens ship from `src/config/designTokens.ts` (rendered to
 | `--space-2` | `0.5rem` | New | Spacing scale step (§16.4). |
 | `--space-3` | `0.75rem` | New | Spacing scale step (§16.4). |
 | `--space-4` | `1rem` | New | Spacing scale step (§16.4). |
+| `--space-5` | `1.25rem` | New | Spacing scale step (§16.4). |
 | `--space-6` | `1.5rem` | New | Spacing scale step (§16.4). |
 | `--space-8` | `2rem` | New | Spacing scale step (§16.4). |
+| `--space-10` | `2.5rem` | New | Spacing scale step (§16.4). |
 | `--space-12` | `3rem` | New | Spacing scale step (§16.4). |
 | `--space-16` | `4rem` | New | Spacing scale step (§16.4). |
 | `--width-container` | `72rem` | New | Shared max content width (§16.4). |

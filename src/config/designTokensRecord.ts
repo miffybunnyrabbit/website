@@ -212,8 +212,10 @@ export const tokenProvenance: readonly TokenProvenance[] = [
   { name: "--space-2", provenance: "new", note: "Spacing scale step (§16.4)." },
   { name: "--space-3", provenance: "new", note: "Spacing scale step (§16.4)." },
   { name: "--space-4", provenance: "new", note: "Spacing scale step (§16.4)." },
+  { name: "--space-5", provenance: "new", note: "Spacing scale step (§16.4)." },
   { name: "--space-6", provenance: "new", note: "Spacing scale step (§16.4)." },
   { name: "--space-8", provenance: "new", note: "Spacing scale step (§16.4)." },
+  { name: "--space-10", provenance: "new", note: "Spacing scale step (§16.4)." },
   { name: "--space-12", provenance: "new", note: "Spacing scale step (§16.4)." },
   { name: "--space-16", provenance: "new", note: "Spacing scale step (§16.4)." },
 
