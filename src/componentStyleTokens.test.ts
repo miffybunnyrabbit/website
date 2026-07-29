@@ -94,6 +94,26 @@ describe("component styles consume the design tokens (VD-101)", () => {
     expect(violations).toEqual([]);
   });
 
+  it("declares no numeric font-weight literal in any scoped <style> block", () => {
+    // The weight scale lives in the tokens (--font-weight-regular/-bold); a
+    // scoped `font-weight: 700` silently forks the type system and drifts from
+    // the §16 scale exactly like a colour literal would. Keyword values
+    // (`inherit`, `bold`) resolve to an inherited/named weight, and `var(--…)`
+    // references the token, so those remain the only ways to name a weight.
+    const NUMERIC_FONT_WEIGHT = /font-weight:\s*\d/i;
+    const violations: string[] = [];
+    for (const { path, source } of sources) {
+      for (const body of styleBlocks(source)) {
+        for (const line of body.split("\n")) {
+          if (NUMERIC_FONT_WEIGHT.test(line)) {
+            violations.push(`${rel(path)}: numeric font-weight in "${line.trim()}"`);
+          }
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
   it("routes component borders and surfaces through the neutral ramp token", () => {
     // Proves the migration actually happened: the sections now reference the
     // neutral token rather than merely dropping their old literals.
