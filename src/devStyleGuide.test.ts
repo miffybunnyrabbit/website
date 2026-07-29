@@ -73,6 +73,10 @@ describe("the dev style guide renders the whole token system (VD-106)", () => {
     expect(html).toContain('class="section-shell');
     // The proof-metric figure is the most recently extracted primitive.
     expect(html).toContain('class="metric"');
+    // The accessible external-link primitive: demonstrated with its safe rel so
+    // the behavioural treatment (not just a visual) is eyeballable.
+    expect(html).toContain('class="external-link"');
+    expect(html).toContain('rel="noopener noreferrer"');
   });
 
   it("shows the mint accent so the brand colour is eyeballable", async () => {

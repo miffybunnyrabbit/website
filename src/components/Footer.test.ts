@@ -75,6 +75,17 @@ describe("Footer.astro", () => {
     expect(html).toContain("LinkedIn");
   });
 
+  it("routes third-party links through the safe external-link primitive (VD-104)", async () => {
+    // The one approved social link is third-party (LinkedIn), so it must render
+    // through `.external-link` and carry the safe rel — never a hand-rolled
+    // anchor that could leak the referrer or a window.opener handle.
+    const html = await renderFooter({ content: footerWithApproval() });
+    const anchor = html.match(/<a[^>]*href="https:\/\/www\.linkedin\.com[^"]*"[^>]*>/)?.[0];
+    expect(anchor, "approved LinkedIn link is not rendered").toBeTruthy();
+    expect(anchor).toContain("external-link");
+    expect(anchor).toContain('rel="noopener noreferrer"');
+  });
+
   it("renders no identity facts when nothing is approved (honest current state)", async () => {
     // The shipped footer has no approved facts, so only the brand mark and
     // copyright line should appear — no <dl>, no verify drafts.

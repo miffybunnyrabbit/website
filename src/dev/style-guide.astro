@@ -22,6 +22,7 @@
  */
 import "../styles/global.css";
 import { TOKEN_GROUPS } from "../config/designTokens";
+import ExternalLink from "../components/primitives/ExternalLink.astro";
 ---
 
 <!doctype html>
@@ -164,6 +165,25 @@ import { TOKEN_GROUPS } from "../config/designTokens";
               <span class="sg-note">
                 The one conversion action — ink-on-mint, inverting to mint-on-ink
                 on hover and focus. Both states clear WCAG AA (§16.2).
+              </span>
+            </div>
+          </li>
+          <li class="sg-row">
+            <div class="sg-demo">
+              <ExternalLink href="https://www.linkedin.com/company/helix-collective">
+                LinkedIn
+              </ExternalLink>
+            </div>
+            <div class="sg-meta">
+              <code class="sg-name">.external-link</code>
+              <span class="sg-note">
+                A third-party outbound link. The treatment is behavioural, not
+                visual — it inherits the same ink type and focus ring as any
+                link but always carries rel="noopener noreferrer" so the
+                destination gets neither the visitor's referrer nor a
+                window.opener handle. The primary CTA is not one of these: it is
+                the first-party Calendly booking action and keeps its referrer
+                (§5, D-006).
               </span>
             </div>
           </li>

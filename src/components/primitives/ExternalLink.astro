@@ -1,0 +1,39 @@
+---
+/**
+ * Accessible external-link primitive (implementation plan VD-104).
+ *
+ * The one place a *third-party* outbound link is rendered, so the safe-link
+ * treatment lives here instead of being hand-copied at each call site. An
+ * external link leaves the first-party origin for a destination Helix does not
+ * control (an approved LinkedIn profile, a privacy host, …), so it always
+ * carries `rel="noopener noreferrer"`:
+ *
+ *  - `noreferrer` withholds the visitor's originating URL from the third party
+ *    (it suppresses the `Referer` header on the navigation, which matters even
+ *    for the same-tab links this site uses).
+ *  - `noopener` denies the destination a live `window.opener` handle — a
+ *    reverse-tabnabbing defence that costs nothing in-tab and becomes
+ *    load-bearing the moment such a link is ever opened in a new context.
+ *
+ * The treatment is behavioural, not visual: external links inherit the same ink
+ * type and the global `:focus-visible` ring as any other link, so extracting it
+ * changes the rel guarantee, not the rendered chrome. The `.external-link` class
+ * is the shared hook the style guide labels and the gate identifies.
+ *
+ * The primary CTA is deliberately NOT an external link in this sense: it is the
+ * first-party Calendly booking action, navigates in place, and keeps its
+ * referrer for attribution (§5, D-006, `conversionSpec`), so it renders as a
+ * plain `.cta-button` and must not route through here.
+ */
+export interface Props {
+  /** Absolute off-origin URL of the third-party destination. */
+  href: string;
+  /** Optional extra classes composed after the primitive's own. */
+  class?: string;
+}
+
+const { href, class: extra } = Astro.props;
+const className = ["external-link", extra].filter(Boolean).join(" ");
+---
+
+<a href={href} class={className} rel="noopener noreferrer"><slot /></a>

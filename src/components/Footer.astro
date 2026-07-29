@@ -26,6 +26,7 @@ import {
   copyrightLine,
   type FooterContent,
 } from "../config/footer";
+import ExternalLink from "./primitives/ExternalLink.astro";
 
 export interface Props {
   /** Defaults to the site's footer model; overridable for testing. */
@@ -67,16 +68,14 @@ const copyright = copyrightLine(year, published);
         <ul class="site-footer__links">
           {socialLinks.map((link) => (
             <li>
-              <a href={link.href} rel="noopener noreferrer">
-                {link.label}
-              </a>
+              <ExternalLink href={link.href}>{link.label}</ExternalLink>
             </li>
           ))}
           {privacyLink && (
             <li>
-              <a href={privacyLink.href} rel="noopener noreferrer">
+              <ExternalLink href={privacyLink.href}>
                 {privacyLink.label}
-              </a>
+              </ExternalLink>
             </li>
           )}
           {contactEmail && (
