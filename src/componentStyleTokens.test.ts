@@ -439,4 +439,50 @@ describe("component styles consume the design tokens (VD-101)", () => {
     );
     expect(consumers.length).toBeGreaterThanOrEqual(1);
   });
+
+  it("declares no raw timing literal in any scoped transition (VD-105)", () => {
+    // Interaction transitions ride the shared motion scale: every duration is a
+    // `--duration-*` token and the timing function is `--ease-standard`
+    // (P3-005, VD-105). A scoped `transition: color 200ms ease` forks that
+    // scale — change the tokens and the component that kept the literal drifts
+    // off the shared motion feel, exactly like a colour or spacing literal
+    // would. The `.cta-button` and `.skip-link` primitives already ride the
+    // scale in `global.css`; this keeps the section-scoped transitions on it too.
+    //
+    // Continuous `animation` (the logo marquee's `40s linear infinite`) is out
+    // of scope: a multi-second linear scroll is genuinely off the interaction
+    // scale, which has no token for it, so — like the off-scale spacing and type
+    // values the gates above leave alone — it keeps its literal rather than being
+    // forced onto a step. This gate watches `transition` shorthands only.
+    const TRANSITION_DECL = /transition\s*:\s*([^;]*);/gi;
+    const RAW_DURATION = /\d*\.?\d+m?s\b/;
+    const RAW_EASING = /\b(?:ease(?:-in|-out|-in-out)?|linear|step-start|step-end|steps)\b/;
+    const violations: string[] = [];
+    for (const { path, source } of sources) {
+      for (const body of styleBlocks(source)) {
+        let match: RegExpExecArray | null;
+        while ((match = TRANSITION_DECL.exec(body)) !== null) {
+          // Strip token references so `var(--ease-standard)` / `var(--duration-*)`
+          // never trip the raw-value patterns; what remains is property names,
+          // commas, and any literal timing that leaked through.
+          const value = match[1].replace(/var\(\s*--[a-z0-9-]+\s*\)/gi, "");
+          if (RAW_DURATION.test(value) || RAW_EASING.test(value)) {
+            violations.push(`${rel(path)}: raw timing in "transition: ${match[1].trim()}"`);
+          }
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
+  it("routes interaction transitions through the motion scale", () => {
+    // Proves the migration happened: the sections reference the easing token
+    // rather than merely dropping the `ease` keyword.
+    const consumers = sources.filter(({ source }) =>
+      styleBlocks(source).some((body) => body.includes("var(--ease-standard)")),
+    );
+    // The how-we-work active-stage cue and the fit-answer hover cue both ride
+    // the scale.
+    expect(consumers.length).toBeGreaterThanOrEqual(2);
+  });
 });
