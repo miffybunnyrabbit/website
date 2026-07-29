@@ -302,4 +302,54 @@ describe("component styles consume the design tokens (VD-101)", () => {
     // proof banner's metric label, so most styled sections consume the token.
     expect(consumers.length).toBeGreaterThanOrEqual(5);
   });
+
+  it("declares no line-height-scale literal in any line-height property", () => {
+    // The tightened leadings that read as "display" and "heading" live in the
+    // tokens as `--line-height-display` (the oversized hero headline and proof
+    // figure) and `--line-height-heading` (sub-headings). A scoped
+    // `line-height: 1.05` on a headline silently forks that value: change the
+    // token and the headline that kept the literal drifts off the shared leading,
+    // exactly like a colour or spacing literal would. The scale values are read
+    // from the model so this gate tracks them rather than hand-copied numbers.
+    //
+    // As with the spacing and type-scale gates, the flag fires ONLY when a
+    // line-height equals a defined scale step, so the genuinely off-scale leadings
+    // the scale has no token for — a card title's `1.1`, a compact `1`, a fit
+    // result's `1.3` — are left alone rather than forced onto the nearest step
+    // (which would change the rendered type). On-scale means: use the token.
+    const lineHeightValues = allTokens()
+      .filter((token) => token.name.startsWith("--line-height-"))
+      .map((token) => token.value);
+    expect(lineHeightValues.length, "line-height scale must be defined").toBeGreaterThan(0);
+    const LINE_HEIGHT_PROPERTY = /^\s*line-height\s*:/;
+    // Match each scale value as a whole CSS value (not the tail of a longer
+    // number), so e.g. `1.2` does not trip on `1.25` and `1` does not trip on
+    // `1.05`.
+    const literals = lineHeightValues.map(
+      (value) => new RegExp(`(?<![\\w.])${value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w.])`),
+    );
+    const violations: string[] = [];
+    for (const { path, source } of sources) {
+      for (const body of styleBlocks(source)) {
+        for (const line of body.split("\n")) {
+          if (!LINE_HEIGHT_PROPERTY.test(line)) continue;
+          if (literals.some((literal) => literal.test(line))) {
+            violations.push(`${rel(path)}: line-height-scale literal in "${line.trim()}"`);
+          }
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
+  it("routes headline line-heights through the --line-height-* scale", () => {
+    // Proves the migration happened: the headlines reference the leading tokens
+    // rather than merely dropping the literal.
+    const consumers = sources.filter(({ source }) =>
+      styleBlocks(source).some((body) => body.includes("var(--line-height-")),
+    );
+    // The hero headline, proof figure, and the section sub-headings all set a
+    // tightened leading, so several styled sections consume the scale.
+    expect(consumers.length).toBeGreaterThanOrEqual(4);
+  });
 });
