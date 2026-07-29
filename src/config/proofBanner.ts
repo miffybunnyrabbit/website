@@ -11,13 +11,15 @@
  * a third metric appears, a banned count creeps back, or the required figures are
  * altered.
  *
- * One value is still pending a decision: the headline uses a bare `$`, and D-001
- * has not yet fixed the currency. Under the plan's revised approach (§5 last row,
- * §17, §23) a pending financial claim is not withheld — it publishes in its safe
- * fallback form with an open approval-queue item and is updated on sign-off. A
- * deliberately currency-neutral `$500M+` is exactly that fallback (D-001 lists it
- * as a valid headline choice), so the banner publishes now while `currencyApproval`
- * stays `"pending"` and category-B item Q-0007 tracks confirming the currency.
+ * The headline uses a bare `$`, and that currency-neutral wording is now the
+ * approved one. Under the plan's revised approach (§5 last row, §17, §23) a
+ * pending financial claim is never withheld — it publishes in its safe fallback
+ * form with an open approval-queue item and updates on sign-off — and the
+ * sign-off has landed: on 2026-07-29 category-B item Q-0007 approved the
+ * `$500M+` figure in exactly this currency-neutral wording, and D-001 is decided
+ * (currency-neutral aggregate; A$ for Australian-dollar figures; no mixed-currency
+ * aggregation without a documented method). `currencyApproval` is therefore
+ * `"approved"`.
  *
  * This module is pure content plus validation. It renders as a static two-column
  * strip and requires no client-side state.
@@ -55,9 +57,10 @@ export const REQUIRED_METRIC_ORDER: readonly ProofMetricId[] = [
 
 /**
  * The proof banner. Two metrics, no more: the enterprise-value figure and the
- * years-in-operation figure. It publishes now in its safe, currency-neutral draft
- * form; the open category-B queue item Q-0007 tracks the D-001 currency decision,
- * after which `currencyApproval` flips to `"approved"` (§23).
+ * years-in-operation figure. Category-B item Q-0007 approved the `$500M+` figure
+ * in its currency-neutral wording on 2026-07-29 and D-001 is decided, so
+ * `currencyApproval` is `"approved"` and the banner publishes the confirmed
+ * figure (§23).
  */
 export const proofBanner: ProofBanner = {
   metrics: [
@@ -195,10 +198,11 @@ export function validateProofBanner(banner: ProofBanner = proofBanner): string[]
   }
 
   // The currency behind the "$500M+" figure (D-001) is not a publication gate:
-  // the banner publishes in its safe, currency-neutral draft form and the open
-  // category-B queue item Q-0007 tracks the decision (§5 last row, §17, §23). The
-  // async linkage — that a still-pending currency has an open queue item — is
-  // enforced centrally in `approvalQueue.ts`, not here.
+  // the banner publishes whether the currency is still pending (in its safe,
+  // currency-neutral fallback form) or approved — as now, with Q-0007 signed off
+  // on 2026-07-29 (§5 last row, §17, §23). The async linkage — that a
+  // still-pending currency must have an open queue item — is enforced centrally
+  // in `approvalQueue.ts`, not here.
 
   return errors;
 }
@@ -217,10 +221,10 @@ export function assertProofBannerValid(banner: ProofBanner = proofBanner): void 
 
 /**
  * The proof banner a production build should render, or `null` only when the
- * model is explicitly held back (`publish: false`). The banner publishes in its
- * safe, currency-neutral draft form while the D-001 currency decision is tracked
- * by the open queue item Q-0007 — the same publish-draft default the case-study
- * model uses (§23).
+ * model is explicitly held back (`publish: false`). The banner publishes whether
+ * a figure's backing decision is still pending or, as with the now-approved
+ * `$500M+` currency (Q-0007, D-001), signed off — the same publish-draft default
+ * the case-study model uses (§23).
  */
 export function publishedProofBanner(banner: ProofBanner = proofBanner): ProofBanner | null {
   return banner.publish ? banner : null;

@@ -10,11 +10,12 @@
  * back in through markup.
  *
  * `assertProofBannerValid()` runs at render time so a drifted banner fails the
- * build instead of shipping. The banner publishes in its safe, currency-neutral
- * draft form: the `$500M+` figure uses a bare `$` while the D-001 currency
- * decision is tracked asynchronously by the open queue item Q-0007 (§23).
- * `publishedProofBanner()` returns `null` only if the model is explicitly held
- * back (`publish: false`), in which case this component renders nothing.
+ * build instead of shipping. The `$500M+` figure uses a bare `$`, and that
+ * currency-neutral wording is the approved one: Q-0007 signed it off on
+ * 2026-07-29 and the D-001 currency decision is decided (§23), so
+ * `currencyApproval` is `"approved"`. `publishedProofBanner()` returns `null`
+ * only if the model is explicitly held back (`publish: false`), in which case
+ * this component renders nothing.
  */
 import {
   proofBanner as defaultBanner,
