@@ -352,4 +352,53 @@ describe("component styles consume the design tokens (VD-101)", () => {
     // tightened leading, so several styled sections consume the scale.
     expect(consumers.length).toBeGreaterThanOrEqual(4);
   });
+
+  it("declares no radius-scale literal in any border-radius property", () => {
+    // The rounded corners that read as "brand" live in the tokens as the
+    // `--radius-*` scale (§16.4): --radius-sm for controls, --radius-md for
+    // cards, --radius-lg for the large case-study visuals. A scoped
+    // `border-radius: 0.375rem` on a control silently forks the small step:
+    // change the token and the corner that kept the literal drifts off the
+    // shared radius, exactly like a colour or spacing literal would. The scale
+    // values are read from the model so this gate tracks it rather than
+    // hand-copied numbers.
+    //
+    // As with the spacing and type-scale gates, the flag fires ONLY when a
+    // border-radius equals a defined scale step, so a genuinely off-scale value
+    // the scale has no token for — the fit card's `0.5rem`, which sits between
+    // --radius-sm and --radius-md — is left alone rather than forced onto the
+    // nearest step (which would change the rendered corner). On-scale means: use
+    // the token.
+    const radiusValues = allTokens()
+      .filter((token) => token.name.startsWith("--radius-"))
+      .map((token) => token.value);
+    expect(radiusValues.length, "radius scale must be defined").toBeGreaterThan(0);
+    const BORDER_RADIUS_PROPERTY = /^\s*border-radius\s*:/;
+    // Match each scale value as a whole CSS value (not the tail of a longer
+    // number), so e.g. `10.375rem` would not trip the `0.375rem` step.
+    const literals = radiusValues.map(
+      (value) => new RegExp(`(?<![\\d.])${value.replace(".", "\\.")}(?![\\w])`),
+    );
+    const violations: string[] = [];
+    for (const { path, source } of sources) {
+      for (const body of styleBlocks(source)) {
+        for (const line of body.split("\n")) {
+          if (!BORDER_RADIUS_PROPERTY.test(line)) continue;
+          if (literals.some((literal) => literal.test(line))) {
+            violations.push(`${rel(path)}: radius-scale literal in "${line.trim()}"`);
+          }
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
+  it("routes component corner radii through the --radius-* scale", () => {
+    // Proves the migration happened: a section references the radius tokens
+    // rather than merely dropping the literal.
+    const consumers = sources.filter(({ source }) =>
+      styleBlocks(source).some((body) => body.includes("var(--radius-")),
+    );
+    expect(consumers.length).toBeGreaterThanOrEqual(1);
+  });
 });
