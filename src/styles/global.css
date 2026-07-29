@@ -24,6 +24,14 @@
   --line-height-heading: 1.2;
   --line-height-body: 1.5;
   --letter-spacing-eyebrow: 0.12em;
+  --font-size-xs: 0.75rem; /* fine print, eyebrow labels */
+  --font-size-sm: 0.875rem; /* small labels, legal copy */
+  --font-size-lg: 1.125rem; /* lead paragraphs */
+  --font-size-xl: 1.25rem; /* prompts, metric multiples */
+  --font-size-h3: clamp(1.5rem, 3.5vw, 2.25rem); /* prominent outcome numbers */
+  --font-size-h2: clamp(1.75rem, 4vw, 2.75rem); /* section headings */
+  --font-size-h1: clamp(2rem, 5vw, 3.5rem); /* hero headline */
+  --font-size-display: clamp(2.5rem, 6vw, 4rem); /* oversized proof figures */
 
   /* Spacing — generous vertical rhythm (§16.4) */
   --space-1: 0.25rem;

@@ -37,6 +37,14 @@ The tokens ship from `src/config/designTokens.ts` (rendered to
 | `--line-height-heading` | `1.2` | New | Heading leading (§16.4). |
 | `--line-height-body` | `1.5` | New | Comfortable body leading (§16.4). |
 | `--letter-spacing-eyebrow` | `0.12em` | New | Tracking for uppercase eyebrows (§16.4). |
+| `--font-size-xs` | `0.75rem` | New | Type-scale step: fine print, eyebrow labels (§16.4). |
+| `--font-size-sm` | `0.875rem` | New | Type-scale step: small labels, legal copy (§16.4). |
+| `--font-size-lg` | `1.125rem` | New | Type-scale step: lead paragraphs (§16.4). |
+| `--font-size-xl` | `1.25rem` | New | Type-scale step: prompts, metric multiples (§16.4). |
+| `--font-size-h3` | `clamp(1.5rem, 3.5vw, 2.25rem)` | New | Fluid type-scale step: prominent outcome numbers (§16.4). |
+| `--font-size-h2` | `clamp(1.75rem, 4vw, 2.75rem)` | New | Fluid type-scale step: section headings (§16.4). |
+| `--font-size-h1` | `clamp(2rem, 5vw, 3.5rem)` | New | Fluid type-scale step: hero headline (§16.4). |
+| `--font-size-display` | `clamp(2.5rem, 6vw, 4rem)` | New | Fluid type-scale step: oversized proof figures (§16.4). |
 | `--space-1` | `0.25rem` | New | Spacing scale step (§16.4). |
 | `--space-2` | `0.5rem` | New | Spacing scale step (§16.4). |
 | `--space-3` | `0.75rem` | New | Spacing scale step (§16.4). |

@@ -122,14 +122,14 @@ const published = publishedCaseStudies(studies);
   }
 
   .cases__headline {
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-size: var(--font-size-h2);
     line-height: 1.1;
     margin: 0 0 var(--space-6);
     max-width: 24ch;
   }
 
   .cases__intro {
-    font-size: 1.125rem;
+    font-size: var(--font-size-lg);
     max-width: 56ch;
     margin: 0 0 var(--space-12);
   }
@@ -180,7 +180,7 @@ const published = publishedCaseStudies(studies);
 
   /* Large numbers are prominent (§8.5). */
   .cases__outcome {
-    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    font-size: var(--font-size-h3);
     font-weight: var(--font-weight-bold);
     line-height: 1.1;
     margin: 0 0 var(--space-2);
@@ -188,7 +188,7 @@ const published = publishedCaseStudies(studies);
   }
 
   .cases__multiple {
-    font-size: 1.25rem;
+    font-size: var(--font-size-xl);
     font-weight: var(--font-weight-bold);
     margin: 0 0 var(--space-3);
   }
@@ -210,7 +210,7 @@ const published = publishedCaseStudies(studies);
     font-weight: var(--font-weight-bold);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm);
     margin: 0 0 var(--space-2);
   }
 
@@ -230,7 +230,7 @@ const published = publishedCaseStudies(studies);
   }
 
   .cases__claim {
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm);
     opacity: 0.7;
     margin: auto 0 0;
   }

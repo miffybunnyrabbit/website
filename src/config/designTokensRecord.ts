@@ -206,6 +206,46 @@ export const tokenProvenance: readonly TokenProvenance[] = [
     provenance: "new",
     note: "Tracking for uppercase eyebrows (§16.4).",
   },
+  {
+    name: "--font-size-xs",
+    provenance: "new",
+    note: "Type-scale step: fine print, eyebrow labels (§16.4).",
+  },
+  {
+    name: "--font-size-sm",
+    provenance: "new",
+    note: "Type-scale step: small labels, legal copy (§16.4).",
+  },
+  {
+    name: "--font-size-lg",
+    provenance: "new",
+    note: "Type-scale step: lead paragraphs (§16.4).",
+  },
+  {
+    name: "--font-size-xl",
+    provenance: "new",
+    note: "Type-scale step: prompts, metric multiples (§16.4).",
+  },
+  {
+    name: "--font-size-h3",
+    provenance: "new",
+    note: "Fluid type-scale step: prominent outcome numbers (§16.4).",
+  },
+  {
+    name: "--font-size-h2",
+    provenance: "new",
+    note: "Fluid type-scale step: section headings (§16.4).",
+  },
+  {
+    name: "--font-size-h1",
+    provenance: "new",
+    note: "Fluid type-scale step: hero headline (§16.4).",
+  },
+  {
+    name: "--font-size-display",
+    provenance: "new",
+    note: "Fluid type-scale step: oversized proof figures (§16.4).",
+  },
 
   // --- Spacing: generous vertical-rhythm scale (§16.4). ---
   { name: "--space-1", provenance: "new", note: "Spacing scale step (§16.4)." },

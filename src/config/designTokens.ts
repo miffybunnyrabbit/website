@@ -111,6 +111,17 @@ export const TOKEN_GROUPS: readonly TokenGroup[] = [
       { name: "--line-height-heading", value: "1.2" },
       { name: "--line-height-body", value: "1.5" },
       { name: "--letter-spacing-eyebrow", value: "0.12em" },
+      // Type scale (§16.4). Fluid headings clamp between a mobile floor and a
+      // desktop cap; the body steps are static. Sections consume these instead
+      // of carrying their own font-size literals (VD-101).
+      { name: "--font-size-xs", value: "0.75rem", note: "fine print, eyebrow labels" },
+      { name: "--font-size-sm", value: "0.875rem", note: "small labels, legal copy" },
+      { name: "--font-size-lg", value: "1.125rem", note: "lead paragraphs" },
+      { name: "--font-size-xl", value: "1.25rem", note: "prompts, metric multiples" },
+      { name: "--font-size-h3", value: "clamp(1.5rem, 3.5vw, 2.25rem)", note: "prominent outcome numbers" },
+      { name: "--font-size-h2", value: "clamp(1.75rem, 4vw, 2.75rem)", note: "section headings" },
+      { name: "--font-size-h1", value: "clamp(2rem, 5vw, 3.5rem)", note: "hero headline" },
+      { name: "--font-size-display", value: "clamp(2.5rem, 6vw, 4rem)", note: "oversized proof figures" },
     ],
   },
   {

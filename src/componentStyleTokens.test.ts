@@ -210,4 +210,52 @@ describe("component styles consume the design tokens (VD-101)", () => {
     // styled sections consume the scale.
     expect(consumers.length).toBeGreaterThanOrEqual(8);
   });
+
+  it("declares no type-scale literal in any font-size property", () => {
+    // Headings, leads, and labels ride the `--font-size-*` type scale (§16.4). A
+    // scoped `font-size: clamp(1.75rem, 4vw, 2.75rem)` silently forks a scale
+    // step: change the token and the section that kept the literal drifts off the
+    // scale, exactly like a colour or spacing literal would. The scale values are
+    // read from the model so this gate tracks it rather than hand-copied numbers.
+    //
+    // As with the spacing gate, the flag fires ONLY when a font-size equals a
+    // defined scale step, so a genuinely off-scale value the scale has no token
+    // for — a `1.375rem` result headline, a `0.8125rem` progress label — is left
+    // alone rather than forced onto the nearest step (which would change the
+    // rendered type). On-scale means: use the token.
+    const fontSizeValues = allTokens()
+      .filter((token) => token.name.startsWith("--font-size-"))
+      .map((token) => token.value);
+    expect(fontSizeValues.length, "type scale must be defined").toBeGreaterThan(0);
+    const FONT_SIZE_PROPERTY = /^\s*font-size\s*:/;
+    // Match each scale value as a whole CSS value (not the tail of a longer
+    // number, nor a fragment of another token). Escape every regex metacharacter
+    // so the `clamp(...)` values match literally.
+    const literals = fontSizeValues.map(
+      (value) => new RegExp(`(?<![\\w.])${value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w.])`),
+    );
+    const violations: string[] = [];
+    for (const { path, source } of sources) {
+      for (const body of styleBlocks(source)) {
+        for (const line of body.split("\n")) {
+          if (!FONT_SIZE_PROPERTY.test(line)) continue;
+          if (literals.some((literal) => literal.test(line))) {
+            violations.push(`${rel(path)}: type-scale literal in "${line.trim()}"`);
+          }
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
+  it("routes component font sizes through the --font-size-* scale", () => {
+    // Proves the migration happened: the sections reference the type-scale tokens
+    // rather than merely dropping the literals.
+    const consumers = sources.filter(({ source }) =>
+      styleBlocks(source).some((body) => body.includes("var(--font-size-")),
+    );
+    // Every section sets a headline and a lead, so most styled sections consume
+    // the type scale.
+    expect(consumers.length).toBeGreaterThanOrEqual(8);
+  });
 });
