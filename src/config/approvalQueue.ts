@@ -128,10 +128,14 @@ export interface QueueItem {
 }
 
 /**
- * The live approval queue. Every entry is `open`: nothing on the site is
- * approved yet, mirroring the pending state of every content model. Approvers
- * clear items here (flipping status and recording the decision) in parallel with
- * development; the content model for a cleared item is then marked approved.
+ * The live approval queue. Most entries are still `open`, but the first owner
+ * sign-offs have landed: on 2026-07-29 Q-0006 (client logos and case-study role
+ * descriptions) and Q-0007 ($500M+ figure and the D-001 currency treatment) were
+ * approved and now carry `status: "approved"` with their decision recorded, and
+ * the matching content models (`logos`, `proofBanner`) have flipped to approved
+ * in step. Approvers clear items here (flipping status and recording the
+ * decision) in parallel with development; the content model for a cleared item is
+ * then marked approved.
  */
 export const approvalQueue: readonly QueueItem[] = [
   {
