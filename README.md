@@ -16,6 +16,27 @@ full brief, decisions, and phase plan.
 Node.js `>=20.3` (see `.nvmrc`). The plan targets Node 24 LTS in CI/Cloudflare;
 local development currently pins to the installed Node 20 LTS.
 
+## Quick start
+
+```sh
+nvm use              # Node 20, per .nvmrc
+npm ci               # install exactly the locked dependencies
+cp .env.example .env # then edit .env if you have a booking URL (see below)
+npm run dev          # serve the site at http://localhost:4321
+```
+
+`.env` is optional. The one variable it documents, `PUBLIC_CALENDLY_URL`, is the
+booking link behind the single site-wide CTA and is injected at build time — see
+[`.env.example`](./.env.example) for the constraints (https, on an approved
+Calendly host). Without it the build only **warns** and the CTA renders without a
+link; a set-but-insecure or off-host value **fails** the build.
+
+Every build prints an **approval queue** report: the content still awaiting
+sign-off (`docs/approvals/queue/`) that publishes in draft form. Two homepage
+areas intentionally render **empty** until their queue items are approved — the
+proof banner's `$500m+` figure (Q-0007) and the client logo marquee (Q-0006).
+That is expected in dev, not a bug.
+
 ## Commands
 
 | Command | Description |
