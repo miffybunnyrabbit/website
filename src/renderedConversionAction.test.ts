@@ -121,7 +121,12 @@ describe("assembled homepage offers exactly one primary conversion action", () =
     // no-JS fallback fails here — the assertions below cannot pass vacuously on a
     // page that shipped no CTA at all.
     for (const cls of REQUIRED_CTA_CLASSES) {
-      const forClass = tracked.filter((a) => attr(a, "class") === cls);
+      // Match by class-list membership, not exact equality: each CTA now also
+      // carries the shared `cta-button` mint primitive (VD-102/VD-104) alongside
+      // its per-placement class, so the attribute is a space-separated list.
+      const forClass = tracked.filter((a) =>
+        (attr(a, "class") ?? "").split(/\s+/).includes(cls),
+      );
       expect(forClass).toHaveLength(1);
     }
     // At least the four static placements are present. The fit island renders a
