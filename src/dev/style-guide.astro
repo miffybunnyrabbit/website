@@ -1,0 +1,258 @@
+---
+/**
+ * Dev-only visual style guide (implementation plan VD-106).
+ *
+ * The acceptance gate for VD-101…VD-105: it renders every design token and both
+ * shared primitives on one page so the brand system can be eyeballed at desktop
+ * and mobile widths before any section-level restyle is signed off. It invents
+ * nothing — it iterates `TOKEN_GROUPS` from `designTokens.ts` (the same source
+ * of truth that renders `global.css`), so a token added to the model appears
+ * here automatically and `devStyleGuide.test.ts` fails if it does not.
+ *
+ * This file lives under `src/dev/`, NOT `src/pages/`, and is mounted only while
+ * `astro dev` runs, via the `dev-style-guide` integration in `astro.config.mjs`
+ * (`command === "dev"`). `astro build` never sees the route, so it is excluded
+ * from the production `dist/` exactly as VD-106 requires — no noindex fig-leaf,
+ * the HTML simply never ships.
+ *
+ * Its own scoped styles ride the tokens like every gated component: no colour,
+ * spacing, or size literals. The per-token demos reference the live custom
+ * properties through inline `var(--…)` so each swatch shows the real computed
+ * value rather than a hand-copied one.
+ */
+import "../styles/global.css";
+import { TOKEN_GROUPS } from "../config/designTokens";
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Helix Collective — design system style guide (dev only)</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <main id="main" class="sg">
+      <header class="sg-head">
+        <p class="sg-eyebrow">Dev only · VD-106</p>
+        <h1 class="sg-h1">Design system style guide</h1>
+        <p class="sg-lede">
+          Every design token from <code>designTokens.ts</code> and both shared
+          primitives, on one page. Resize the window: the fluid type and spacing
+          scales are proven at mobile and desktop widths here, not in prose.
+        </p>
+      </header>
+
+      {
+        TOKEN_GROUPS.map((group) => (
+          <section class="sg-group" aria-labelledby={`group-${group.key}`}>
+            <h2 class="sg-h2" id={`group-${group.key}`}>
+              {group.title}
+            </h2>
+            <ul class="sg-rows" role="list">
+              {group.tokens.map((token) => (
+                <li class="sg-row">
+                  <div class="sg-demo">
+                    {group.key === "color" && (
+                      <span class="sg-swatch" style={`background: var(${token.name})`} />
+                    )}
+                    {group.key === "radius" && (
+                      <span
+                        class="sg-swatch sg-swatch--filled"
+                        style={`border-radius: var(${token.name})`}
+                      />
+                    )}
+                    {group.key === "spacing" && (
+                      <span class="sg-bar" style={`inline-size: var(${token.name})`} />
+                    )}
+                    {group.key === "typography" && token.name.startsWith("--font-size-") && (
+                      <span class="sg-type" style={`font-size: var(${token.name})`}>
+                        Ag
+                      </span>
+                    )}
+                    {group.key === "typography" && token.name.startsWith("--font-weight-") && (
+                      <span class="sg-type" style={`font-weight: var(${token.name})`}>
+                        Ag
+                      </span>
+                    )}
+                    {group.key === "typography" && token.name.startsWith("--letter-spacing-") && (
+                      <span class="sg-type" style={`letter-spacing: var(${token.name})`}>
+                        HELIX
+                      </span>
+                    )}
+                    {group.key === "typography" && token.name.startsWith("--line-height-") && (
+                      <span class="sg-line" style={`line-height: var(${token.name})`}>
+                        The quick brown fox jumps over the lazy dog.
+                      </span>
+                    )}
+                  </div>
+                  <div class="sg-meta">
+                    <code class="sg-name">{token.name}</code>
+                    <code class="sg-value">{token.value}</code>
+                    {token.note && <span class="sg-note">{token.note}</span>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+
+      <section class="sg-group" aria-labelledby="group-primitives">
+        <h2 class="sg-h2" id="group-primitives">
+          Shared primitives (VD-104)
+        </h2>
+        <ul class="sg-rows" role="list">
+          <li class="sg-row">
+            <div class="sg-demo">
+              <a class="cta-button" href="#main">Book a working session</a>
+            </div>
+            <div class="sg-meta">
+              <code class="sg-name">.cta-button</code>
+              <span class="sg-note">
+                The one conversion action — ink-on-mint, inverting to mint-on-ink
+                on hover and focus. Both states clear WCAG AA (§16.2).
+              </span>
+            </div>
+          </li>
+          <li class="sg-row">
+            <div class="sg-demo">
+              <a class="skip-link sg-skip-demo" href="#main">Skip to content</a>
+            </div>
+            <div class="sg-meta">
+              <code class="sg-name">.skip-link</code>
+              <span class="sg-note">
+                Off-screen until focused, then pinned top-left. Tab to it to see
+                it appear (it is the first focusable element on every page).
+              </span>
+            </div>
+          </li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  .sg {
+    max-width: var(--width-container);
+    margin-inline: auto;
+    padding: var(--space-12) var(--space-6);
+  }
+
+  .sg-head {
+    margin-bottom: var(--space-16);
+  }
+
+  .sg-eyebrow {
+    font-size: var(--font-size-xs);
+    letter-spacing: var(--letter-spacing-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-ink-800);
+  }
+
+  .sg-h1 {
+    font-size: var(--font-size-h1);
+    line-height: var(--line-height-display);
+    margin-block: var(--space-3);
+  }
+
+  .sg-lede {
+    max-width: var(--width-text);
+    font-size: var(--font-size-lg);
+    color: var(--color-ink-800);
+  }
+
+  .sg-group {
+    margin-bottom: var(--space-16);
+  }
+
+  .sg-h2 {
+    font-size: var(--font-size-xl);
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-ink-100);
+  }
+
+  .sg-rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .sg-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4) var(--space-8);
+  }
+
+  .sg-demo {
+    flex: 0 0 auto;
+    min-inline-size: var(--width-text);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .sg-swatch {
+    display: inline-block;
+    inline-size: var(--space-12);
+    block-size: var(--space-12);
+    border: 1px solid var(--color-ink-100);
+    border-radius: var(--radius-sm);
+  }
+
+  .sg-swatch--filled {
+    background: var(--color-accent);
+  }
+
+  .sg-bar {
+    display: inline-block;
+    block-size: var(--space-6);
+    background: var(--color-accent);
+    border-radius: var(--radius-sm);
+  }
+
+  .sg-type {
+    font-family: var(--font-display);
+  }
+
+  .sg-line {
+    display: inline-block;
+    max-width: var(--width-text);
+  }
+
+  .sg-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+  }
+
+  .sg-name {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .sg-value {
+    color: var(--color-ink-800);
+  }
+
+  .sg-note {
+    flex-basis: 100%;
+    font-size: var(--font-size-sm);
+    color: var(--color-ink-800);
+  }
+
+  /* Pin the demo skip link into view so the guide can show its focused state
+     without the visitor having to tab to it. */
+  .sg-skip-demo {
+    position: static;
+    top: auto;
+    left: auto;
+  }
+</style>
