@@ -92,8 +92,20 @@ const copyright = copyrightLine(year, published);
 </footer>
 
 <style>
+  /* White-on-black footer (VD-102). The 2026-07-29 live-site audit
+     (currentSiteAudit.ts, R-001, colour-usage) records that "the hero and footer
+     run white-on-black" on pure black `#000000` (the `--color-ink-900` token).
+     The hero opens on that black surface; the footer closes on it, bookending the
+     page and giving the institutional sign-off the same confident weight as the
+     live site. White-on-black clears WCAG AA at the maximum 21:1 ratio (§16.2),
+     asserted in footerSurface.test.ts. The footer sits directly below the white
+     final CTA, so the full-bleed colour change delineates it — no hairline top
+     border is needed (mirroring the hero). Every footer link inherits its colour
+     (`a { color: inherit }`, global.css), so the brand mark, external links, and
+     the mailto link all read white on the black surface without per-link rules. */
   .site-footer {
-    border-top: 1px solid var(--color-ink-100);
+    background-color: var(--color-ink-900);
+    color: var(--color-white);
   }
 
   .site-footer__inner {
