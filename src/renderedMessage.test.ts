@@ -93,6 +93,19 @@ describe("assembled homepage carries the required §24 message", () => {
     for (const step of howWeWorkSteps) {
       expect(html).toContain(step.number);
       expect(html).toContain(step.title);
+      // §24 requires more than the stage *label* reach the visitor: each stage's
+      // meaning "must survive copy editing" (§11.1–11.4) — stage one built at
+      // Helix's own cost/time, stage two paid-as-we-deliver plus back-end upside
+      // and board alignment, stage three embedded delivery against agreed
+      // objectives, stage four sustainable handover, clean exit, and gain-share.
+      // The model pins those as per-stage `requiredConcepts`; assert they reach
+      // the composed page (as WhyHelix does above), so a regression that dropped
+      // the `<p class="how__step-body">` line — shipping numbered, titled but
+      // meaningless stages — fails here instead of silently stripping the §24
+      // message. Driven off the model so the two cannot drift.
+      for (const concept of step.requiredConcepts) {
+        expect(lower).toContain(concept.toLowerCase());
+      }
     }
   });
 
