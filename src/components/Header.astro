@@ -60,10 +60,10 @@ const { brand, items, ctaLabel } = headerNav;
     /* Wrap the brand/nav/CTA row so a narrow viewport (320 px) reflows the
        long CTA onto its own line instead of overflowing the page (FX-201). */
     flex-wrap: wrap;
-    gap: 1rem 1.5rem;
+    gap: var(--space-4) var(--space-6);
     max-width: var(--width-container);
     margin-inline: auto;
-    padding: 1rem 1.5rem;
+    padding: var(--space-4) var(--space-6);
   }
 
   .site-header__brand {
@@ -75,7 +75,7 @@ const { brand, items, ctaLabel } = headerNav;
   .site-header__nav-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: var(--space-4);
     margin: 0;
     padding: 0;
     list-style: none;

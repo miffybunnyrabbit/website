@@ -98,15 +98,15 @@ const visible = marqueeLogos(logos);
   .marquee__viewport {
     display: flex;
     width: max-content;
-    padding-block: 2.5rem;
+    padding-block: var(--space-10);
   }
 
   .marquee__track {
     display: flex;
     align-items: center;
-    gap: 3rem;
+    gap: var(--space-12);
     margin: 0;
-    padding: 0 1.5rem;
+    padding: 0 var(--space-6);
     list-style: none;
     animation: marquee-scroll 40s linear infinite;
   }
@@ -140,7 +140,7 @@ const visible = marqueeLogos(logos);
     .marquee__track {
       flex-wrap: wrap;
       justify-content: center;
-      gap: 2rem 3rem;
+      gap: var(--space-8) var(--space-12);
       animation: none;
     }
 

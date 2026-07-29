@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, it, expect } from "vitest";
-import { tokenValue } from "./config/designTokens";
+import { allTokens, tokenValue } from "./config/designTokens";
 
 /**
  * VD-101 gate — every component consumes the design tokens instead of carrying
@@ -156,6 +156,58 @@ describe("component styles consume the design tokens (VD-101)", () => {
       styleBlocks(source).some((body) => body.includes("var(--width-container)")),
     );
     // The container caps every section shell, so most styled sections consume it.
+    expect(consumers.length).toBeGreaterThanOrEqual(8);
+  });
+
+  it("declares no spacing-scale literal in any rhythm property", () => {
+    // Every rhythm value — padding, margin, gap — rides the `--space-*` scale
+    // (§16.4). A scoped `margin: 1.5rem` silently forks that step: change the
+    // token and the section that kept the literal drifts off the rhythm, exactly
+    // like a colour or container-width literal would. The scale values are read
+    // from the model so this gate tracks it rather than hand-copied numbers.
+    //
+    // The gate flags a value ONLY when it equals a `--space-*` step, so a
+    // genuinely off-scale value that the scale has no token for — the `-1px` of
+    // the visually-hidden clip pattern, a bespoke `0.375rem` micro-margin — is
+    // left alone rather than forced onto the nearest step (which would change the
+    // rendered layout). On-scale means: use the token.
+    const spacingValues = allTokens()
+      .filter((token) => token.name.startsWith("--space-"))
+      .map((token) => token.value);
+    expect(spacingValues.length, "spacing scale must be defined").toBeGreaterThan(0);
+    // A rhythm property whose value could ride the spacing scale. Positioning
+    // offsets (top/left/right/bottom/inset) are geometric, not rhythm, so they
+    // are out of scope — a connector's `left: 0.85rem` aligns to a marker, it is
+    // not a spacing step.
+    const RHYTHM_PROPERTY =
+      /^\s*(margin|padding|gap|row-gap|column-gap)(-(top|right|bottom|left|block|inline|block-start|block-end|inline-start|inline-end))?\s*:/;
+    // Match each scale value only as a whole CSS token (not the tail of a longer
+    // number), so e.g. `12.5rem` does not trip the `2.5rem` step.
+    const literals = spacingValues.map(
+      (value) => new RegExp(`(?<![\\d.])${value.replace(".", "\\.")}(?![\\w])`),
+    );
+    const violations: string[] = [];
+    for (const { path, source } of sources) {
+      for (const body of styleBlocks(source)) {
+        for (const line of body.split("\n")) {
+          if (!RHYTHM_PROPERTY.test(line)) continue;
+          if (literals.some((literal) => literal.test(line))) {
+            violations.push(`${rel(path)}: spacing-scale literal in "${line.trim()}"`);
+          }
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
+
+  it("routes component spacing through the --space-* scale", () => {
+    // Proves the migration happened: the sections reference the spacing tokens
+    // rather than merely dropping the literals.
+    const consumers = sources.filter(({ source }) =>
+      styleBlocks(source).some((body) => body.includes("var(--space-")),
+    );
+    // Every section shell carries padding and inter-element rhythm, so most
+    // styled sections consume the scale.
     expect(consumers.length).toBeGreaterThanOrEqual(8);
   });
 });
