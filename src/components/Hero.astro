@@ -20,7 +20,7 @@ const supportingCopy = heroSupportingCopy(hero);
 
 <section class="hero" id="top" aria-labelledby="hero-headline">
   <div class="hero__inner">
-    <p class="hero__eyebrow">{eyebrow}</p>
+    <p class="eyebrow">{eyebrow}</p>
     <h1 class="hero__headline" id="hero-headline">{headline}</h1>
     <p class="hero__supporting">{supportingCopy}</p>
     {supportingLine && <p class="hero__line">{supportingLine}</p>}
@@ -41,12 +41,6 @@ const supportingCopy = heroSupportingCopy(hero);
     max-width: var(--width-container);
     margin-inline: auto;
     padding: var(--space-16) var(--space-6);
-  }
-
-  .hero__eyebrow {
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--letter-spacing-eyebrow);
-    margin: 0 0 var(--space-4);
   }
 
   .hero__headline {

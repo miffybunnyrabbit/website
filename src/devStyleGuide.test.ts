@@ -67,6 +67,7 @@ describe("the dev style guide renders the whole token system (VD-106)", () => {
     const html = await renderPage(StyleGuide);
     expect(html).toContain("cta-button");
     expect(html).toContain("skip-link");
+    expect(html).toContain('class="eyebrow"');
   });
 
   it("shows the mint accent so the brand colour is eyeballable", async () => {

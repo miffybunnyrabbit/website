@@ -465,6 +465,27 @@ a {
   color: var(--color-accent);
 }
 
+/* Section eyebrow / kicker — the short tracked label above a section headline,
+   given the §16.1 mint accent (VD-102) as a shared primitive so every section's
+   eyebrow is identical (VD-104). Mint is a surface/graphic colour, not a text
+   colour (mint-on-white fails contrast, §16.2), so the accent is a short mint
+   rule set before the label rather than colouring the label text itself. */
+.eyebrow {
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-eyebrow);
+  margin: 0 0 var(--space-4);
+}
+
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  inline-size: var(--space-6);
+  block-size: 0.15em;
+  margin-inline-end: var(--space-3);
+  vertical-align: middle;
+  background-color: var(--color-accent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
