@@ -56,9 +56,10 @@ const published = publishedProofBanner(banner);
 <style>
   /* Black-on-mint proof strip (VD-102). The 2026-07-29 live-site audit
      (currentSiteAudit.ts, R-001) records the proof strip as one of the site's
-     full-bleed mint section backgrounds carrying black text; the strip is the
-     homepage's single mint surface, so the accent lands here as a full-bleed
-     block rather than as a hairline accent. Mint is a surface colour, not a text
+     full-bleed mint section backgrounds carrying black text; the strip is one
+     of them (the case-studies band is another, gated by casesSurface.test.ts),
+     so the accent lands here as a full-bleed block rather than as a hairline
+     accent. Mint is a surface colour, not a text
      colour — ink-on-mint clears WCAG AA where mint-on-white fails it (§16.2) —
      so the text is pinned to ink and the pairing's contrast is asserted in
      proofBannerSurface.test.ts. The full-bleed colour change delineates the

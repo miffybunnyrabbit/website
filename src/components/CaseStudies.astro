@@ -105,8 +105,30 @@ const published = publishedCaseStudies(studies);
 }
 
 <style>
+  /* Black-on-mint case-studies band (VD-102). The 2026-07-29 live-site audit
+     (currentSiteAudit.ts:colour-usage, R-001) records mint on three full-bleed
+     section backgrounds; the RW-002 desktop screenshot
+     (docs/research/current-site/desktop/homepage.png) shows the case-studies
+     band — "how we turn 'why not?' into successful ventures" — as one of them,
+     sitting exactly where this section falls in the rebuild order (after the
+     logo marquee, before the manifesto). So the accent lands here as a
+     full-bleed block, the same treatment the proof strip carries. Mint is a
+     surface colour, not a text colour — ink-on-mint clears WCAG AA where
+     mint-on-white fails it (§16.2) — so the text is pinned to ink and the
+     pairing's contrast is asserted in casesSurface.test.ts. The full-bleed
+     colour change delineates the band from the white sections around it, so the
+     former hairline bottom border is dropped. */
   .cases {
-    border-bottom: 1px solid var(--color-ink-100);
+    background-color: var(--color-accent);
+    color: var(--color-helix-ink);
+  }
+
+  /* The shared .eyebrow renders its accent as a short mint rule (::before),
+     which would be mint-on-mint and vanish against this surface; invert it to
+     ink so the mark stays visible — the same ink-on-mint inversion the surface
+     applies to the text. */
+  .cases :global(.eyebrow::before) {
+    background-color: var(--color-helix-ink);
   }
 
   .cases__inner {
