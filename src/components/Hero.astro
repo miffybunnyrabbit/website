@@ -33,8 +33,18 @@ const supportingCopy = heroSupportingCopy(hero);
 </section>
 
 <style>
+  /* White-on-black hero (VD-102). The 2026-07-29 live-site audit
+     (currentSiteAudit.ts, R-001) records the hero as running white-on-black —
+     pure black `#000000`, the `--color-ink-900` token. The hero carries the
+     site's single most important statement, so it leads as a full-bleed black
+     surface rather than the default white body, mirroring the live site's
+     confident, high-impact opening. White-on-black clears WCAG AA at the maximum
+     21:1 ratio (§16.2), asserted in heroSurface.test.ts. The full-bleed colour
+     change delineates the hero from the mint proof strip directly below it, so
+     no hairline border is needed. */
   .hero {
-    border-bottom: 1px solid var(--color-ink-100);
+    background-color: var(--color-ink-900);
+    color: var(--color-white);
   }
 
   .hero__inner {
