@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   assertCaseStudiesValid,
@@ -267,5 +269,23 @@ describe("validateCaseStudies guardrails", () => {
     expect(stageLabel("0-to-1-to-10")).toBe("0 → 1 → 10");
     expect(stageLabel("0-to-1")).toBe("0 → 1");
     expect(stageLabel("scale")).toBe("Scale");
+  });
+});
+
+describe("case-study logo assets", () => {
+  // `CaseStudies.astro` renders `/logos/<study.logo>` verbatim, so a logo
+  // filename that names a file not committed under public/logos/ ships a broken
+  // image the moment a study publishes. `publishedAssets` only gates the assets
+  // of *published* studies, and every study is `publish: false` today — so that
+  // gate is silent about drift here. This gate is publish-state-independent:
+  // it caught the Q-0006 flip that renamed the committed assets to `.png`
+  // (logos.ts was updated; these `logo:` fields were left naming `.svg`).
+  const logoDir = new URL("../../public/logos/", import.meta.url);
+
+  it("commits every referenced logo file under public/logos/", () => {
+    for (const study of caseStudies) {
+      const path = fileURLToPath(new URL(study.logo, logoDir));
+      expect(existsSync(path), `${study.slug}: missing public/logos/${study.logo}`).toBe(true);
+    }
   });
 });

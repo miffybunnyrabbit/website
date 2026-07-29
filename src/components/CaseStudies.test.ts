@@ -111,7 +111,7 @@ describe("CaseStudies.astro", () => {
     // Logo with an accessible name, stage tag, the outcome, the value multiple,
     // the causal 'how we moved it' mechanism, and the evidence note.
     expect(html).toContain('alt="Neara logo"');
-    expect(html).toContain("/logos/neara.svg");
+    expect(html).toContain("/logos/neara.png");
     expect(html).toContain(stageLabel("0-to-1-to-10"));
     expect(html).toContain("20×");
     expect(html.toLowerCase()).toContain("how we moved it");
