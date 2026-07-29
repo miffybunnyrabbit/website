@@ -77,6 +77,8 @@ assertFinalCtaCopyValid(copy);
     font-weight: 700;
     letter-spacing: 0.04em;
     text-decoration: none;
-    white-space: nowrap;
+    /* Wrap the long approved label instead of overflowing a 320 px viewport
+       (FX-201). */
+    overflow-wrap: break-word;
   }
 </style>

@@ -57,7 +57,10 @@ const { brand, items, ctaLabel } = headerNav;
   .site-header__inner {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    /* Wrap the brand/nav/CTA row so a narrow viewport (320 px) reflows the
+       long CTA onto its own line instead of overflowing the page (FX-201). */
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
     max-width: 72rem;
     margin-inline: auto;
     padding: 1rem 1.5rem;
@@ -81,6 +84,8 @@ const { brand, items, ctaLabel } = headerNav;
   .site-header__cta {
     font-weight: 700;
     text-decoration: none;
-    white-space: nowrap;
+    /* Let the long approved label wrap at word boundaries rather than forcing
+       a single line that overflows a 320 px viewport (FX-201). */
+    overflow-wrap: break-word;
   }
 </style>
