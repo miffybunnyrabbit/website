@@ -24,10 +24,10 @@
  *   - Colours come from §16.1 (brand mint/ink/white) and §16.2 (neutrals derived
  *     from ink and white). The sample focus colour is only accepted after the
  *     contrast check §16.2 requires.
- *   - Fonts (P3-003) are NOT self-hosted here: §16.3 requires a design audit to
- *     record the exact families and a legal self-hosting plan first. Until then
- *     the token uses a safe system stack, exactly as the OG image (P7-003) and
- *     CSP (P7-008) are deferred until their inputs are approved.
+ *   - Fonts (P3-003) are self-hosted latin woff2 subsets of Oswald 700 and
+ *     Roboto 400–700 — the families the 2026-07-29 live-site audit identified,
+ *     cleared for self-hosting by the D-010 decision (both are open-licence
+ *     Google Fonts). `BaseLayout.astro` preloads the two files.
  *
  * This module is pure configuration plus validation and string rendering: no UI,
  * no I/O.
@@ -93,17 +93,18 @@ export const TOKEN_GROUPS: readonly TokenGroup[] = [
   },
   {
     key: "typography",
-    title: "Typography — system stack until the §16.3 font audit and self-hosting plan (P3-003)",
+    title: "Typography — self-hosted Oswald and Roboto per the §16.3 audit and D-010 (P3-003)",
     tokens: [
       {
         name: "--font-body",
         value:
-          'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+          'Roboto, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif',
+        note: "self-hosted latin subset in /fonts/, D-010 decided 2026-07-29",
       },
       {
         name: "--font-display",
-        value: "var(--font-body)",
-        note: "swapped for the approved condensed display face once §16.3 is resolved",
+        value: "Oswald, var(--font-body)",
+        note: "the audited condensed display face, self-hosted per D-010",
       },
       { name: "--font-weight-regular", value: "400" },
       { name: "--font-weight-bold", value: "700" },
@@ -361,7 +362,26 @@ function renderRoot(groups: readonly TokenGroup[]): string {
  * focus colour, the visually-hidden-until-focused skip link
  * `BaseLayout.astro` renders, and a reduced-motion override (P3-005).
  */
-const RESET_AND_GLOBALS = `*,
+const RESET_AND_GLOBALS = `/* Self-hosted brand fonts (P3-003, D-010): latin woff2 subsets, swap so text
+   is never invisible while they load. Oswald carries the display headings; the
+   Roboto file is a variable font covering the 400–700 range the body uses. */
+@font-face {
+  font-family: Oswald;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/oswald-700-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/roboto-variable-latin.woff2") format("woff2");
+}
+
+*,
 *::before,
 *::after {
   box-sizing: border-box;

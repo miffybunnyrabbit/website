@@ -91,19 +91,19 @@ describe("design-token inventory (R-002)", () => {
     }
   });
 
-  it("requires the font tokens to be licence-pending and governed by D-010", () => {
+  it("requires the font tokens to be exact and governed by D-010 now it is decided", () => {
     for (const name of FONT_TOKEN_NAMES) {
       const entry = tokenProvenance.find((e) => e.name === name)!;
-      expect(entry.provenance, name).toBe("licence-pending");
+      expect(entry.provenance, name).toBe("exact");
       expect(entry.governingDecision, name).toBe(GOVERNING_DECISION_ID);
     }
-    // Flipping a font token off its gate is caught.
+    // Sliding a font token back to its pre-decision placeholder state is caught.
     const p = cloneProvenance();
     const body = p.find((e) => e.name === "--font-body")!;
-    body.provenance = "exact";
+    body.provenance = "licence-pending";
     delete body.governingDecision;
     const errors = validateDesignTokensRecord(p).join("\n");
-    expect(errors).toContain("must be \"licence-pending\"");
+    expect(errors).toContain('must be "exact"');
     expect(errors).toContain(`governed by ${GOVERNING_DECISION_ID}`);
   });
 
@@ -123,20 +123,20 @@ describe("design-token inventory (R-002)", () => {
     expect(OMITTED_CATEGORIES.every((c) => c.reason.trim().length > 0)).toBe(true);
   });
 
-  it("links a real, still-open D-010 decision", () => {
+  it("links the real, now-decided D-010 decision", () => {
     const governing = decisions.find((d) => d.id === GOVERNING_DECISION_ID);
     expect(governing, GOVERNING_DECISION_ID).toBeDefined();
-    // R-002 publishes as a pending baseline while the font decision is open.
-    expect(DESIGN_TOKENS_REVIEW.status).toBe("pending");
-    expect(governing!.status).toBe("open");
+    // D-010 was decided on 2026-07-29, so R-002 may (and does) read approved.
+    expect(governing!.status).toBe("decided");
+    expect(DESIGN_TOKENS_REVIEW.status).toBe("approved");
   });
 
-  it("forbids marking the record approved while D-010 is still open", () => {
+  it("accepts the approved record now D-010 is decided", () => {
     const original = DESIGN_TOKENS_REVIEW.status;
     try {
       (DESIGN_TOKENS_REVIEW as { status: string }).status = "approved";
       const errors = validateDesignTokensRecord();
-      expect(errors.join("\n")).toContain("marked approved");
+      expect(errors.join("\n")).not.toContain("marked approved");
     } finally {
       (DESIGN_TOKENS_REVIEW as { status: string }).status = original;
     }

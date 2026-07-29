@@ -23,35 +23,50 @@ async function renderMarquee(props?: {
   return container.renderToString(LogoMarquee, { props: props ?? {} });
 }
 
-/** The real register with the named brands' rights confirmed (retain+approved). */
+/** The register with every retained brand's rights back to pending (pre-Q-0006). */
+function allPending(): LogoEntry[] {
+  return logos.map((e) => ({ ...e, permission: "pending" as const }));
+}
+
+/** The all-pending register with only the named brands' rights confirmed. */
 function approve(...names: string[]): LogoEntry[] {
   const wanted = new Set(names.map((n) => n.toLowerCase()));
-  return logos.map((e) =>
+  return allPending().map((e) =>
     wanted.has(e.name.toLowerCase()) ? { ...e, status: "retain", permission: "approved" } : e,
   );
 }
 
 describe("LogoMarquee.astro", () => {
-  it("renders nothing while no logo's rights are confirmed (the site default)", async () => {
-    // Every register entry is still `permission: "pending"` (R-008), so the
-    // marquee is gated shut — nothing must leak into the build.
-    expect(marqueeLogos(logos)).toHaveLength(0);
+  it("renders every retained logo in the site default (Q-0006 approved)", async () => {
+    // Q-0006 cleared every retained brand's rights on 2026-07-29, so the site
+    // default renders the full marquee from local assets.
+    expect(marqueeLogos(logos)).toHaveLength(18);
     const html = await renderMarquee();
+    expect(html).toContain("marquee__item");
+    expect(html).toContain('src="/logos/canva.png"');
+  });
+
+  it("renders nothing when no logo's rights are confirmed", async () => {
+    // With every entry back at `permission: "pending"` (the pre-Q-0006 state)
+    // the marquee is gated shut — nothing must leak into the build.
+    const pending = allPending();
+    expect(marqueeLogos(pending)).toHaveLength(0);
+    const html = await renderMarquee({ logos: pending });
     expect(html).not.toContain("marquee__item");
     expect(html).not.toContain("<img");
   });
 
   it("renders a logo image with alt text once an entry is approved", async () => {
     const html = await renderMarquee({ logos: approve("Neara") });
-    expect(html).toContain('src="/logos/neara.svg"');
+    expect(html).toContain('src="/logos/neara.png"');
     expect(html).toContain('alt="Neara"');
   });
 
   it("renders only entries that are both retained and approved", async () => {
-    // Neara is cleared for use; Ferovinum stays pending in the register.
+    // Neara is cleared for use; Ferovinum stays pending in the fixture.
     const html = await renderMarquee({ logos: approve("Neara") });
-    expect(html).toContain("neara.svg");
-    expect(html).not.toContain("ferovinum.svg");
+    expect(html).toContain("neara.png");
+    expect(html).not.toContain("ferovinum.png");
   });
 
   it("never uses a Webflow CDN path for an asset (local assets only)", async () => {

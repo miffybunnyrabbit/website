@@ -198,7 +198,11 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "All marquee logos and case-study role descriptions publish under pending permission until each client or authorised owner confirms.",
     requiredApprovers: REQUIRED_APPROVERS.C,
-    status: "open",
+    status: "approved",
+    decision:
+      "Owner approved publication of every retained client/partner logo and the case-study role descriptions. The logo assets are the same files the live site already publishes, stored locally under public/logos/ (never hotlinked, §8.4); logos.ts permissions flip to approved.",
+    decisionDate: "2026-07-29",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "Q-0007-proof-enterprise-value",
@@ -208,7 +212,11 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "$500M+ ENTERPRISE VALUE CREATED publishes in its safe, deliberately currency-neutral draft form; confirming the currency behind the figure is the open D-001 decision this item tracks.",
     requiredApprovers: REQUIRED_APPROVERS.B,
-    status: "open",
+    status: "approved",
+    decision:
+      "Owner approved the $500M+ enterprise-value figure in its currency-neutral wording, and with it the D-001 currency treatment (currency-neutral aggregate; A$ for Australian-dollar figures; no mixed-currency aggregation without a documented method).",
+    decisionDate: "2026-07-29",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "Q-0008-strategic-copy",

@@ -108,9 +108,13 @@ export const decisions: readonly DecisionRecord[] = [
       "The $500M+ and case-study figures use a bare `$` without naming a currency across AU, UK, and crypto markets.",
     recommendedDefault:
       "Publish a deliberately currency-neutral `$500M+`; use A$ for Australian-dollar valuations and the local currency elsewhere; never aggregate mixed currencies without a documented conversion method.",
-    status: "open",
+    status: "decided",
     queueItem: "Q-0007-proof-enterprise-value",
     gate: "proof-currency",
+    decision:
+      "Adopt the recommended default: the aggregate publishes as the deliberately currency-neutral $500M+ (approved with the figure via Q-0007); currency-specific values use A$ for Australian-dollar figures and the local currency elsewhere; mixed currencies are never aggregated without a documented conversion method (R-005).",
+    decisionDate: "2026-07-29",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "D-0002-enterprise-value-terminology",
@@ -200,9 +204,13 @@ export const decisions: readonly DecisionRecord[] = [
       "The live site's actual font family and licensing must be audited before any commercial font is self-hosted.",
     recommendedDefault:
       "Use a high-quality, approved, metrically similar fallback unless the original font can legally be used.",
-    status: "open",
+    status: "decided",
     notes:
       "Design/engineering licensing call with no content/legal-approval queue item; tracked here and in the design-token work, not in the approval queue.",
+    decision:
+      "Self-host the live site's own families, identified by the 2026-07-29 computed-value audit: Oswald 700 (display) and Roboto 400–700 (body). Both are Google Fonts under open licences (Oswald: SIL OFL 1.1; Roboto: Apache 2.0), so self-hosting is permitted; latin woff2 subsets are committed under public/fonts/ and preloaded per P3-003.",
+    decisionDate: "2026-07-29",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "D-0011-analytics",

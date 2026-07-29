@@ -64,15 +64,24 @@ describe("decisions register content (§6)", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("starts every decision open with no recorded decision (honest default)", () => {
+  it("carries the 2026-07-29 owner decisions; everything else stays open", () => {
+    const decided = new Set(["D-0001-currency", "D-0010-font-rights"]);
     for (const d of decisions) {
-      expect(d.status, d.id).toBe("open");
-      expect(isDecided(d), d.id).toBe(false);
-      expect(d.decision, d.id).toBeUndefined();
-      expect(d.decisionDate, d.id).toBeUndefined();
-      expect(d.decidedBy, d.id).toBeUndefined();
+      if (decided.has(d.id)) {
+        expect(d.status, d.id).toBe("decided");
+        expect(isDecided(d), d.id).toBe(true);
+        expect(d.decision, d.id).toBeTruthy();
+        expect(d.decisionDate, d.id).toBe("2026-07-29");
+        expect(d.decidedBy, d.id).toContain("Helix owner");
+      } else {
+        expect(d.status, d.id).toBe("open");
+        expect(isDecided(d), d.id).toBe(false);
+        expect(d.decision, d.id).toBeUndefined();
+        expect(d.decisionDate, d.id).toBeUndefined();
+        expect(d.decidedBy, d.id).toBeUndefined();
+      }
     }
-    expect(openDecisions()).toHaveLength(decisions.length);
+    expect(openDecisions()).toHaveLength(decisions.length - decided.size);
   });
 
   it("points every named approval-queue item at a real queue item", () => {
@@ -109,13 +118,10 @@ describe("decisions register content (§6)", () => {
 });
 
 describe("gateApproved", () => {
-  it("reads all three content gates as not-yet-approved today", () => {
-    const gates: DecisionGateId[] = [
-      "proof-currency",
-      "hero-performance-linked",
-      "engagement-model",
-    ];
-    for (const g of gates) expect(gateApproved(g), g).toBe(false);
+  it("reads the currency gate approved (Q-0007/D-001); the others pending", () => {
+    expect(gateApproved("proof-currency")).toBe(true);
+    expect(gateApproved("hero-performance-linked")).toBe(false);
+    expect(gateApproved("engagement-model")).toBe(false);
   });
 });
 
@@ -170,10 +176,22 @@ describe("validateDecisions", () => {
   });
 
   it("flags a content gate approved while its decision is still open", () => {
-    // Stub the gate reader so proof-currency reads approved; the owning decision
-    // D-0001 is still open, so the §2 cross-check must fire.
+    // Stub the gate reader so proof-currency reads approved against a register
+    // where the owning decision D-0001 is wound back to open; the §2 cross-check
+    // must fire.
     const approveProofCurrency = (g: DecisionGateId) => g === "proof-currency";
-    expect(validateDecisions(decisions, approvalQueue, approveProofCurrency)).toContain(
+    const wound = decisions.map((d) =>
+      d.id === "D-0001-currency"
+        ? {
+            ...d,
+            status: "open" as const,
+            decision: undefined,
+            decisionDate: undefined,
+            decidedBy: undefined,
+          }
+        : d,
+    );
+    expect(validateDecisions(wound, approvalQueue, approveProofCurrency)).toContain(
       'Content gate "proof-currency" reads "approved" but decision "D-0001-currency" is still open; record the decision before approving the gate.',
     );
   });
@@ -224,8 +242,8 @@ describe("validateDecisions", () => {
 describe("formatOpenDecisionsWarning", () => {
   it("lists every open decision", () => {
     const warning = formatOpenDecisionsWarning();
-    expect(warning).toContain("12 open §6 decision(s)");
-    for (const d of decisions) expect(warning).toContain(d.id);
+    expect(warning).toContain("10 open §6 decision(s)");
+    for (const d of openDecisions()) expect(warning).toContain(d.id);
   });
 
   it("reports none open when the register is empty of open items", () => {
@@ -254,7 +272,7 @@ describe("generated one-file-per-decision records (§6)", () => {
   });
 
   it("shows the decision block only once a decision is decided", () => {
-    const open = decisions[0];
+    const open = decisions.find((d) => d.status === "open")!;
     expect(renderDecisionMarkdown(open)).toContain("No decision recorded yet");
 
     const decided: DecisionRecord = {

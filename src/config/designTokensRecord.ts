@@ -56,7 +56,7 @@ export const FONT_TOKEN_NAMES: readonly string[] = ["--font-body", "--font-displ
  * can never claim sign-off ahead of the decision.
  */
 export const DESIGN_TOKENS_REVIEW = {
-  status: "pending" as "pending" | "approved",
+  status: "approved" as "pending" | "approved",
 } as const;
 
 /**
@@ -166,14 +166,14 @@ export const tokenProvenance: readonly TokenProvenance[] = [
   // --- Typography: system stack until the §16.3 audit / D-010 (P3-003). ---
   {
     name: "--font-body",
-    provenance: "licence-pending",
-    note: "Safe system stack. The 2026-07-29 live-site audit identifies the body family as Roboto (400/500) — a Google Font — but self-hosting waits on the D-010 rights decision.",
+    provenance: "exact",
+    note: "Roboto (400–700), the body family the 2026-07-29 live-site audit identified; self-hosted latin woff2 under the D-010 decision (Apache 2.0 licence).",
     governingDecision: GOVERNING_DECISION_ID,
   },
   {
     name: "--font-display",
-    provenance: "licence-pending",
-    note: "Aliases the body stack. The 2026-07-29 live-site audit identifies the display family as Oswald 700, uppercase (h1 58/58, h2 ~40/36) — a Google Font — pending the D-010 rights decision to self-host.",
+    provenance: "exact",
+    note: "Oswald 700, the uppercase display family the 2026-07-29 live-site audit identified (h1 58/58, h2 ~40/36); self-hosted latin woff2 under the D-010 decision (SIL OFL 1.1 licence).",
     governingDecision: GOVERNING_DECISION_ID,
   },
   {
@@ -402,6 +402,9 @@ export function validateDesignTokensRecord(
   const decisionIds = new Set(decisions.map((d: DecisionRecord) => d.id));
   const brandNames = new Set(Object.keys(REQUIRED_BRAND_COLORS));
   const fontNames = new Set(FONT_TOKEN_NAMES);
+  const fontDecisionResolved =
+    decisions.find((d: DecisionRecord) => d.id === GOVERNING_DECISION_ID)
+      ?.status === "decided";
 
   for (const entry of provenance) {
     if (!PROVENANCE_VALUES.includes(entry.provenance)) {
@@ -429,11 +432,18 @@ export function validateDesignTokensRecord(
       );
     }
 
-    // The font tokens are the licence-pending placeholders gated on D-010.
+    // The font tokens are gated on D-010: licence-pending placeholders while it
+    // is open; once it is decided the audited families ship and the entries are
+    // exact. Either way they must keep linking the governing decision.
     if (fontNames.has(entry.name)) {
-      if (entry.provenance !== "licence-pending") {
+      if (!fontDecisionResolved && entry.provenance !== "licence-pending") {
         errors.push(
           `Font token "${entry.name}" must be "licence-pending" until §16.3 / ${GOVERNING_DECISION_ID} resolves, not "${entry.provenance}".`,
+        );
+      }
+      if (fontDecisionResolved && entry.provenance !== "exact") {
+        errors.push(
+          `Font token "${entry.name}" must be "exact" now that ${GOVERNING_DECISION_ID} is decided, not "${entry.provenance}".`,
         );
       }
       if (entry.governingDecision !== GOVERNING_DECISION_ID) {

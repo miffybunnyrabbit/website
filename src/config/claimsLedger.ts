@@ -148,9 +148,10 @@ export const claimsLedger: readonly ClaimRecord[] = [
     id: "C-0006-portfolio-enterprise-value",
     target: { kind: "proof-metric", ref: "enterprise-value" },
     metricType: "portfolio-enterprise-value",
-    publishStatus: "researching",
+    publishStatus: "approved",
     queueItem: "Q-0007-proof-enterprise-value",
-    notes: "Currency behind the $500M+ figure is the open D-001 decision.",
+    notes:
+      "Owner approved the currency-neutral $500M+ wording via Q-0007 (2026-07-29), which also settled D-001 on its currency-neutral default.",
   },
 ];
 

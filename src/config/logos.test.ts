@@ -50,10 +50,17 @@ describe("logo register", () => {
     }
   });
 
-  it("withholds unapproved logos from the marquee until rights are confirmed", () => {
-    // The authored register has no approved permissions yet (R-008 pending), so
-    // the marquee renders nothing rather than shipping unlicensed assets.
-    expect(marqueeLogos()).toEqual([]);
+  it("publishes every retained logo now Q-0006 confirmed the rights", () => {
+    // The 2026-07-29 Q-0006 approval cleared every retained brand, so the
+    // marquee publishes the full register from local assets.
+    expect(marqueeLogos()).toHaveLength(18);
+    expect(marqueeLogos().every((l) => l.permission === "approved")).toBe(true);
+  });
+
+  it("withholds logos whose rights are not confirmed", () => {
+    // Winding permissions back to pending gates the marquee shut again.
+    const pending = logos.map((e) => ({ ...e, permission: "pending" as const }));
+    expect(marqueeLogos(pending)).toEqual([]);
   });
 
   it("renders only retained, permission-approved entries", () => {

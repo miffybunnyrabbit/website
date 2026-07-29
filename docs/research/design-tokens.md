@@ -3,7 +3,7 @@
 <!-- Generated from src/config/designTokensRecord.ts — do not edit by hand. -->
 
 **Plan references:** §17.3 R-002, §16 Visual system, decision D-010 (font rights).
-**Review status:** pending — this document is the plan's working baseline; the brand colours are observed-not-audited (§16.1) and the font families are the open §16.3 audit (D-0010-font-rights), so this record may only be marked approved once that decision is recorded.
+**Review status:** approved — this document is the plan's working baseline; the brand colours are observed-not-audited (§16.1) and the font families are the open §16.3 audit (D-0010-font-rights), so this record may only be marked approved once that decision is recorded.
 
 The tokens ship from `src/config/designTokens.ts` (rendered to
 `src/styles/global.css`). This record inventories every one of them and, per
@@ -29,8 +29,8 @@ The tokens ship from `src/config/designTokens.ts` (rendered to
 | `--color-accent` | `#5affba` | New | Accent alias of the brand mint (§16.2). |
 | `--color-focus` | `#00a864` | New | Sample focus colour introduced for the design system; contrast-checked against white in designTokens.test.ts (§16.2). |
 | `--color-text` | `#000000` | New | Body-text colour, set to the brand ink (§16.2). |
-| `--font-body` | `system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` | Licence-pending (D-0010-font-rights) | Safe system stack. The 2026-07-29 live-site audit identifies the body family as Roboto (400/500) — a Google Font — but self-hosting waits on the D-010 rights decision. |
-| `--font-display` | `var(--font-body)` | Licence-pending (D-0010-font-rights) | Aliases the body stack. The 2026-07-29 live-site audit identifies the display family as Oswald 700, uppercase (h1 58/58, h2 ~40/36) — a Google Font — pending the D-010 rights decision to self-host. |
+| `--font-body` | `Roboto, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif` | Exact (D-0010-font-rights) | Roboto (400–700), the body family the 2026-07-29 live-site audit identified; self-hosted latin woff2 under the D-010 decision (Apache 2.0 licence). |
+| `--font-display` | `Oswald, var(--font-body)` | Exact (D-0010-font-rights) | Oswald 700, the uppercase display family the 2026-07-29 live-site audit identified (h1 58/58, h2 ~40/36); self-hosted latin woff2 under the D-010 decision (SIL OFL 1.1 licence). |
 | `--font-weight-regular` | `400` | New | Standard 400 weight for the design system. |
 | `--font-weight-bold` | `700` | New | Standard 700 weight for the design system. |
 | `--line-height-display` | `1.05` | New | Tight display leading for oversized statements (§16.4). |

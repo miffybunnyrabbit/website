@@ -91,10 +91,13 @@ describe("claimsLedger model", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("keeps every claim in a publishable, unapproved research state", () => {
-    // Nothing has cleared finance/legal/owner review yet; nothing is rejected.
+  it("keeps case-study claims researching; the approved proof figure is cleared", () => {
+    // Q-0007 (2026-07-29) approved the currency-neutral portfolio figure;
+    // every case-study claim still awaits finance/legal/owner review.
     for (const claim of claimsLedger) {
-      expect(claim.publishStatus).toBe("researching");
+      expect(claim.publishStatus).toBe(
+        claim.id === "C-0006-portfolio-enterprise-value" ? "approved" : "researching",
+      );
       expect(isPublishable(claim)).toBe(true);
     }
   });

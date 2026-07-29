@@ -64,12 +64,24 @@ describe("approval queue", () => {
     );
   });
 
-  it("starts with every item open (nothing is approved yet)", () => {
+  it("carries the 2026-07-29 owner approvals; everything else stays open", () => {
+    const approved = new Set([
+      "Q-0006-client-representation",
+      "Q-0007-proof-enterprise-value",
+    ]);
     for (const item of approvalQueue) {
-      expect(item.status, item.id).toBe("open");
-      expect(isResolved(item)).toBe(false);
+      if (approved.has(item.id)) {
+        expect(item.status, item.id).toBe("approved");
+        expect(isResolved(item)).toBe(true);
+        expect(item.decision, item.id).toBeTruthy();
+        expect(item.decisionDate, item.id).toBe("2026-07-29");
+        expect(item.decidedBy, item.id).toContain("Helix owner");
+      } else {
+        expect(item.status, item.id).toBe("open");
+        expect(isResolved(item)).toBe(false);
+      }
     }
-    expect(openQueueItems()).toHaveLength(approvalQueue.length);
+    expect(openQueueItems()).toHaveLength(approvalQueue.length - approved.size);
   });
 });
 
@@ -92,17 +104,13 @@ describe("completeness cross-checks against live content", () => {
     }
   });
 
-  it("tracks the pending proof figure and pending logo permissions", () => {
-    // Both preconditions hold in the authored content, so both must be covered.
-    expect(proofBanner.currencyApproval).toBe("pending");
+  it("resolved proof figure and logo permissions need no open coverage", () => {
+    // Q-0006/Q-0007 cleared both on 2026-07-29, and the content models agree —
+    // so the live queue is valid with neither covered by an open item.
+    expect(proofBanner.currencyApproval).toBe("approved");
     expect(logos.some((l) => l.status === "retain" && l.permission === "pending"))
-      .toBe(true);
-
-    const openKinds = openQueueItems().flatMap((i) => i.coverage);
-    expect(
-      openKinds.some((c) => c.kind === "proof-metric" && c.ref === "enterprise-value"),
-    ).toBe(true);
-    expect(openKinds.some((c) => c.kind === "logo-permissions")).toBe(true);
+      .toBe(false);
+    expect(validateApprovalQueue()).toEqual([]);
   });
 
   it("fails when a pending case study loses its open queue item", () => {
@@ -113,20 +121,12 @@ describe("completeness cross-checks against live content", () => {
     expect(errors.join("\n")).toMatch(/neara.*needs sign-off/i);
   });
 
-  it("fails when the only proof-figure item is resolved", () => {
-    const queue = cloneQueue().map((i) =>
-      i.id === "Q-0007-proof-enterprise-value"
-        ? {
-            ...i,
-            status: "approved" as const,
-            decision: "Confirmed as AUD.",
-            decisionDate: "2026-07-20",
-            decidedBy: "finance-owner",
-          }
-        : i,
-    );
-    const errors = validateApprovalQueue(queue);
-    expect(errors.join("\n")).toMatch(/proof figure.*no open queue item/i);
+  it("accepts the resolved proof-figure item now the banner approval is recorded", () => {
+    // The inverse guard (a pending banner with no open item) is enforced by
+    // validateApprovalQueue against the live proofBanner model; with
+    // currencyApproval now "approved", resolving Q-0007 is legitimate.
+    const errors = validateApprovalQueue(cloneQueue());
+    expect(errors.join("\n")).not.toMatch(/proof figure/i);
   });
 
   it("tracks the pending footer identity facts (§14, §23)", () => {
@@ -312,7 +312,7 @@ describe("generated one-file-per-item records (§23)", () => {
 describe("build warning surface", () => {
   it("lists every open item on one line each", () => {
     const warning = formatOpenQueueWarning();
-    expect(warning).toMatch(/11 open item/);
+    expect(warning).toMatch(/9 open item/);
     for (const item of openQueueItems()) {
       expect(warning).toContain(item.id);
     }

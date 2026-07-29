@@ -91,9 +91,15 @@ describe("assetRegister content", () => {
     expect(humans!.containsPeople).toBe(true);
   });
 
-  it("withholds every asset whose rights are still pending", () => {
-    // Nothing is approved yet, so no asset is publishable — the honest default.
-    expect(publishableAssets()).toEqual([]);
+  it("publishes the Q-0006-approved logos and withholds the still-pending assets", () => {
+    // Q-0006 (2026-07-29) cleared every retained logo; the case-study image and
+    // the legacy humans photo stay pending/removed and must be withheld.
+    const publishable = publishableAssets();
+    expect(publishable).toHaveLength(18);
+    const filenames = new Set(publishable.map((a) => a.filename));
+    expect(filenames.has("canva.png")).toBe(true);
+    expect(filenames.has("xylo-case-study.png")).toBe(false);
+    expect(filenames.has("humans-of-helix.jpg")).toBe(false);
   });
 
   it("looks up assets by id and returns undefined for unknown ids", () => {
@@ -156,7 +162,7 @@ describe("validateAssetRegister", () => {
   });
 
   it("flags a missing register row for a logo", () => {
-    const register = cloneRegister().filter((a) => a.filename !== "neara.svg");
+    const register = cloneRegister().filter((a) => a.filename !== "neara.png");
     const errors = validateAssetRegister(register);
     expect(errors.some((e) => e.includes("has no asset-register row"))).toBe(true);
   });

@@ -2,7 +2,7 @@
 
 <!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
-- **Status:** open
+- **Status:** decided
 - **Approval-queue item:** Q-0007-proof-enterprise-value
 - **Content gate:** proof-currency
 
@@ -16,4 +16,7 @@ Publish a deliberately currency-neutral `$500M+`; use A$ for Australian-dollar v
 
 ## Decision
 
-_No decision recorded yet — this item is open and publishing its recommended default._
+Adopt the recommended default: the aggregate publishes as the deliberately currency-neutral $500M+ (approved with the figure via Q-0007); currency-specific values use A$ for Australian-dollar figures and the local currency elsewhere; mixed currencies are never aggregated without a documented conversion method (R-005).
+
+- **Decision date:** 2026-07-29
+- **Decided by:** Helix owner (jeeva@helixcollective.com)

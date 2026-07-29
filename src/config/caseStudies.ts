@@ -121,7 +121,7 @@ export const caseStudies: readonly CaseStudy[] = [
     ],
     claimIds: [],
     logo: "neara.svg",
-    clientApproval: "pending",
+    clientApproval: "approved",
     assetApproval: "pending",
   },
   {
@@ -145,7 +145,7 @@ export const caseStudies: readonly CaseStudy[] = [
     ],
     claimIds: [],
     logo: "ferovinum.svg",
-    clientApproval: "pending",
+    clientApproval: "approved",
     assetApproval: "pending",
   },
   {
@@ -167,7 +167,7 @@ export const caseStudies: readonly CaseStudy[] = [
     ],
     claimIds: [],
     logo: "13sick.svg",
-    clientApproval: "pending",
+    clientApproval: "approved",
     assetApproval: "pending",
   },
   {
@@ -188,7 +188,7 @@ export const caseStudies: readonly CaseStudy[] = [
     helixContribution: [],
     claimIds: [],
     logo: "origami.svg",
-    clientApproval: "pending",
+    clientApproval: "approved",
     assetApproval: "pending",
   },
   {
@@ -209,7 +209,7 @@ export const caseStudies: readonly CaseStudy[] = [
     helixContribution: [],
     claimIds: [],
     logo: "veyor.svg",
-    clientApproval: "pending",
+    clientApproval: "approved",
     assetApproval: "pending",
   },
 ];

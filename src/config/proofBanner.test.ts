@@ -42,11 +42,10 @@ describe("proofBanner configuration", () => {
     expect(() => assertProofBannerValid()).not.toThrow();
   });
 
-  it("publishes in its safe currency-neutral draft form while D-001 is pending", () => {
-    // The revised approach (§5 last row, §17, §23) publishes the pending claim in
-    // its safe fallback rather than withholding it; the bare "$" is deliberately
-    // currency-neutral and the open Q-0007 item tracks confirming the currency.
-    expect(proofBanner.currencyApproval).toBe("pending");
+  it("publishes the approved currency-neutral figure (Q-0007/D-001, 2026-07-29)", () => {
+    // The owner approved the deliberately currency-neutral $500M+ wording, and
+    // D-001 settled on that default, so the banner publishes as approved.
+    expect(proofBanner.currencyApproval).toBe("approved");
     expect(proofBanner.publish).toBe(true);
     expect(publishedProofBanner()).toBe(proofBanner);
   });

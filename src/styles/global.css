@@ -15,9 +15,9 @@
   --color-focus: #00a864; /* contrast-checked against white in designTokens.test.ts (§16.2) */
   --color-text: #000000;
 
-  /* Typography — system stack until the §16.3 font audit and self-hosting plan (P3-003) */
-  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-display: var(--font-body); /* swapped for the approved condensed display face once §16.3 is resolved */
+  /* Typography — self-hosted Oswald and Roboto per the §16.3 audit and D-010 (P3-003) */
+  --font-body: Roboto, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; /* self-hosted latin subset in /fonts/, D-010 decided 2026-07-29 */
+  --font-display: Oswald, var(--font-body); /* the audited condensed display face, self-hosted per D-010 */
   --font-weight-regular: 400;
   --font-weight-bold: 700;
   --line-height-display: 1.05;
@@ -61,6 +61,25 @@
   --duration-fast: 120ms;
   --duration-base: 240ms;
   --duration-slow: 480ms;
+}
+
+/* Self-hosted brand fonts (P3-003, D-010): latin woff2 subsets, swap so text
+   is never invisible while they load. Oswald carries the display headings; the
+   Roboto file is a variable font covering the 400–700 range the body uses. */
+@font-face {
+  font-family: Oswald;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/oswald-700-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/roboto-variable-latin.woff2") format("woff2");
 }
 
 *,

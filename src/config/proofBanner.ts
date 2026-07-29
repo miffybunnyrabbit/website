@@ -72,7 +72,7 @@ export const proofBanner: ProofBanner = {
       label: "YEARS IN OPERATION",
     },
   ],
-  currencyApproval: "pending",
+  currencyApproval: "approved",
   publish: true,
 };
 

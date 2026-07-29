@@ -128,10 +128,13 @@ describe("the live site", () => {
     expect(() => assertSitePublicImagesPresent(publicRoot)).not.toThrow();
   });
 
-  it("emits nothing while every logo is pending and every study unpublished", () => {
-    // The gate is armed but idle until an approval lands; this records the
-    // current baseline so a premature approval that skips its asset is visible.
-    expect(requiredPublicImagePaths()).toEqual([]);
+  it("requires every Q-0006-approved logo asset (all committed in public/)", () => {
+    // Q-0006 approved the full marquee, so the gate now demands all 18 local
+    // logo files — exactly the set committed under public/logos/.
+    const required = requiredPublicImagePaths();
+    expect(required).toHaveLength(18);
+    expect(required).toContain("logos/canva.png");
+    expect(required.every((p) => p.startsWith("logos/") && p.endsWith(".png"))).toBe(true);
   });
 
   it("resolves required paths against the real public/ directory", () => {
