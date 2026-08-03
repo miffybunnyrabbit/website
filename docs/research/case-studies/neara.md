@@ -44,7 +44,7 @@ Current A$1.1b outcome is public (see sources). Entry and end-of-engagement valu
 
 ## Backing claim IDs
 
-- `C-0001-neara-enterprise-value` — enterprise-value (researching, tracked by Q-0001-neara-valuation)
+- `C-0001-neara-enterprise-value` — enterprise-value (approved, tracked by Q-0001-neara-valuation)
 
 ## Calculation
 

@@ -146,7 +146,11 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "FROM IDEA TO A$1B+ — draft multiple and value-created figures carry [VERIFY:] markers.",
     requiredApprovers: REQUIRED_APPROVERS.B,
-    status: "open",
+    status: "approved",
+    decision:
+      "Owner approved the Neara claim: the FROM IDEA TO A$1B+ headline and the 20× / A$200m figures publish verbatim, backed by the February 2026 A$1.1b Series D reporting in the dossier. The study flips to approved and published.",
+    decisionDate: "2026-08-03",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "Q-0002-ferovinum-valuation",
@@ -165,7 +169,11 @@ export const approvalQueue: readonly QueueItem[] = [
     coverage: [{ kind: "case-study", ref: "13sick" }],
     publishedWording: "A$30M → A$150M — draft multiple carries a [VERIFY:] marker.",
     requiredApprovers: REQUIRED_APPROVERS.B,
-    status: "open",
+    status: "approved",
+    decision:
+      "Owner verified the 13SICK claim: the A$30M → A$150M headline and the 5× / A$100m figures publish verbatim. The study flips to approved and published.",
+    decisionDate: "2026-08-03",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "Q-0004-origami-valuation",
@@ -257,7 +265,11 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "Legal entity name and ABN publish as [VERIFY:] drafts and the registered office as the §12 Redfern address — all withheld from the rendered footer until the Helix owner confirms them (§14, D-007).",
     requiredApprovers: REQUIRED_APPROVERS.A,
-    status: "open",
+    status: "approved",
+    decision:
+      "Owner approved the footer identity. The legal entity (Helix Venture Studio Pty Ltd) and ABN (20 678 772 631) are the values the live site already publishes, confirmed in the 2026-07-29 audit capture; the registered office publishes as the Vine Street, Redfern address. All three facts flip to approved and render.",
+    decisionDate: "2026-08-03",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     // The engagement-model validation record (§11.7, R-012,
@@ -276,7 +288,11 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "The four-stage 'How we work' model and its unpaid-preparation, paid-as-we-deliver, back-end gain-share, embedded-delivery, and clean-exit wording publish as the plan's working baseline, documented in docs/research/engagement-model.md and withheld from production sign-off until finance, legal, and the owner confirm it (§11.7, R-012).",
     requiredApprovers: REQUIRED_APPROVERS.B,
-    status: "open",
+    status: "approved",
+    decision:
+      "Owner approved the engagement-model wording as published: unpaid preparation, paid-as-we-deliver, back-end gain-share, embedded delivery without an assigned legal status, and a clean engagement exit. The R-012 review flips to approved and D-012 is recorded on its instrument-neutral default.",
+    decisionDate: "2026-08-03",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
 ];
 

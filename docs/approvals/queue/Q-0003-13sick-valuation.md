@@ -5,7 +5,7 @@
 - **Category:** B — Financial claims
 - **Covers:** case-study (13sick)
 - **Required approvers:** finance-owner, legal-reviewer, helix-owner
-- **Status:** open
+- **Status:** approved
 
 ## Currently published draft wording or asset
 
@@ -13,4 +13,7 @@ A$30M → A$150M — draft multiple carries a [VERIFY:] marker.
 
 ## Decision
 
-_No decision recorded yet — this item is still open and publishing in draft form._
+Owner verified the 13SICK claim: the A$30M → A$150M headline and the 5× / A$100m figures publish verbatim. The study flips to approved and published.
+
+- **Decision date:** 2026-08-03
+- **Decided by:** Helix owner (jeeva@helixcollective.com)

@@ -74,9 +74,14 @@ describe("caseStudies configuration", () => {
     expect(names).not.toContain("xylo");
   });
 
-  it("keeps every quantified study unpublished until its research gate passes", () => {
-    // All five carry unresolved [VERIFY:]/[RESEARCH:] markers, so none may ship.
-    expect(caseStudies.every((s) => s.publish === false)).toBe(true);
+  it("publishes only the owner-approved studies; the rest stay gated", () => {
+    // Neara and 13SICK cleared Q-0001/Q-0003 on 2026-08-03; Ferovinum, Origami,
+    // and Veyor still carry unresolved [VERIFY:]/[RESEARCH:] markers.
+    const published = caseStudies.filter((s) => s.publish).map((s) => s.slug).sort();
+    expect(published).toEqual(["13sick", "neara"]);
+    for (const s of caseStudies.filter((s) => !s.publish)) {
+      expect(s.approvalStatus, s.slug).not.toBe("approved");
+    }
   });
 
   it("passes its own validation as authored", () => {
@@ -84,8 +89,8 @@ describe("caseStudies configuration", () => {
     expect(() => assertCaseStudiesValid()).not.toThrow();
   });
 
-  it("renders nothing until an entry is approved and published", () => {
-    expect(publishedCaseStudies()).toEqual([]);
+  it("returns the approved, published entries in order", () => {
+    expect(publishedCaseStudies().map((s) => s.slug)).toEqual(["neara", "13sick"]);
   });
 
   it("keeps the required and removed slug lists disjoint", () => {
@@ -251,7 +256,10 @@ describe("validateCaseStudies guardrails", () => {
     const idx = studies.findIndex((s) => s.slug === "neara");
     studies[idx] = approvedStudy("neara");
     expect(validateCaseStudies(studies)).toEqual([]);
-    expect(publishedCaseStudies(studies).map((s) => s.slug)).toEqual(["neara"]);
+    expect(publishedCaseStudies(studies).map((s) => s.slug)).toEqual([
+      "neara",
+      "13sick",
+    ]);
   });
 
   it("maps every engagement stage to a human-facing label", () => {

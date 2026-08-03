@@ -29,8 +29,13 @@
  * printable register can never drift from the code.
  *
  * This module is pure content plus validation: no UI, no client-side state. It
- * invents no permissions — every kept asset stays `pending` until its rights are
- * confirmed, the same honest default the logo and claims models use.
+ * invents no permissions — it derives each asset's status from the model that
+ * owns it. Q-0006 cleared all 18 marquee-logo assets for publication on
+ * 2026-07-29 (sourced from the live site's own published files), so those rows
+ * now carry `approved`; the case-study imagery and the legacy Xylo/"humans of
+ * Helix" records are still `pending` until their rights are confirmed. The gate
+ * still stands for any future entry — an unconfirmed asset stays `pending` and
+ * is withheld — the same honest default the logo and claims models use.
  */
 
 import { caseStudies, type CaseStudy } from "./caseStudies";

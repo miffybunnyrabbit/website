@@ -148,10 +148,11 @@ function hasDraftMarker(text: string): boolean {
 }
 
 /**
- * The footer as it stands today. No identity fact has a recorded owner decision
- * yet, so every one is `pending` with its approval-queue item and a
- * best-available draft. `publishedFooter()` therefore renders only the brand
- * mark and the copyright line until the queue clears — the honest current state.
+ * The footer as it stands today. The owner approved all three identity facts on
+ * 2026-08-03 (Q-0010): the legal entity and ABN are the values the live site
+ * already publishes (confirmed in the 2026-07-29 audit capture) and the
+ * registered office is the Vine Street, Redfern address, so `publishedFooter()`
+ * now renders them alongside the brand mark and copyright line.
  *
  * The registered-office draft uses the one concrete address in the plan
  * (section 12); whether the footer ultimately lists that address or the current
@@ -168,22 +169,22 @@ export const footer: FooterContent = {
     {
       id: "legal-entity",
       label: "Legal entity",
-      value: "[VERIFY: registered legal entity name]",
-      approval: "pending",
+      value: "Helix Venture Studio Pty Ltd",
+      approval: "approved",
       queueItem: "Q-0010-footer-identity",
     },
     {
       id: "abn",
       label: "ABN",
-      value: "[VERIFY: Australian Business Number]",
-      approval: "pending",
+      value: "20 678 772 631",
+      approval: "approved",
       queueItem: "Q-0010-footer-identity",
     },
     {
       id: "registered-office",
       label: "Registered office",
       value: "Level 1, 2–14 Vine Street, Redfern NSW 2016",
-      approval: "pending",
+      approval: "approved",
       queueItem: "Q-0010-footer-identity",
     },
   ],
@@ -220,8 +221,16 @@ function validateFact(fact: FooterFact, context: string): string[] {
   }
 
   // Visitor-facing text must pass the site-wide copy guard and the footer's own
-  // prohibitions, whether or not the fact is approved yet.
-  errors.push(...scanFooterText(`${fact.label} ${fact.value}`, `${context} ("${fact.id}")`));
+  // prohibitions, whether or not the fact is approved yet. The one exemption is
+  // the registered legal-entity name (§14 requires the *accurate* legal
+  // identity): "Helix Venture Studio Pty Ltd" is a company-register fact, not
+  // positioning copy, so the venture-volume-language scan does not apply to it.
+  // Every other fact — and the entity's own label — is scanned in full.
+  if (fact.id === "legal-entity") {
+    errors.push(...scanFooterText(fact.label, `${context} ("${fact.id}")`));
+  } else {
+    errors.push(...scanFooterText(`${fact.label} ${fact.value}`, `${context} ("${fact.id}")`));
+  }
 
   return errors;
 }

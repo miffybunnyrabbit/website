@@ -44,7 +44,7 @@ A scale-stage proof point: systems thinking and product rollout turning delivery
 
 ## Backing claim IDs
 
-- `C-0003-13sick-enterprise-value` — enterprise-value (researching, tracked by Q-0003-13sick-valuation)
+- `C-0003-13sick-enterprise-value` — enterprise-value (approved, tracked by Q-0003-13sick-valuation)
 
 ## Calculation
 

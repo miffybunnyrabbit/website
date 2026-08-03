@@ -2,7 +2,7 @@
 
 <!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
-- **Status:** open
+- **Status:** decided
 - **Approval-queue item:** Q-0011-engagement-model
 - **Content gate:** engagement-model
 
@@ -16,4 +16,7 @@ Helix exits the engagement cleanly once the result is sustainable; any agreed ba
 
 ## Decision
 
-_No decision recorded yet — this item is open and publishing its recommended default._
+Adopt the recommended default, approved with the engagement-model wording via Q-0011: Helix exits the engagement cleanly once the result is sustainable, back-end participation is realised through the agreed contractual mechanism, embedded delivery assigns no legal status, and no wording implies a company sale is required (§11.7, R-012).
+
+- **Decision date:** 2026-08-03
+- **Decided by:** Helix owner (jeeva@helixcollective.com)

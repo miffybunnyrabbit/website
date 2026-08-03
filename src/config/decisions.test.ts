@@ -64,14 +64,18 @@ describe("decisions register content (§6)", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("carries the 2026-07-29 owner decisions; everything else stays open", () => {
-    const decided = new Set(["D-0001-currency", "D-0010-font-rights"]);
+  it("carries the recorded owner decisions; everything else stays open", () => {
+    const decidedOn: Record<string, string> = {
+      "D-0001-currency": "2026-07-29",
+      "D-0010-font-rights": "2026-07-29",
+      "D-0012-engagement-boundaries": "2026-08-03",
+    };
     for (const d of decisions) {
-      if (decided.has(d.id)) {
+      if (d.id in decidedOn) {
         expect(d.status, d.id).toBe("decided");
         expect(isDecided(d), d.id).toBe(true);
         expect(d.decision, d.id).toBeTruthy();
-        expect(d.decisionDate, d.id).toBe("2026-07-29");
+        expect(d.decisionDate, d.id).toBe(decidedOn[d.id]);
         expect(d.decidedBy, d.id).toContain("Helix owner");
       } else {
         expect(d.status, d.id).toBe("open");
@@ -81,7 +85,9 @@ describe("decisions register content (§6)", () => {
         expect(d.decidedBy, d.id).toBeUndefined();
       }
     }
-    expect(openDecisions()).toHaveLength(decisions.length - decided.size);
+    expect(openDecisions()).toHaveLength(
+      decisions.length - Object.keys(decidedOn).length,
+    );
   });
 
   it("points every named approval-queue item at a real queue item", () => {
@@ -118,10 +124,10 @@ describe("decisions register content (§6)", () => {
 });
 
 describe("gateApproved", () => {
-  it("reads the currency gate approved (Q-0007/D-001); the others pending", () => {
+  it("reads the currency and engagement gates approved; hero wording pending", () => {
     expect(gateApproved("proof-currency")).toBe(true);
     expect(gateApproved("hero-performance-linked")).toBe(false);
-    expect(gateApproved("engagement-model")).toBe(false);
+    expect(gateApproved("engagement-model")).toBe(true);
   });
 });
 
@@ -242,7 +248,7 @@ describe("validateDecisions", () => {
 describe("formatOpenDecisionsWarning", () => {
   it("lists every open decision", () => {
     const warning = formatOpenDecisionsWarning();
-    expect(warning).toContain("10 open §6 decision(s)");
+    expect(warning).toContain("9 open §6 decision(s)");
     for (const d of openDecisions()) expect(warning).toContain(d.id);
   });
 

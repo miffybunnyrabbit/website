@@ -91,12 +91,17 @@ describe("claimsLedger model", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("keeps case-study claims researching; the approved proof figure is cleared", () => {
-    // Q-0007 (2026-07-29) approved the currency-neutral portfolio figure;
-    // every case-study claim still awaits finance/legal/owner review.
+  it("tracks the owner approvals; unapproved claims stay researching", () => {
+    // Approved: the proof figure (Q-0007), Neara (Q-0001), 13SICK (Q-0003).
+    // Still researching: Ferovinum, Origami, Veyor.
+    const approved = new Set([
+      "C-0001-neara-enterprise-value",
+      "C-0003-13sick-enterprise-value",
+      "C-0006-portfolio-enterprise-value",
+    ]);
     for (const claim of claimsLedger) {
-      expect(claim.publishStatus).toBe(
-        claim.id === "C-0006-portfolio-enterprise-value" ? "approved" : "researching",
+      expect(claim.publishStatus, claim.id).toBe(
+        approved.has(claim.id) ? "approved" : "researching",
       );
       expect(isPublishable(claim)).toBe(true);
     }
@@ -109,7 +114,8 @@ describe("derived fields", () => {
     expect(claimCompany(neara)).toBe("Neara");
     expect(claimPublicCopy(neara)).toBe("FROM IDEA TO A$1B+");
     expect(claimCurrency(neara)).toBe("AUD");
-    expect(claimDraftValue(neara)).toContain("VERIFY");
+    // Approved 2026-08-03 (Q-0001): the verified figure publishes marker-free.
+    expect(claimDraftValue(neara)).toBe("A$200m");
   });
 
   it("attributes the proof figure to the portfolio and reads its currency as undecided", () => {
@@ -171,8 +177,9 @@ describe("validateClaimsLedger — referential integrity", () => {
 describe("validateClaimsLedger — lifecycle", () => {
   it("flags an unapproved claim whose queue item is already resolved", () => {
     const ledger = cloneLedger();
+    const stillResearching = ledger.find((c) => c.publishStatus === "researching")!;
     const queue = cloneQueue();
-    const item = queue.find((q) => q.id === ledger[0].queueItem)!;
+    const item = queue.find((q) => q.id === stillResearching.queueItem)!;
     item.status = "approved";
     item.decision = "Approved.";
     item.decisionDate = "2026-07-26";
@@ -184,10 +191,11 @@ describe("validateClaimsLedger — lifecycle", () => {
 
   it("flags an approved claim whose copy still carries a draft marker", () => {
     const ledger = cloneLedger();
-    // Neara's derived draft value is a [VERIFY:] string, so approving it must fail.
-    ledger[0].publishStatus = "approved";
+    // Ferovinum's derived draft value is a [VERIFY:] string, so approving it must fail.
+    const ferovinum = ledger.find((c) => c.id === "C-0002-ferovinum-enterprise-value")!;
+    ferovinum.publishStatus = "approved";
     const queue = cloneQueue();
-    const item = queue.find((q) => q.id === ledger[0].queueItem)!;
+    const item = queue.find((q) => q.id === ferovinum.queueItem)!;
     item.status = "approved";
     item.decision = "Approved.";
     item.decisionDate = "2026-07-26";

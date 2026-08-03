@@ -5,7 +5,7 @@
 - **Category:** B — Financial claims
 - **Covers:** engagement-model
 - **Required approvers:** finance-owner, legal-reviewer, helix-owner
-- **Status:** open
+- **Status:** approved
 
 ## Currently published draft wording or asset
 
@@ -13,4 +13,7 @@ The four-stage 'How we work' model and its unpaid-preparation, paid-as-we-delive
 
 ## Decision
 
-_No decision recorded yet — this item is still open and publishing in draft form._
+Owner approved the engagement-model wording as published: unpaid preparation, paid-as-we-deliver, back-end gain-share, embedded delivery without an assigned legal status, and a clean engagement exit. The R-012 review flips to approved and D-012 is recorded on its instrument-neutral default.
+
+- **Decision date:** 2026-08-03
+- **Decided by:** Helix owner (jeeva@helixcollective.com)

@@ -65,11 +65,23 @@ function withPublishedNeara(): CaseStudy[] {
 }
 
 describe("CaseStudies.astro", () => {
-  it("renders nothing while every study is an unpublished draft", async () => {
-    // The shipped collection is entirely in-research drafts, so the section must
-    // not leak a placeholder figure or an empty proof section into the build.
-    expect(caseStudies.every((s) => !s.publish)).toBe(true);
+  it("renders the approved studies and leaks no draft markers (site default)", async () => {
+    // Neara and 13SICK were approved and published on 2026-08-03 (Q-0001,
+    // Q-0003); Ferovinum, Origami, and Veyor remain unpublished drafts.
+    expect(caseStudies.filter((s) => s.publish).map((s) => s.slug).sort())
+      .toEqual(["13sick", "neara"]);
     const html = await renderCases();
+    expect(html).toContain("<section");
+    expect(html).toContain("FROM IDEA TO A$1B+");
+    expect(html).toContain("A$30M → A$150M");
+    expect(html).not.toContain("Ferovinum");
+    expect(html).not.toContain("[VERIFY:");
+  });
+
+  it("renders nothing while every study is an unpublished draft", async () => {
+    // Winding every study back to unpublished gates the section shut again.
+    const drafts = caseStudies.map((s) => ({ ...s, publish: false }));
+    const html = await renderCases({ studies: drafts });
     expect(html).not.toContain("<section");
     expect(html).not.toContain(caseStudyCopy.headline);
     expect(html).not.toContain("[VERIFY:");

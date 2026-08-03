@@ -3,7 +3,7 @@
 <!-- Generated from src/config/engagementModel.ts — do not edit by hand. -->
 
 **Plan references:** §11.7 (accuracy and legal guardrails), §17.13 R-012.
-**Review status:** pending — tracked by approval-queue item Q-0011-engagement-model (category B: finance, legal, and the commercial owner).
+**Review status:** approved — tracked by approval-queue item Q-0011-engagement-model (category B: finance, legal, and the commercial owner).
 
 This record documents the real operating model behind the "How we work" (§11)
 and "We're different because…" (§10) copy. It contains no confidential

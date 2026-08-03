@@ -86,10 +86,22 @@ describe("Footer.astro", () => {
     expect(anchor).toContain('rel="noopener noreferrer"');
   });
 
-  it("renders no identity facts when nothing is approved (honest current state)", async () => {
-    // The shipped footer has no approved facts, so only the brand mark and
-    // copyright line should appear — no <dl>, no verify drafts.
+  it("renders the Q-0010-approved identity facts in the site default", async () => {
+    // The owner approved all three identity facts on 2026-08-03, so the shipped
+    // footer publishes them — and never a draft marker.
     const html = await renderFooter({ year: 2026 });
+    expect(html).toContain("Helix Venture Studio Pty Ltd");
+    expect(html).toContain("20 678 772 631");
+    expect(html).not.toContain("[VERIFY");
+  });
+
+  it("renders no identity facts when nothing is approved", async () => {
+    // Winding every fact back to pending hides the whole <dl> again.
+    const pending: FooterContent = {
+      ...footer,
+      facts: footer.facts.map((f) => ({ ...f, approval: "pending" as const })),
+    };
+    const html = await renderFooter({ year: 2026, content: pending });
     expect(html).not.toContain("<dl");
     expect(html).not.toContain("[VERIFY");
   });

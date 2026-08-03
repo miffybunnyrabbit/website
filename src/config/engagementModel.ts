@@ -102,7 +102,7 @@ export const ENGAGEMENT_MODEL_DOC_PATH = "docs/research/engagement-model.md";
  * state is "documented, publishing in draft form, sign-off outstanding".
  */
 export const ENGAGEMENT_MODEL_REVIEW = {
-  status: "pending" as "pending" | "approved",
+  status: "approved" as "pending" | "approved",
   /** The category-B approval-queue item that must clear this record. */
   queueItem: "Q-0011-engagement-model",
 } as const;

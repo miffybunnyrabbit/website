@@ -87,12 +87,11 @@ describe("assembled homepage represents footer identity per the §24 queue state
     region = found as string;
   });
 
-  it("guards the fixture: the footer still ships pending identity facts (§14, §23)", () => {
-    // The withholding assertions below are only meaningful while at least one
-    // fact is still awaiting sign-off. If every fact were approved this test would
-    // flag that the fixture no longer exercises the withhold path.
+  it("guards the fixture: every identity fact is approved and rendered (Q-0010)", () => {
+    // The owner approved all three facts on 2026-08-03, so the assembled page
+    // must carry them; the withhold path is exercised by Footer.test.ts fixtures.
     expect(footer.facts.length).toBeGreaterThan(0);
-    expect(footer.facts.some((f) => f.approval === "pending")).toBe(true);
+    expect(footer.facts.every((f) => f.approval === "approved")).toBe(true);
   });
 
   it("always renders the safe brand mark and copyright line (§14)", () => {

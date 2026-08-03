@@ -57,8 +57,8 @@ describe("footer configuration", () => {
     }
   });
 
-  it("has no approved identity facts yet (nothing is signed off)", () => {
-    expect(footer.facts.every((f) => f.approval === "pending")).toBe(true);
+  it("has its identity facts signed off (Q-0010 approved 2026-08-03)", () => {
+    expect(footer.facts.every((f) => f.approval === "approved")).toBe(true);
   });
 
   it("carries no invented social links (no LinkedIn URL is documented)", () => {
@@ -66,10 +66,15 @@ describe("footer configuration", () => {
   });
 
   it("names no person, team, investor, or careers content (section 14)", () => {
+    // The registered legal-entity name is a company-register fact (§14 requires
+    // the *accurate* legal identity), not positioning copy — validateFact()
+    // exempts its value from the venture-volume-language scan. This check
+    // mirrors that exemption: the entity's value is excluded while its label and
+    // every other fact's label + value are scanned in full.
     const text = [
       footer.brand.label,
       footer.copyrightHolder,
-      ...footer.facts.map((f) => `${f.label} ${f.value}`),
+      ...footer.facts.map((f) => (f.id === "legal-entity" ? f.label : `${f.label} ${f.value}`)),
     ]
       .join(" ")
       .toLowerCase();
@@ -83,9 +88,10 @@ describe("footer configuration", () => {
 });
 
 describe("publishedFooter", () => {
-  it("withholds unapproved identity facts from the rendered footer", () => {
-    // Current state: nothing approved, so no facts render.
-    expect(publishedFooter().facts).toEqual([]);
+  it("renders the identity facts now that Q-0010 has cleared (2026-08-03)", () => {
+    // Current state: all three identity facts are approved, so all render.
+    expect(publishedFooter().facts).toEqual(footer.facts);
+    expect(publishedFooter().facts.every((f) => f.approval === "approved")).toBe(true);
     expect(publishedFooter().socialLinks).toEqual([]);
   });
 

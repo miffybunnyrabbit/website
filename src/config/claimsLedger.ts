@@ -108,9 +108,9 @@ export const claimsLedger: readonly ClaimRecord[] = [
     id: "C-0001-neara-enterprise-value",
     target: { kind: "case-study", slug: "neara" },
     metricType: "enterprise-value",
-    publishStatus: "researching",
+    publishStatus: "approved",
     queueItem: "Q-0001-neara-valuation",
-    notes: "Multiple and value-created figures carry [VERIFY:] markers (§9.1).",
+    notes: "Owner approved the 20× / A$200m figures and the A$1B+ headline via Q-0001 (2026-08-03).",
   },
   {
     id: "C-0002-ferovinum-enterprise-value",
@@ -124,9 +124,9 @@ export const claimsLedger: readonly ClaimRecord[] = [
     id: "C-0003-13sick-enterprise-value",
     target: { kind: "case-study", slug: "13sick" },
     metricType: "enterprise-value",
-    publishStatus: "researching",
+    publishStatus: "approved",
     queueItem: "Q-0003-13sick-valuation",
-    notes: "Draft multiple carries a [VERIFY:] marker (§9.3).",
+    notes: "Owner verified the 5× / A$100m figures behind the A$30M → A$150M headline via Q-0003 (2026-08-03).",
   },
   {
     id: "C-0004-origami-enterprise-value",

@@ -64,24 +64,30 @@ describe("approval queue", () => {
     );
   });
 
-  it("carries the 2026-07-29 owner approvals; everything else stays open", () => {
-    const approved = new Set([
-      "Q-0006-client-representation",
-      "Q-0007-proof-enterprise-value",
-    ]);
+  it("carries the recorded owner approvals; everything else stays open", () => {
+    const approvedOn: Record<string, string> = {
+      "Q-0001-neara-valuation": "2026-08-03",
+      "Q-0003-13sick-valuation": "2026-08-03",
+      "Q-0006-client-representation": "2026-07-29",
+      "Q-0007-proof-enterprise-value": "2026-07-29",
+      "Q-0010-footer-identity": "2026-08-03",
+      "Q-0011-engagement-model": "2026-08-03",
+    };
     for (const item of approvalQueue) {
-      if (approved.has(item.id)) {
+      if (item.id in approvedOn) {
         expect(item.status, item.id).toBe("approved");
         expect(isResolved(item)).toBe(true);
         expect(item.decision, item.id).toBeTruthy();
-        expect(item.decisionDate, item.id).toBe("2026-07-29");
+        expect(item.decisionDate, item.id).toBe(approvedOn[item.id]);
         expect(item.decidedBy, item.id).toContain("Helix owner");
       } else {
         expect(item.status, item.id).toBe("open");
         expect(isResolved(item)).toBe(false);
       }
     }
-    expect(openQueueItems()).toHaveLength(approvalQueue.length - approved.size);
+    expect(openQueueItems()).toHaveLength(
+      approvalQueue.length - Object.keys(approvedOn).length,
+    );
   });
 });
 
@@ -115,10 +121,10 @@ describe("completeness cross-checks against live content", () => {
 
   it("fails when a pending case study loses its open queue item", () => {
     const queue = cloneQueue().filter(
-      (i) => !i.coverage.some((c) => c.kind === "case-study" && c.ref === "neara"),
+      (i) => !i.coverage.some((c) => c.kind === "case-study" && c.ref === "ferovinum"),
     );
     const errors = validateApprovalQueue(queue);
-    expect(errors.join("\n")).toMatch(/neara.*needs sign-off/i);
+    expect(errors.join("\n")).toMatch(/ferovinum.*needs sign-off/i);
   });
 
   it("accepts the resolved proof-figure item now the banner approval is recorded", () => {
@@ -129,12 +135,11 @@ describe("completeness cross-checks against live content", () => {
     expect(errors.join("\n")).not.toMatch(/proof figure/i);
   });
 
-  it("tracks the pending footer identity facts (§14, §23)", () => {
-    // The footer's identity facts publish withheld and pending, so the queue
-    // must carry an open item covering them.
-    expect(footer.facts.some((f) => f.approval === "pending")).toBe(true);
-    const openKinds = openQueueItems().flatMap((i) => i.coverage);
-    expect(openKinds.some((c) => c.kind === "footer-identity")).toBe(true);
+  it("resolved footer identity facts need no open coverage (Q-0010)", () => {
+    // The owner approved all three identity facts on 2026-08-03, so no open
+    // item needs to cover footer-identity and the live queue stays valid.
+    expect(footer.facts.every((f) => f.approval === "approved")).toBe(true);
+    expect(validateApprovalQueue()).toEqual([]);
   });
 
   it("every footer fact references its footer-identity queue item", () => {
@@ -149,20 +154,11 @@ describe("completeness cross-checks against live content", () => {
     }
   });
 
-  it("fails when the only footer-identity item is resolved", () => {
-    const queue = cloneQueue().map((i) =>
-      i.id === "Q-0010-footer-identity"
-        ? {
-            ...i,
-            status: "approved" as const,
-            decision: "Entity, ABN, and Redfern office confirmed.",
-            decisionDate: "2026-07-22",
-            decidedBy: "helix-owner",
-          }
-        : i,
-    );
-    const errors = validateApprovalQueue(queue);
-    expect(errors.join("\n")).toMatch(/footer identity.*no open queue item/i);
+  it("accepts the resolved footer-identity item now the facts are approved", () => {
+    // The inverse guard (pending facts with no open item) is enforced against
+    // the live footer model; with every fact approved, Q-0010 resolves cleanly.
+    const errors = validateApprovalQueue(cloneQueue());
+    expect(errors.join("\n")).not.toMatch(/footer identity/i);
   });
 });
 
@@ -214,7 +210,13 @@ describe("structural validation", () => {
 
   it("requires a decided item to record decision, date, and decider", () => {
     const queue = cloneQueue();
-    queue[0] = { ...queue[0], status: "approved" };
+    queue[0] = {
+      ...queue[0],
+      status: "approved",
+      decision: undefined,
+      decisionDate: undefined,
+      decidedBy: undefined,
+    };
     const errors = validateApprovalQueue(queue).join("\n");
     expect(errors).toMatch(/decision note/);
     expect(errors).toMatch(/decision date/);
@@ -273,7 +275,7 @@ describe("generated one-file-per-item records (§23)", () => {
   });
 
   it("shows the decision block only once an item is decided", () => {
-    const open = approvalQueue[0];
+    const open = approvalQueue.find((i) => i.status === "open")!;
     expect(renderQueueItemMarkdown(open)).toContain("No decision recorded yet");
 
     const decided: QueueItem = {
@@ -312,7 +314,7 @@ describe("generated one-file-per-item records (§23)", () => {
 describe("build warning surface", () => {
   it("lists every open item on one line each", () => {
     const warning = formatOpenQueueWarning();
-    expect(warning).toMatch(/9 open item/);
+    expect(warning).toMatch(/5 open item/);
     for (const item of openQueueItems()) {
       expect(warning).toContain(item.id);
     }
