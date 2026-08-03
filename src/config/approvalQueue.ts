@@ -128,14 +128,18 @@ export interface QueueItem {
 }
 
 /**
- * The live approval queue. Most entries are still `open`, but the first owner
- * sign-offs have landed: on 2026-07-29 Q-0006 (client logos and case-study role
- * descriptions) and Q-0007 ($500M+ figure and the D-001 currency treatment) were
- * approved and now carry `status: "approved"` with their decision recorded, and
- * the matching content models (`logos`, `proofBanner`) have flipped to approved
- * in step. Approvers clear items here (flipping status and recording the
- * decision) in parallel with development; the content model for a cleared item is
- * then marked approved.
+ * The live approval queue. Six of the eleven entries have now cleared. On
+ * 2026-07-29 Q-0006 (client logos and case-study role descriptions) and Q-0007
+ * ($500M+ figure and the D-001 currency treatment) were approved; on 2026-08-03
+ * the Neara (Q-0001) and 13SICK (Q-0003) valuations, the footer identity
+ * (Q-0010), and the engagement model (Q-0011) followed. Each carries
+ * `status: "approved"` with its decision recorded, and the matching content
+ * models — `logos`, `proofBanner`, `caseStudies`, `footer`, `engagementModel`,
+ * and `claimsLedger` — have flipped to approved in step. The remaining five
+ * (Q-0002, Q-0004, Q-0005, Q-0008, Q-0009) stay `open` and publish in draft.
+ * Approvers clear items here (flipping status and recording the decision) in
+ * parallel with development; the content model for a cleared item is then marked
+ * approved.
  */
 export const approvalQueue: readonly QueueItem[] = [
   {

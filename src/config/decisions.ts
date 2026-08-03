@@ -28,8 +28,11 @@
  * still match, so the printable decision records can never drift from the code.
  *
  * This module is pure content plus validation: no UI, no client-side state. It
- * invents no owner decisions — every entry is `open` and publishes its
- * recommended default, the honest current state.
+ * invents no owner decisions — an entry reads `decided` only once the owner
+ * records one. Three have: D-001 (currency) and D-010 (font rights) on
+ * 2026-07-29, and D-012 (engagement boundaries) on 2026-08-03. The remaining
+ * nine stay `open` and publish their recommended default, the honest current
+ * state.
  */
 
 import { approvalQueue, type QueueItem } from "./approvalQueue";
