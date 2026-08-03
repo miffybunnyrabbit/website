@@ -90,14 +90,15 @@ export const caseStudyCopy = {
 } as const;
 
 /**
- * The five approved case studies, in the plan's recommended order (section 8.5):
- * Neara and Ferovinum lead because they best establish the scale of the
- * proposition.
+ * The five case studies, in the plan's recommended order (section 8.5): Neara
+ * and Ferovinum lead because they best establish the scale of the proposition.
  *
- * Every quantified figure is a working draft carrying an unresolved `[VERIFY:]`
- * or `[RESEARCH:]` marker, so each entry is `publish: false` with no claim IDs
- * until its section-9 research and approval gates pass. The validator forbids
- * publishing any of them in this state.
+ * Two have cleared their section-9 research and approval gates and now publish
+ * with backing claim IDs: Neara (owner-approved 2026-08-03, Q-0001) and 13SICK
+ * (owner-approved 2026-08-03, Q-0003). The remaining three — Ferovinum, Origami,
+ * and Veyor — still carry unresolved `[VERIFY:]`/`[RESEARCH:]` markers, so each
+ * stays `publish: false` with no claim IDs until its own gates pass. The
+ * validator forbids publishing any entry while it is still in that draft state.
  */
 export const caseStudies: readonly CaseStudy[] = [
   {
