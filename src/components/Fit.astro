@@ -52,7 +52,9 @@ const results = resultNodes();
     <h2 class="fit__headline" id="fit-heading">{copy.headline}</h2>
     <p class="fit__intro">{copy.intro}</p>
 
-    <FitQualifier client:visible />
+    <div class="fit__qualifier-frame">
+      <FitQualifier client:visible />
+    </div>
 
     {/* Full qualification summary and CTA for visitors without JavaScript. */}
     <noscript>
@@ -109,6 +111,26 @@ const results = resultNodes();
     margin: 0 0 var(--space-10);
   }
 
+  /* The qualifier is the section's focal element, so its card is centred in the
+     section shell rather than hanging off the left edge under the headline, and
+     the column widens a step at desktop widths so the answer buttons read as a
+     deliberate panel instead of a narrow strip in a wide band. Centring lives
+     here, on a scoped frame, rather than on the island's own rule: the island
+     ships one unified card for every viewport (FX-202) and the frame is what
+     places it. The copy inside stays left-aligned — centred prompts and answers
+     would cost scannability (§12.4). */
+  .fit__qualifier-frame {
+    display: grid;
+    grid-template-columns: minmax(0, 40rem);
+    justify-content: center;
+  }
+
+  @media (min-width: 64rem) {
+    .fit__qualifier-frame {
+      grid-template-columns: minmax(0, 52rem);
+    }
+  }
+
   .fit__fallback {
     margin-top: var(--space-8);
   }
@@ -137,11 +159,19 @@ const results = resultNodes();
     declared globally under the section class. All meaning survives without
     these rules; they add spacing, visible focus, and a restrained active cue. */}
 <style is:global>
+  /* Width and placement belong to the scoped `.fit__qualifier-frame` above; this
+     rule keeps only the card's own chrome, with a roomier inset once the frame
+     widens at desktop. */
   .fit-qualifier {
-    max-width: 40rem;
     border: 1px solid var(--color-ink-100);
     border-radius: 0.5rem;
     padding: var(--space-8) var(--space-6);
+  }
+
+  @media (min-width: 64rem) {
+    .fit-qualifier {
+      padding: var(--space-12) var(--space-10);
+    }
   }
 
   .fit-qualifier__progress {
