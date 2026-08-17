@@ -121,13 +121,15 @@ describe("CaseStudies.astro", () => {
     const studies = withPublishedNeara();
     const html = await renderCases({ studies });
     // Logo with an accessible name, stage tag, the outcome, the value multiple,
-    // the causal 'how we moved it' mechanism, and the evidence note.
+    // and the causal 'how we moved it' mechanism. The claim ids are deliberately
+    // absent: they are internal identifiers tracked in the claims ledger, not
+    // visitor-facing copy.
     expect(html).toContain('alt="Neara logo"');
     expect(html).toContain("/logos/neara.png");
     expect(html).toContain(stageLabel("0-to-1-to-10"));
     expect(html).toContain("20×");
     expect(html.toLowerCase()).toContain("how we moved it");
-    expect(html).toContain("CLAIM-NEARA-001");
+    expect(html).not.toContain("CLAIM-NEARA-001");
   });
 
   it("exposes the section as a labelled landmark", async () => {
