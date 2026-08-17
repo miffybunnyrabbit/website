@@ -44,7 +44,7 @@ Current A$50m–A$75m range is public (see sources). The entry value, the multip
 
 ## Backing claim IDs
 
-- `C-0005-veyor-enterprise-value` — enterprise-value (researching, tracked by Q-0005-veyor-valuation)
+- `C-0005-veyor-enterprise-value` — enterprise-value (researching, tracked by Q-0012-outstanding-valuation-figures)
 
 ## Calculation
 
@@ -87,4 +87,4 @@ Helix helped turn Veyor from [VERIFY: initial concept/state] into a scalable del
 
 ## Approval record
 
-Valuation claim gated by Q-0005 (category B); logo and role description gated by Q-0006 (category C).
+Published wording approved by Q-0005 (category B, 2026-08-17); the valuation figures it excluded are gated by the open Q-0012; logo and role description gated by Q-0006 (category C).

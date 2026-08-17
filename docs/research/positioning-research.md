@@ -3,7 +3,7 @@
 <!-- Generated from src/config/positioningResearch.ts — do not edit by hand. -->
 
 **Plan references:** §17.5 R-004, §10 (differentiation).
-**Review status:** pending — positioning is strategic copy; sign-off is tracked in `Q-0008-strategic-copy`.
+**Review status:** approved — positioning is strategic copy; sign-off is tracked in `Q-0008-strategic-copy`.
 
 The purpose is to sharpen differentiation and avoid category clichés, not to
 copy competitors. The clichés below are enforced at build time by

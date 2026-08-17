@@ -3,7 +3,7 @@
 <!-- Generated from src/config/toneOfVoice.ts — do not edit by hand. -->
 
 **Plan references:** §15 (tone-of-voice system), §17.4 R-003.
-**Review status:** pending — the tone system is the plan's working baseline; the one outstanding sign-off is the §15.4 profanity decision, tracked in `Q-0008-strategic-copy`.
+**Review status:** approved — the tone system is the plan's working baseline, and its one outstanding sign-off, the §15.4 profanity decision, was recorded by the owner in `Q-0008-strategic-copy`.
 
 The current site's voice is bold, playful, direct, and slightly
 conspiratorial. Preserve that energy, but make the copy more commercially
@@ -98,7 +98,9 @@ Use Australian spelling and punctuation (organisation, neighbourhood, programme 
 
 ## Profanity (§15.4)
 
-Profanity in body copy (for example the supplied “get shit done” phrasing) is consistent with the existing irreverence but publishes only after an explicit owner decision.
+Profanity does not publish in body copy: the supplied “get shit done” phrasing is declined (owner decision, 2026-08-17, Q-0008). Copy keeps the same directness without it.
 
-Even if approved for body copy, profanity never appears in metadata, social-preview text, or accessibility labels.
+Sanctioned equivalent: “get the hard part done”.
+
+Profanity never appears in metadata, social-preview text, or accessibility labels — and under this decision it does not appear in body copy either.
 

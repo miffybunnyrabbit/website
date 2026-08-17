@@ -52,8 +52,20 @@ describe("tone-of-voice record (R-003)", () => {
     }
   });
 
-  it("is not yet signed off (profanity decision outstanding)", () => {
-    expect(TONE_OF_VOICE_REVIEW.status).toBe("pending");
+  it("is signed off, its governing queue item having cleared", () => {
+    expect(TONE_OF_VOICE_REVIEW.status).toBe("approved");
+    const governing = approvalQueue.find(
+      (q) => q.id === PROFANITY_POLICY.governingQueueItem,
+    );
+    expect(governing?.status).toBe("approved");
+  });
+
+  it("declines profanity and offers a profanity-free equivalent", () => {
+    // The owner declined the supplied phrasing but asked for something equally
+    // punchy, so the record must carry a replacement rather than a bare "no".
+    expect(PROFANITY_POLICY.sanctionedAlternative.trim()).not.toBe("");
+    expect(PROFANITY_POLICY.sanctionedAlternative).not.toMatch(/shit|fuck/i);
+    expect(PROFANITY_POLICY.rule.toLowerCase()).toContain("declined");
   });
 
   it("tracks the profanity decision against a real queue item", () => {

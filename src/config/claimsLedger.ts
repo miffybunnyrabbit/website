@@ -99,9 +99,15 @@ export const CLAIM_ID_PATTERN = /^C-\d{4}-[a-z0-9-]+$/;
 /**
  * The live claims ledger. One entry per quantified claim the site drafts today:
  * each case study's enterprise-value claim plus the portfolio `$500M+` proof
- * figure. Every entry is `researching` — no figure has cleared finance/legal/
- * owner review yet — and each names the category-B queue item tracking it, so the
- * honest current state is "drafted, publishing withheld, sign-off outstanding".
+ * figure. Each names the category-B queue item tracking it.
+ *
+ * Three figures have cleared owner review and publish (Neara, 13SICK, and the
+ * portfolio `$500M+`). The other three — Ferovinum, Origami, Veyor — stay
+ * `researching`: the owner's 2026-08-17 decisions on Q-0002/Q-0004/Q-0005
+ * approved the *wording* those studies publish, explicitly not their figures, so
+ * each claim points at Q-0012, the open item carrying the outstanding §9
+ * research. A claim only ever reads `approved` once its own number has been
+ * verified — never as a side effect of a neighbouring wording approval.
  */
 export const claimsLedger: readonly ClaimRecord[] = [
   {
@@ -117,8 +123,9 @@ export const claimsLedger: readonly ClaimRecord[] = [
     target: { kind: "case-study", slug: "ferovinum" },
     metricType: "enterprise-value",
     publishStatus: "researching",
-    queueItem: "Q-0002-ferovinum-valuation",
-    notes: "Securitisation-vs-valuation evidence unresolved (§9.2).",
+    queueItem: "Q-0012-outstanding-valuation-figures",
+    notes:
+      "Securitisation-vs-valuation evidence unresolved (§9.2). Q-0002 approved the study's non-quantified wording on 2026-08-17 but not this figure, so tracking moved to the open Q-0012.",
   },
   {
     id: "C-0003-13sick-enterprise-value",
@@ -133,16 +140,18 @@ export const claimsLedger: readonly ClaimRecord[] = [
     target: { kind: "case-study", slug: "origami" },
     metricType: "enterprise-value",
     publishStatus: "researching",
-    queueItem: "Q-0004-origami-valuation",
-    notes: "Figures and Helix contribution await internal research (§9.4).",
+    queueItem: "Q-0012-outstanding-valuation-figures",
+    notes:
+      "Figures and Helix contribution await internal research (§9.4). Q-0004 approved the study's wording on 2026-08-17 but not this figure, so tracking moved to the open Q-0012.",
   },
   {
     id: "C-0005-veyor-enterprise-value",
     target: { kind: "case-study", slug: "veyor" },
     metricType: "enterprise-value",
     publishStatus: "researching",
-    queueItem: "Q-0005-veyor-valuation",
-    notes: "Draft figures and Helix contribution carry [VERIFY:]/[RESEARCH:] markers (§9.5).",
+    queueItem: "Q-0012-outstanding-valuation-figures",
+    notes:
+      "Draft figures and Helix contribution carry [VERIFY:]/[RESEARCH:] markers (§9.5). Q-0005 approved the study's wording on 2026-08-17 but not this figure, so tracking moved to the open Q-0012.",
   },
   {
     id: "C-0006-portfolio-enterprise-value",

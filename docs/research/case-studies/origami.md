@@ -44,7 +44,7 @@ The existing site describes Origami as an automated leverage protocol; public me
 
 ## Backing claim IDs
 
-- `C-0004-origami-enterprise-value` — enterprise-value (researching, tracked by Q-0004-origami-valuation)
+- `C-0004-origami-enterprise-value` — enterprise-value (researching, tracked by Q-0012-outstanding-valuation-figures)
 
 ## Calculation
 
@@ -86,4 +86,4 @@ Helix helped Origami move from [VERIFY: starting state] to [VERIFY: outcome] by 
 
 ## Approval record
 
-Valuation claim gated by Q-0004 (category B); logo and role description gated by Q-0006 (category C).
+Published wording approved by Q-0004 (category B, 2026-08-17); the valuation figures it excluded are gated by the open Q-0012; logo and role description gated by Q-0006 (category C).

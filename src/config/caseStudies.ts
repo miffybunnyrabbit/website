@@ -95,10 +95,16 @@ export const caseStudyCopy = {
  *
  * Two have cleared their section-9 research and approval gates and now publish
  * with backing claim IDs: Neara (owner-approved 2026-08-03, Q-0001) and 13SICK
- * (owner-approved 2026-08-03, Q-0003). The remaining three — Ferovinum, Origami,
- * and Veyor — still carry unresolved `[VERIFY:]`/`[RESEARCH:]` markers, so each
- * stays `publish: false` with no claim IDs until its own gates pass. The
- * validator forbids publishing any entry while it is still in that draft state.
+ * (owner-approved 2026-08-03, Q-0003).
+ *
+ * The remaining three — Ferovinum, Origami, and Veyor — had their *published
+ * wording* approved on 2026-08-17 (Q-0002, Q-0004, Q-0005), but that approval
+ * was explicitly scoped to the non-quantified headline and role description of
+ * each. Their figures are blocked on research, not on approval, so they still
+ * carry unresolved `[VERIFY:]`/`[RESEARCH:]` markers and each stays
+ * `publish: false` with no claim IDs; Q-0012 is the open item that now tracks
+ * that outstanding §9 research. The validator forbids publishing any entry while
+ * it is still in that draft state.
  */
 export const caseStudies: readonly CaseStudy[] = [
   {

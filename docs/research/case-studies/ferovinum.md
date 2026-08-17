@@ -44,7 +44,7 @@ Before publishing any "valued at $500m" claim, internal evidence must distinguis
 
 ## Backing claim IDs
 
-- `C-0002-ferovinum-enterprise-value` — enterprise-value (researching, tracked by Q-0002-ferovinum-valuation)
+- `C-0002-ferovinum-enterprise-value` — enterprise-value (researching, tracked by Q-0012-outstanding-valuation-figures)
 
 ## Calculation
 
@@ -87,4 +87,4 @@ Helix helped shape the technology and anchor early fundraising, supporting Ferov
 
 ## Approval record
 
-Valuation claim gated by Q-0002 (category B); logo and role description gated by Q-0006 (category C).
+Published wording approved by Q-0002 (category B, 2026-08-17); the valuation figures it excluded are gated by the open Q-0012; logo and role description gated by Q-0006 (category C).

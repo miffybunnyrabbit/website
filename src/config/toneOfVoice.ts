@@ -103,28 +103,34 @@ export interface RetiredTerm {
 
 /**
  * The record's review state. The tone system itself is the plan's baseline and
- * needs no sign-off; the one outstanding piece is the §15.4 profanity decision,
- * which requires an explicit owner decision tracked in the category-A strategic
- * copy queue item. So the honest state is "documented baseline, profanity
- * sign-off outstanding".
+ * needs no sign-off; the one outstanding piece was the §15.4 profanity decision,
+ * which the owner recorded on 2026-08-17 with the strategic copy (Q-0008). With
+ * that decided, the record is approved.
  */
 export const TONE_OF_VOICE_REVIEW = {
-  status: "pending" as "pending" | "approved",
+  status: "approved" as "pending" | "approved",
 } as const;
 
 /**
- * The §15.4 profanity policy. The supplied "get shit done" phrasing is
- * consistent with the existing irreverence but requires an explicit owner
- * decision, tracked in the strategic-copy queue item. The hard rule holds
- * regardless of that decision: profanity never appears in metadata, social
+ * The §15.4 profanity policy, decided by the owner on 2026-08-17 alongside the
+ * strategic copy (Q-0008): profanity does not publish. The supplied "get shit
+ * done" phrasing is consistent with the existing irreverence, but the owner
+ * asked for an equally punchy phrase without the swearing, so
+ * `sanctionedAlternative` records the wording that ships in its place. The hard
+ * rule stands and always did: profanity never appears in metadata, social
  * previews, or accessibility labels.
  */
 export const PROFANITY_POLICY = {
   rule:
-    "Profanity in body copy (for example the supplied “get shit done” phrasing) is consistent with the existing irreverence but publishes only after an explicit owner decision.",
+    "Profanity does not publish in body copy: the supplied “get shit done” phrasing is declined (owner decision, 2026-08-17, Q-0008). Copy keeps the same directness without it.",
+  /**
+   * The punchy, profanity-free replacement the owner asked for in place of the
+   * declined phrasing. Same blunt cadence, same irreverence, no swearing.
+   */
+  sanctionedAlternative: "get the hard part done",
   hardRule:
-    "Even if approved for body copy, profanity never appears in metadata, social-preview text, or accessibility labels.",
-  /** The queue item that tracks the outstanding owner decision. */
+    "Profanity never appears in metadata, social-preview text, or accessibility labels — and under this decision it does not appear in body copy either.",
+  /** The queue item that recorded the owner decision. */
   governingQueueItem: "Q-0008-strategic-copy",
 } as const;
 
@@ -511,7 +517,7 @@ export function renderToneOfVoiceDoc(
     DOC_COMMENT,
     "",
     "**Plan references:** §15 (tone-of-voice system), §17.4 R-003.",
-    `**Review status:** ${TONE_OF_VOICE_REVIEW.status} — the tone system is the plan's working baseline; the one outstanding sign-off is the §15.4 profanity decision, tracked in \`${PROFANITY_POLICY.governingQueueItem}\`.`,
+    `**Review status:** ${TONE_OF_VOICE_REVIEW.status} — the tone system is the plan's working baseline, and its one outstanding sign-off, the §15.4 profanity decision, was recorded by the owner in \`${PROFANITY_POLICY.governingQueueItem}\`.`,
     "",
     "The current site's voice is bold, playful, direct, and slightly",
     "conspiratorial. Preserve that energy, but make the copy more commercially",
@@ -558,6 +564,8 @@ export function renderToneOfVoiceDoc(
     "## Profanity (§15.4)",
     "",
     PROFANITY_POLICY.rule,
+    "",
+    `Sanctioned equivalent: “${PROFANITY_POLICY.sanctionedAlternative}”.`,
     "",
     PROFANITY_POLICY.hardRule,
     "",

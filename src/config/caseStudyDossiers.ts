@@ -191,7 +191,7 @@ export const caseStudyDossiers: readonly CaseStudyDossier[] = [
     risksOrProhibitedWording:
       "Do not describe the securitisation/funding programme as a company valuation or enterprise value; publish the qualitative headline until the evidence gate passes (§9.2).",
     approvalRecord:
-      "Valuation claim gated by Q-0002 (category B); logo and role description gated by Q-0006 (category C).",
+      "Published wording approved by Q-0002 (category B, 2026-08-17); the valuation figures it excluded are gated by the open Q-0012; logo and role description gated by Q-0006 (category C).",
   },
   {
     slug: "13sick",
@@ -266,7 +266,7 @@ export const caseStudyDossiers: readonly CaseStudyDossier[] = [
     risksOrProhibitedWording:
       "Do not invent the \"how\"; do not confuse funding raised or total value locked with company valuation (§9.4).",
     approvalRecord:
-      "Valuation claim gated by Q-0004 (category B); logo and role description gated by Q-0006 (category C).",
+      "Published wording approved by Q-0004 (category B, 2026-08-17); the valuation figures it excluded are gated by the open Q-0012; logo and role description gated by Q-0006 (category C).",
   },
   {
     slug: "veyor",
@@ -307,7 +307,7 @@ export const caseStudyDossiers: readonly CaseStudyDossier[] = [
     risksOrProhibitedWording:
       "Do not cite the A$50m–A$75m range as value attributable to Helix; use the brand spelling \"Veyor\".",
     approvalRecord:
-      "Valuation claim gated by Q-0005 (category B); logo and role description gated by Q-0006 (category C).",
+      "Published wording approved by Q-0005 (category B, 2026-08-17); the valuation figures it excluded are gated by the open Q-0012; logo and role description gated by Q-0006 (category C).",
   },
 ];
 

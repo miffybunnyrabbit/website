@@ -128,18 +128,31 @@ export interface QueueItem {
 }
 
 /**
- * The live approval queue. Six of the eleven entries have now cleared. On
+ * The live approval queue. Ten of its twelve entries have now cleared. On
  * 2026-07-29 Q-0006 (client logos and case-study role descriptions) and Q-0007
  * ($500M+ figure and the D-001 currency treatment) were approved; on 2026-08-03
  * the Neara (Q-0001) and 13SICK (Q-0003) valuations, the footer identity
- * (Q-0010), and the engagement model (Q-0011) followed. Each carries
- * `status: "approved"` with its decision recorded, and the matching content
- * models — `logos`, `proofBanner`, `caseStudies`, `footer`, `engagementModel`,
- * and `claimsLedger` — have flipped to approved in step. The remaining five
- * (Q-0002, Q-0004, Q-0005, Q-0008, Q-0009) stay `open` and publish in draft.
- * Approvers clear items here (flipping status and recording the decision) in
- * parallel with development; the content model for a cleared item is then marked
- * approved.
+ * (Q-0010), and the engagement model (Q-0011) followed; on 2026-08-17 the owner
+ * cleared the three remaining case-study items (Q-0002, Q-0004, Q-0005) and the
+ * strategic copy (Q-0008). Each carries `status: "approved"` with its decision
+ * recorded, and the matching content models — `logos`, `proofBanner`,
+ * `caseStudies`, `footer`, `engagementModel`, `toneOfVoice`,
+ * `positioningResearch`, and `claimsLedger` — have flipped in step.
+ *
+ * The three case-study approvals are deliberately *scoped to the wording that
+ * publishes today*: the non-quantified headline and role description of each
+ * study, not its withheld figures. Those figures are blocked on research, not on
+ * approval, so `claimsLedger` keeps C-0002/C-0004/C-0005 at `researching` and
+ * each study stays `publish: false` while its `[VERIFY:]`/`[RESEARCH:]` markers
+ * remain. Because both models require unapproved content to be tracked by an
+ * *open* item, Q-0012 was opened to carry exactly that residue — closing a
+ * wording gate must never leave an unverified figure untracked.
+ *
+ * Two items remain open: Q-0009, the standing launch review, which by design
+ * spans the six reviewers before and after launch rather than closing once; and
+ * Q-0012. Approvers clear items here (flipping status and recording the
+ * decision) in parallel with development; the content model for a cleared item
+ * is then marked approved.
  */
 export const approvalQueue: readonly QueueItem[] = [
   {
@@ -164,7 +177,11 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "FROM IDEA TO A GLOBAL CAPITAL PLATFORM — securitisation-vs-valuation evidence unresolved (§9.2).",
     requiredApprovers: REQUIRED_APPROVERS.B,
-    status: "open",
+    status: "approved",
+    decision:
+      "Owner approved the Ferovinum wording that publishes today: the non-quantified FROM IDEA TO A GLOBAL CAPITAL PLATFORM headline and the technology/fundraising role description. The approval is scoped to that wording only — the 10× and $300m figures stay withheld because the §9.2 securitisation-vs-valuation evidence gate is a research question, not an approval one. C-0002 stays `researching` and the study stays `publish: false` until the figures resolve.",
+    decisionDate: "2026-08-17",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "Q-0003-13sick-valuation",
@@ -187,7 +204,11 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "APPROX. 10× VALUE GROWTH — figures and the Helix contribution await internal research (§9.4).",
     requiredApprovers: REQUIRED_APPROVERS.B,
-    status: "open",
+    status: "approved",
+    decision:
+      "Owner approved the Origami wording that publishes today: the APPROX. 10× VALUE GROWTH headline and the role description. The approval is scoped to that wording only — the figures and the Helix contribution await the internal subject-matter research §9.4 requires, and the plan is explicit that the \"how\" must not be invented. C-0004 stays `researching` and the study stays `publish: false` until that research lands.",
+    decisionDate: "2026-08-17",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "Q-0005-veyor-valuation",
@@ -197,7 +218,11 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "0 → 1 TO A$50M+ — draft figures and the Helix contribution carry [VERIFY:]/[RESEARCH:] markers.",
     requiredApprovers: REQUIRED_APPROVERS.B,
-    status: "open",
+    status: "approved",
+    decision:
+      "Owner approved the Veyor wording that publishes today: the 0 → 1 TO A$50M+ headline and the March 2026 A$50m–A$75m Series A range it rests on. The approval is scoped to that wording only — the multiple, the value-created figure, and the exact Helix contribution still carry [VERIFY:]/[RESEARCH:] markers, so C-0005 stays `researching` and the study stays `publish: false` until they resolve.",
+    decisionDate: "2026-08-17",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "Q-0006-client-representation",
@@ -242,7 +267,11 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "Hero proposition, partnership model, fit criteria, the single CTA, the no-fit humour, and the profanity decision publish in their drafted wording.",
     requiredApprovers: REQUIRED_APPROVERS.A,
-    status: "open",
+    status: "approved",
+    decision:
+      "Owner approved the strategic copy as published: the hero proposition with its `aligned` supporting line, the single LET'S CREATE ENTERPRISE VALUE CTA, the fit criteria and their outcomes, and the \"IT'S NOT US. IT'S YOU :)\" no-fit humour. Two things are deliberately *not* carried by this approval. Profanity is declined — the supplied \"get shit done\" phrasing does not publish, and PROFANITY_POLICY records \"get the hard part done\" as the sanctioned equivalent that keeps the irreverence without the swearing. D-009 also stays pending: the hero keeps the `aligned` variant and the literal \"get paid when you get paid\" claim remains unselected. D-0002, D-0004, D-0005, and D-0006 remain open — approving this copy does not settle them.",
+    decisionDate: "2026-08-17",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "Q-0009-launch-review",
@@ -297,6 +326,28 @@ export const approvalQueue: readonly QueueItem[] = [
       "Owner approved the engagement-model wording as published: unpaid preparation, paid-as-we-deliver, back-end gain-share, embedded delivery without an assigned legal status, and a clean engagement exit. The R-012 review flips to approved and D-012 is recorded on its instrument-neutral default.",
     decisionDate: "2026-08-03",
     decidedBy: "Helix owner (jeeva@helixcollective.com)",
+  },
+  {
+    // Q-0002, Q-0004 and Q-0005 approved the *wording* each of those three
+    // studies publishes today, not their withheld figures — the owner's
+    // 2026-08-17 decisions say so in terms. The figures are still unresearched,
+    // and both `claimsLedger` and `caseStudies` require an *open* item to track
+    // content that has not cleared. This is that item: one homogeneous piece of
+    // outstanding work (the §9.2/§9.4/§9.5 research behind three studies),
+    // covered by one record in the same way Q-0006 covers five studies at once.
+    // Category B, because what it gates is quantified financial claims.
+    id: "Q-0012-outstanding-valuation-figures",
+    category: "B",
+    title: "Outstanding case-study valuation figures: Ferovinum, Origami, Veyor",
+    coverage: [
+      { kind: "case-study", ref: "ferovinum" },
+      { kind: "case-study", ref: "origami" },
+      { kind: "case-study", ref: "veyor" },
+    ],
+    publishedWording:
+      "Nothing quantified publishes for these three: each study stays `publish: false` with its multiple, value-created figure, and Helix contribution held as [VERIFY:]/[RESEARCH:] markers until the §9.2 securitisation-vs-valuation evidence, the §9.4 Origami research, and the §9.5 Veyor figures resolve. Their approved headlines and role descriptions already publish under Q-0002, Q-0004, and Q-0005.",
+    requiredApprovers: REQUIRED_APPROVERS.B,
+    status: "open",
   },
 ];
 

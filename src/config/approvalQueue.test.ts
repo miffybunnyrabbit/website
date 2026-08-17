@@ -72,6 +72,10 @@ describe("approval queue", () => {
       "Q-0007-proof-enterprise-value": "2026-07-29",
       "Q-0010-footer-identity": "2026-08-03",
       "Q-0011-engagement-model": "2026-08-03",
+      "Q-0002-ferovinum-valuation": "2026-08-17",
+      "Q-0004-origami-valuation": "2026-08-17",
+      "Q-0005-veyor-valuation": "2026-08-17",
+      "Q-0008-strategic-copy": "2026-08-17",
     };
     for (const item of approvalQueue) {
       if (item.id in approvedOn) {
@@ -107,6 +111,28 @@ describe("completeness cross-checks against live content", () => {
       if (needsSignoff) {
         expect(openStudyRefs, study.slug).toContain(study.slug);
       }
+    }
+  });
+
+  it("keeps the research-blocked figures tracked after their wording cleared", () => {
+    // Q-0002/Q-0004/Q-0005 approved only the wording those three studies
+    // publish; their figures are still unverified. Approving a wording gate must
+    // never leave an unapproved figure untracked, so Q-0012 carries the residue
+    // and the ledger points at it. This is the invariant that made Q-0012
+    // necessary — without it the claims ledger would have to call an
+    // unresearched figure "approved".
+    const residue = approvalQueue.find(
+      (i) => i.id === "Q-0012-outstanding-valuation-figures",
+    );
+    expect(residue?.status).toBe("open");
+    expect(residue?.category).toBe("B");
+    for (const slug of ["ferovinum", "origami", "veyor"]) {
+      expect(
+        residue?.coverage.some((c) => c.kind === "case-study" && c.ref === slug),
+        slug,
+      ).toBe(true);
+      const study = caseStudies.find((s) => s.slug === slug);
+      expect(study?.publish, slug).toBe(false);
     }
   });
 
@@ -314,7 +340,7 @@ describe("generated one-file-per-item records (§23)", () => {
 describe("build warning surface", () => {
   it("lists every open item on one line each", () => {
     const warning = formatOpenQueueWarning();
-    expect(warning).toMatch(/5 open item/);
+    expect(warning).toMatch(/2 open item/);
     for (const item of openQueueItems()) {
       expect(warning).toContain(item.id);
     }

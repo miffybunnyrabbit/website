@@ -145,11 +145,11 @@ export interface Objection {
 
 /**
  * The record's review state. Positioning is strategic copy, so its sign-off is
- * the category-A strategic-copy queue item; until that clears, the honest state
- * is "documented working baseline, strategic-copy sign-off outstanding".
+ * the category-A strategic-copy queue item, which the owner approved on
+ * 2026-08-17.
  */
 export const POSITIONING_RESEARCH_REVIEW = {
-  status: "pending" as "pending" | "approved",
+  status: "approved" as "pending" | "approved",
   /** The queue item that governs strategic-copy sign-off. */
   governingQueueItem: "Q-0008-strategic-copy",
 } as const;

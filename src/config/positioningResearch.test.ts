@@ -70,8 +70,12 @@ describe("positioning-research record (R-004)", () => {
     }
   });
 
-  it("is not yet signed off (strategic-copy decision outstanding)", () => {
-    expect(POSITIONING_RESEARCH_REVIEW.status).toBe("pending");
+  it("is signed off, its governing strategic-copy item having cleared", () => {
+    expect(POSITIONING_RESEARCH_REVIEW.status).toBe("approved");
+    const governing = approvalQueue.find(
+      (q) => q.id === POSITIONING_RESEARCH_REVIEW.governingQueueItem,
+    );
+    expect(governing?.status).toBe("approved");
   });
 
   it("tracks sign-off against a real strategic-copy queue item", () => {
