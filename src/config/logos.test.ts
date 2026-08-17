@@ -34,10 +34,22 @@ describe("logo register", () => {
     }
   });
 
-  it("retains the Xylo logo even though its case study is removed (D-008)", () => {
+  it("removes the Xylo logo as well as its case study (D-0008, 2026-08-17)", () => {
+    // D-0008 published "retain the logo until the owner says otherwise"; the
+    // owner said otherwise, so the logo is now a removed-but-auditable record.
     const xylo = logos.find((l) => l.name.toLowerCase() === "xylo");
     expect(xylo).toBeDefined();
-    expect(xylo?.status).toBe("retain");
+    expect(xylo?.status).toBe("remove");
+    expect(marqueeLogos().map((l) => l.name)).not.toContain("Xylo");
+  });
+
+  it("carries OccuMed as a retained brand from the client's own site", () => {
+    const occumed = logos.find((l) => l.name === "OccuMed");
+    expect(occumed).toBeDefined();
+    expect(occumed?.status).toBe("retain");
+    expect(occumed?.permission).toBe("approved");
+    expect(occumed?.source).toBe("occumed.com.au");
+    expect(marqueeLogos().map((l) => l.name)).toContain("OccuMed");
   });
 
   it("has unique, local, alt-texted assets throughout", () => {
@@ -52,8 +64,9 @@ describe("logo register", () => {
 
   it("publishes every retained logo now Q-0006 confirmed the rights", () => {
     // The 2026-07-29 Q-0006 approval cleared every retained brand, so the
-    // marquee publishes the full register from local assets.
-    expect(marqueeLogos()).toHaveLength(18);
+    // marquee publishes the full register from local assets: the thirteen
+    // live-site brands the owner kept on 2026-08-17, plus OccuMed.
+    expect(marqueeLogos()).toHaveLength(14);
     expect(marqueeLogos().every((l) => l.permission === "approved")).toBe(true);
   });
 

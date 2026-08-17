@@ -22,7 +22,7 @@ record.
 
 - **Rebuild section order:** top → how-we-work → work → fit → contact
 - **Core brand colours:** --color-helix-mint `#5affba`, --color-helix-ink `#000000`, --color-white `#ffffff`
-- **Removed brands:** Awayco, Perion, Synaptico
+- **Removed brands:** Awayco, Perion, Synaptico, BCG, Agonics, Spec, Jubi, Xylo
 - **Rebuild indexable routes:** /
 - **Rebuild site title:** Helix Collective — Enterprise Value Growth Partner
 
@@ -72,7 +72,7 @@ The 2026-07-29 computed-value audit of the live site confirms mint `#5affba` (de
 
 ### Logo marquee behaviour
 
-The live site scrolls a broad client/venture logo strip. The rebuild keeps the sense of institutional proof but makes it accessible (§8.4): local optimised assets (never Webflow-CDN hotlinks), an `aria-hidden` duplicate set for the infinite scroll, a static wrapped grid under `prefers-reduced-motion`, and keyboard-accessible small-screen scrolling. Awayco, Perion, and Synaptico are removed from the strip (§5); `logos.ts`'s `REMOVED_BRANDS` enforces their absence.
+The live site scrolls a broad client/venture logo strip. The rebuild keeps the sense of institutional proof but makes it accessible (§8.4): local optimised assets (never Webflow-CDN hotlinks), an `aria-hidden` duplicate set for the infinite scroll, a static wrapped grid under `prefers-reduced-motion`, and keyboard-accessible small-screen scrolling. Awayco, Perion, and Synaptico are removed from the strip (§5), and the owner struck BCG, Agonics, Spec, Jubi, and Xylo on 2026-08-17 (the last recording D-0008); OccuMed was added the same day from the client's own site. `logos.ts`'s `REMOVED_BRANDS` enforces every removal.
 
 - **Governing review:** none
 

@@ -2,7 +2,7 @@
 
 <!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
-- **Status:** open
+- **Status:** decided
 - **Approval-queue item:** Q-0006-client-representation
 - **Content gate:** none
 
@@ -16,4 +16,7 @@ Remove Xylo only as a case study and retain its logo until the owner says otherw
 
 ## Decision
 
-_No decision recorded yet — this item is open and publishing its recommended default._
+The owner said otherwise: remove the Xylo logo from the marquee as well, alongside BCG, Agonics, Spec, and Jubi. Xylo keeps an auditable `remove` record in logos.ts (P4-002) and its rights record stands; only its visibility changes.
+
+- **Decision date:** 2026-08-17
+- **Decided by:** Helix owner (jeeva@helixcollective.com)

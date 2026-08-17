@@ -129,10 +129,11 @@ describe("the live site", () => {
   });
 
   it("requires every Q-0006-approved logo asset (all committed in public/)", () => {
-    // Q-0006 approved the full marquee, so the gate now demands all 18 local
-    // logo files — exactly the set committed under public/logos/.
+    // Q-0006 approved the full marquee, so the gate demands a local file for
+    // every brand still standing after the owner's 2026-08-17 cull: thirteen
+    // live-site brands plus OccuMed.
     const required = requiredPublicImagePaths();
-    expect(required).toHaveLength(18);
+    expect(required).toHaveLength(14);
     expect(required).toContain("logos/canva.png");
     expect(required.every((p) => p.startsWith("logos/") && p.endsWith(".png"))).toBe(true);
   });

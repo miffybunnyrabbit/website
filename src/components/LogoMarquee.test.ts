@@ -40,7 +40,7 @@ describe("LogoMarquee.astro", () => {
   it("renders every retained logo in the site default (Q-0006 approved)", async () => {
     // Q-0006 cleared every retained brand's rights on 2026-07-29, so the site
     // default renders the full marquee from local assets.
-    expect(marqueeLogos(logos)).toHaveLength(18);
+    expect(marqueeLogos(logos)).toHaveLength(14);
     const html = await renderMarquee();
     expect(html).toContain("marquee__item");
     expect(html).toContain('src="/logos/canva.png"');

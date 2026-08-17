@@ -139,7 +139,7 @@ function logoAssetRecord(logo: LogoEntry): AssetRecord {
     company: logo.name,
     type: "logo",
     filename: logo.asset,
-    source: "live-site",
+    source: logo.source ?? "live-site",
     owner: "external-brand",
     permissionStatus: logo.permission,
     usage: "logo-marquee",
@@ -148,7 +148,7 @@ function logoAssetRecord(logo: LogoEntry): AssetRecord {
     containsConfidentialUi: false,
     removeFromSite: removed,
     notes: removed
-      ? "Removed brand (§5, §8.4); retained as an auditable record (P4-002)."
+      ? "Removed from the marquee; retained as an auditable record (P4-002)."
       : "",
   };
 }
@@ -315,8 +315,11 @@ export function validateAssetRegister(
     }
   }
 
-  // The Xylo *case-study* asset must be marked removed (§9.6), while its marquee
-  // logo is retained (D-008) — the register must distinguish the two.
+  // The Xylo *case-study* asset must be marked removed (§9.6). Its marquee logo
+  // used to be the counter-case — retained while the panel went (D-0008's
+  // published default) — but the owner struck the logo too on 2026-08-17, so the
+  // rule now runs the other way: both rows must survive as removal records, and
+  // neither may be quietly dropped from the register.
   const xyloPanel = assetById("A-xylo-case-study", register);
   if (!xyloPanel || !xyloPanel.removeFromSite) {
     errors.push(
@@ -326,9 +329,9 @@ export function validateAssetRegister(
   const xyloLogo = register.find(
     (a) => a.type === "logo" && a.company.toLowerCase() === "xylo",
   );
-  if (xyloLogo && xyloLogo.removeFromSite) {
+  if (!xyloLogo || !xyloLogo.removeFromSite) {
     errors.push(
-      "The Xylo marquee logo must be retained, not removed (D-008).",
+      "The Xylo marquee logo must remain as a row marked remove-from-site (D-0008, decided 2026-08-17).",
     );
   }
 

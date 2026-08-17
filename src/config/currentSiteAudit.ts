@@ -24,8 +24,9 @@
  *  (b) the documented core brand colours are exactly `designTokens.ts`'s
  *      `REQUIRED_BRAND_COLORS` (mint/ink/white, §16.1);
  *  (c) the documented removed brands are exactly `logos.ts`'s `REMOVED_BRANDS`
- *      (Awayco, Perion, Synaptico, §5/§8.4), so the marquee finding stays in
- *      lock-step with the enforced logo register;
+ *      (the three the plan strikes, §5/§8.4, plus the five the owner struck on
+ *      2026-08-17), so the marquee finding stays in lock-step with the enforced
+ *      logo register;
  *  (d) the documented rebuild routes are exactly `sitemap.ts`'s
  *      `INDEXABLE_ROUTES`, and the retired `/contact-us` page resolves to a real
  *      301 rule in `redirects.ts`;
@@ -183,7 +184,16 @@ export const auditFacts: AuditFacts = {
     "--color-helix-ink": "#000000",
     "--color-white": "#ffffff",
   },
-  removedBrands: ["Awayco", "Perion", "Synaptico"],
+  removedBrands: [
+    "Awayco",
+    "Perion",
+    "Synaptico",
+    "BCG",
+    "Agonics",
+    "Spec",
+    "Jubi",
+    "Xylo",
+  ],
   rebuildIndexableRoutes: ["/"],
   rebuildTitle: "Helix Collective — Enterprise Value Growth Partner",
 };
@@ -240,7 +250,7 @@ export const auditTopics: readonly AuditTopic[] = [
     id: "logo-marquee-behaviour",
     title: "Logo marquee behaviour",
     statement:
-      "The live site scrolls a broad client/venture logo strip. The rebuild keeps the sense of institutional proof but makes it accessible (§8.4): local optimised assets (never Webflow-CDN hotlinks), an `aria-hidden` duplicate set for the infinite scroll, a static wrapped grid under `prefers-reduced-motion`, and keyboard-accessible small-screen scrolling. Awayco, Perion, and Synaptico are removed from the strip (§5); `logos.ts`'s `REMOVED_BRANDS` enforces their absence.",
+      "The live site scrolls a broad client/venture logo strip. The rebuild keeps the sense of institutional proof but makes it accessible (§8.4): local optimised assets (never Webflow-CDN hotlinks), an `aria-hidden` duplicate set for the infinite scroll, a static wrapped grid under `prefers-reduced-motion`, and keyboard-accessible small-screen scrolling. Awayco, Perion, and Synaptico are removed from the strip (§5), and the owner struck BCG, Agonics, Spec, Jubi, and Xylo on 2026-08-17 (the last recording D-0008); OccuMed was added the same day from the client's own site. `logos.ts`'s `REMOVED_BRANDS` enforces every removal.",
   },
   {
     id: "hover-and-focus-states",

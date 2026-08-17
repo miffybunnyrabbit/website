@@ -186,8 +186,12 @@ export const decisions: readonly DecisionRecord[] = [
       "The brief removes Xylo as a case study but does not say to remove its marquee logo.",
     recommendedDefault:
       "Remove Xylo only as a case study and retain its logo until the owner says otherwise.",
-    status: "open",
+    status: "decided",
     queueItem: "Q-0006-client-representation",
+    decision:
+      "The owner said otherwise: remove the Xylo logo from the marquee as well, alongside BCG, Agonics, Spec, and Jubi. Xylo keeps an auditable `remove` record in logos.ts (P4-002) and its rights record stands; only its visibility changes.",
+    decisionDate: "2026-08-17",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "D-0009-performance-linked-economics",

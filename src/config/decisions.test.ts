@@ -69,6 +69,7 @@ describe("decisions register content (§6)", () => {
       "D-0001-currency": "2026-07-29",
       "D-0010-font-rights": "2026-07-29",
       "D-0012-engagement-boundaries": "2026-08-03",
+      "D-0008-xylo-logo": "2026-08-17",
     };
     for (const d of decisions) {
       if (d.id in decidedOn) {
@@ -248,7 +249,7 @@ describe("validateDecisions", () => {
 describe("formatOpenDecisionsWarning", () => {
   it("lists every open decision", () => {
     const warning = formatOpenDecisionsWarning();
-    expect(warning).toContain("9 open §6 decision(s)");
+    expect(warning).toContain("8 open §6 decision(s)");
     for (const d of openDecisions()) expect(warning).toContain(d.id);
   });
 

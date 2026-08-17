@@ -72,15 +72,27 @@ describe("assetRegister content", () => {
     }
   });
 
-  it("removes the Xylo case-study asset but keeps the Xylo logo (D-008)", () => {
+  it("removes the Xylo case-study asset and now the Xylo logo too (D-0008)", () => {
     const panel = assetById("A-xylo-case-study");
     expect(panel).toBeDefined();
     expect(panel!.removeFromSite).toBe(true);
 
+    // D-0008 was decided on 2026-08-17: the logo goes as well, but its rights
+    // record stands, so the row survives as an auditable removal.
     const logo = assetRegister.find(
       (a) => a.type === "logo" && a.company.toLowerCase() === "xylo",
     );
     expect(logo).toBeDefined();
+    expect(logo!.removeFromSite).toBe(true);
+    expect(logo!.permissionStatus).toBe("approved");
+  });
+
+  it("records OccuMed as sourced from the client's own site", () => {
+    const logo = assetRegister.find(
+      (a) => a.type === "logo" && a.company === "OccuMed",
+    );
+    expect(logo).toBeDefined();
+    expect(logo!.source).toBe("occumed.com.au");
     expect(logo!.removeFromSite).toBe(false);
   });
 
@@ -95,7 +107,7 @@ describe("assetRegister content", () => {
     // Q-0006 (2026-07-29) cleared every retained logo; the case-study image and
     // the legacy humans photo stay pending/removed and must be withheld.
     const publishable = publishableAssets();
-    expect(publishable).toHaveLength(18);
+    expect(publishable).toHaveLength(14);
     const filenames = new Set(publishable.map((a) => a.filename));
     expect(filenames.has("canva.png")).toBe(true);
     expect(filenames.has("xylo-case-study.png")).toBe(false);
@@ -245,9 +257,13 @@ describe("renderAssetRegisterCsv", () => {
       .split("\n")
       .find((line) => line.startsWith("A-awayco,"));
     expect(awayco).toBeDefined();
-    expect(awayco!.endsWith("yes,\"Removed brand (§5, §8.4); retained as an auditable record (P4-002).\"")).toBe(
-      true,
-    );
+    // The note carries no comma, so it needs no quoting; the removal flag is the
+    // `yes` immediately before it.
+    expect(
+      awayco!.endsWith(
+        "yes,Removed from the marquee; retained as an auditable record (P4-002).",
+      ),
+    ).toBe(true);
   });
 
   it("keeps every quoted field balanced so the CSV stays parseable", () => {

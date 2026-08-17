@@ -28,6 +28,12 @@ export interface LogoEntry {
   name: string;
   /** Local optimised asset filename; never a Webflow CDN URL (section 8.4). */
   asset: string;
+  /**
+   * Where the asset came from, for the R-008 rights spine. Defaults to
+   * `live-site` — the live Webflow site's own published files — which is where
+   * every brand carried over from the rebuild originates.
+   */
+  source?: string;
   website?: string;
   status: LogoStatus;
   permission: LogoPermission;
@@ -36,31 +42,47 @@ export interface LogoEntry {
 }
 
 /**
- * Brands the plan requires be removed from the marquee (sections 5 and 8.4).
- * They are kept here as explicit `remove` records so the requirement is
- * auditable (P4-002); the validator forbids ever flipping one back to visible.
+ * Brands that must not appear in the marquee, from two provenances:
+ *
+ *  - the three the plan itself requires be removed (sections 5 and 8.4) —
+ *    Awayco, Perion, Synaptico;
+ *  - the five the owner struck on 2026-08-17 — BCG, Agonics, Spec, Jubi, and
+ *    Xylo, the last of which records the D-0008 decision ("retain its logo until
+ *    the owner says otherwise").
+ *
+ * Both kinds are kept as explicit `remove` records so the removal is auditable
+ * (P4-002); the validator forbids ever flipping one back to visible.
  */
 export const REMOVED_BRANDS: readonly string[] = [
   "Awayco",
   "Perion",
   "Synaptico",
+  "BCG",
+  "Agonics",
+  "Spec",
+  "Jubi",
+  "Xylo",
 ];
 
 /**
  * The reconciled logo register. Brands are the set observed on the live site
- * (section 8.4); the three removed brands carry `status: "remove"`, and every
- * retained brand now carries `permission: "approved"` — Q-0006 cleared all 18
- * for publication on 2026-07-29, the assets sourced from the live site's own
+ * (section 8.4) plus OccuMed, added by the owner on 2026-08-17 from the client's
+ * own site; removed brands carry `status: "remove"`, and every retained brand
+ * carries `permission: "approved"` — Q-0006 cleared the live-site set for
+ * publication on 2026-07-29, the assets sourced from the live site's own
  * published files (asset register, R-008). The gate still stands for any future
  * entry: an unconfirmed brand would stay `permission: "pending"` and be withheld
- * by `marqueeLogos()`; none currently are. Xylo is deliberately retained here —
- * only its *case study* is removed (D-008), not its logo.
+ * by `marqueeLogos()`; none currently are.
+ *
+ * Five brands the live site carried are struck on the owner's 2026-08-17
+ * instruction — BCG, Agonics, Spec, Jubi, and Xylo — and keep auditable `remove`
+ * records below. Xylo's removal is the recorded D-0008 decision: previously only
+ * its *case study* was removed and its logo retained.
  */
 export const logos: readonly LogoEntry[] = [
   { name: "Canva", asset: "canva.png", status: "retain", permission: "approved", alt: "Canva" },
   { name: "Google", asset: "google.png", status: "retain", permission: "approved", alt: "Google" },
   { name: "13SICK", asset: "13sick.png", status: "retain", permission: "approved", alt: "13SICK" },
-  { name: "BCG", asset: "bcg.png", status: "retain", permission: "approved", alt: "BCG" },
   { name: "CommBank", asset: "commbank.png", status: "retain", permission: "approved", alt: "CommBank" },
   { name: "Australia Post", asset: "australia-post.png", status: "retain", permission: "approved", alt: "Australia Post" },
   { name: "eftpos", asset: "eftpos.png", status: "retain", permission: "approved", alt: "eftpos" },
@@ -70,15 +92,27 @@ export const logos: readonly LogoEntry[] = [
   { name: "Filecoin", asset: "filecoin.png", status: "retain", permission: "approved", alt: "Filecoin" },
   { name: "Veyor", asset: "veyor.png", status: "retain", permission: "approved", alt: "Veyor" },
   { name: "Ferovinum", asset: "ferovinum.png", status: "retain", permission: "approved", alt: "Ferovinum" },
-  { name: "Agonics", asset: "agonics.png", status: "retain", permission: "approved", alt: "Agonics" },
-  { name: "Spec", asset: "spec.png", status: "retain", permission: "approved", alt: "Spec" },
-  { name: "Jubi", asset: "jubi.png", status: "retain", permission: "approved", alt: "Jubi" },
-  { name: "Xylo", asset: "xylo.png", status: "retain", permission: "approved", alt: "Xylo" },
   { name: "Origami", asset: "origami.png", status: "retain", permission: "approved", alt: "Origami" },
+  {
+    name: "OccuMed",
+    asset: "occumed.png",
+    source: "occumed.com.au",
+    website: "https://occumed.com.au",
+    status: "retain",
+    permission: "approved",
+    alt: "OccuMed",
+  },
   // Removed brands, kept as auditable records (P4-002). Never renderable.
   { name: "Awayco", asset: "awayco.svg", status: "remove", permission: "pending", alt: "Awayco" },
   { name: "Perion", asset: "perion.svg", status: "remove", permission: "pending", alt: "Perion" },
   { name: "Synaptico", asset: "synaptico.svg", status: "remove", permission: "pending", alt: "Synaptico" },
+  // Struck by the owner on 2026-08-17; rights were confirmed (Q-0006), so the
+  // permission stays `approved` and only the marquee status changes.
+  { name: "BCG", asset: "bcg.png", status: "remove", permission: "approved", alt: "BCG" },
+  { name: "Agonics", asset: "agonics.png", status: "remove", permission: "approved", alt: "Agonics" },
+  { name: "Spec", asset: "spec.png", status: "remove", permission: "approved", alt: "Spec" },
+  { name: "Jubi", asset: "jubi.png", status: "remove", permission: "approved", alt: "Jubi" },
+  { name: "Xylo", asset: "xylo.png", status: "remove", permission: "approved", alt: "Xylo" },
 ];
 
 /** True when `name` matches a brand the plan requires be removed. */
