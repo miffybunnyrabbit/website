@@ -81,16 +81,16 @@ const visible = marqueeLogos(logos);
      (currentSiteAudit.ts:colour-usage, R-001) records mint `#5affba` on *three*
      full-bleed section backgrounds; the RW-002 desktop screenshot
      (docs/research/current-site/desktop/homepage.png) shows the client/partner
-     logo strip as the third — its logos read dark on mint, sitting between the
-     mint proof strip (proofBannerSurface.test.ts) and the mint case-studies band
-     (casesSurface.test.ts), exactly where this section falls in the rebuild
-     order. So the accent lands here as a full-bleed block, the same treatment its
-     two mint neighbours carry. Mint is a surface colour, not a text colour —
-     ink-on-mint clears WCAG AA where mint-on-white fails it (§16.2) — so the
-     inherited colour is pinned to ink (which carries the logos' alt-text
+     logo strip as the third — its logos read dark on mint, directly below the
+     mint proof strip (proofBannerSurface.test.ts). So the accent lands here as a
+     full-bleed block, the same treatment the proof strip and the case-studies
+     band (casesSurface.test.ts) carry. Mint is a surface colour, not a text
+     colour — ink-on-mint clears WCAG AA where mint-on-white fails it (§16.2) —
+     so the inherited colour is pinned to ink (which carries the logos' alt-text
      fallback), asserted in logoMarqueeSurface.test.ts. The strip is contiguous
-     with the mint sections above and below, forming one mint expanse, so the
-     former hairline bottom border is dropped. */
+     with the mint proof strip above, forming one mint expanse, and the white
+     manifesto below now supplies the edge the case-studies band used to sit
+     against, so the former hairline bottom border stays dropped. */
   .marquee {
     background-color: var(--color-accent);
     color: var(--color-helix-ink);

@@ -109,15 +109,15 @@ const published = publishedCaseStudies(studies);
      (currentSiteAudit.ts:colour-usage, R-001) records mint on three full-bleed
      section backgrounds; the RW-002 desktop screenshot
      (docs/research/current-site/desktop/homepage.png) shows the case-studies
-     band — "how we turn 'why not?' into successful ventures" — as one of them,
-     sitting exactly where this section falls in the rebuild order (after the
-     logo marquee, before the manifesto). So the accent lands here as a
-     full-bleed block, the same treatment the proof strip carries. Mint is a
-     surface colour, not a text colour — ink-on-mint clears WCAG AA where
-     mint-on-white fails it (§16.2) — so the text is pinned to ink and the
-     pairing's contrast is asserted in casesSurface.test.ts. The full-bleed
-     colour change delineates the band from the white sections around it, so the
-     former hairline bottom border is dropped. */
+     band — "how we turn 'why not?' into successful ventures" — as one of them.
+     So the accent lands here as a full-bleed block, the same treatment the proof
+     strip carries. Mint is a surface colour, not a text colour — ink-on-mint
+     clears WCAG AA where mint-on-white fails it (§16.2) — so the text is pinned
+     to ink and the pairing's contrast is asserted in casesSurface.test.ts. The
+     band now falls after "How we work" rather than straight after the logo
+     marquee, so it reads against the soft-grey process section above and the
+     white fit section below; the full-bleed colour change delineates it from
+     both, so the former hairline bottom border stays dropped. */
   .cases {
     background-color: var(--color-accent);
     color: var(--color-helix-ink);

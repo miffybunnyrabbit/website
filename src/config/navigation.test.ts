@@ -35,10 +35,21 @@ describe("headerNav configuration", () => {
 
   it("exposes the three approved anchors in reading order (§8.1)", () => {
     expect(headerNav.items.map((i) => i.target)).toEqual([
-      "work",
       "how-we-work",
+      "work",
       "fit",
     ]);
+  });
+
+  // The anchors are a reading path, so they must follow the page's own section
+  // order rather than a fixed list that can drift when a section moves — the
+  // case-studies band moving after "How we work" is exactly that case.
+  it("keeps the anchors in HOMEPAGE_SECTION_IDS order (§7)", () => {
+    const targets = headerNav.items.map((i) => i.target);
+    const inPageOrder = HOMEPAGE_SECTION_IDS.filter((id) =>
+      targets.includes(id),
+    );
+    expect(targets).toEqual([...inPageOrder]);
   });
 
   it("brand link returns to the site root", () => {

@@ -177,7 +177,7 @@ export interface AuditFacts {
 }
 
 export const auditFacts: AuditFacts = {
-  rebuildSectionIds: ["top", "work", "how-we-work", "fit", "contact"],
+  rebuildSectionIds: ["top", "how-we-work", "work", "fit", "contact"],
   brandColors: {
     "--color-helix-mint": "#5affba",
     "--color-helix-ink": "#000000",
@@ -198,7 +198,7 @@ export const auditTopics: readonly AuditTopic[] = [
     id: "page-sections-and-order",
     title: "Page sections and order",
     statement:
-      "The live Webflow homepage runs an oversized hero, a four-metric proof strip (`50+ ventures`, `$500m`, a human count, `10+ years`), a broad logo strip, case-study panels (including Xylo), a merged differentiation/process block, a flattened flowchart image, and a split build/invest CTA. The rebuild reorders this into the §7 sequence — header, enterprise-value hero, two-metric proof banner, accessible logo marquee, five case studies, a separate “We're different because…” manifesto, a distinct four-stage “How we work” section, the interactive fit qualifier, one closing CTA, and an institutional footer — anchored by `navigation.ts`'s `HOMEPAGE_SECTION_IDS` so the story order is a single source of truth.",
+      "The live Webflow homepage runs an oversized hero, a four-metric proof strip (`50+ ventures`, `$500m`, a human count, `10+ years`), a broad logo strip, case-study panels (including Xylo), a merged differentiation/process block, a flattened flowchart image, and a split build/invest CTA. The rebuild reorders this into the §7 sequence — header, enterprise-value hero, two-metric proof banner, accessible logo marquee, a separate “We're different because…” manifesto, a distinct four-stage “How we work” section, five case studies, the interactive fit qualifier, one closing CTA, and an institutional footer — anchored by `navigation.ts`'s `HOMEPAGE_SECTION_IDS` so the story order is a single source of truth.",
   },
   {
     id: "header-behaviour",

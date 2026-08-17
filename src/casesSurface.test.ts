@@ -16,8 +16,8 @@ import {
  * `#5affba` runs on *three* full-bleed section backgrounds. The sibling
  * `proofBannerSurface.test.ts` pins the proof strip — the first of the three —
  * black-on-mint; this gate pins the case-studies band, the second, which the
- * RW-002 desktop screenshot shows sitting exactly where this section falls in
- * the rebuild order (after the logo marquee, before the manifesto). Without it
+ * RW-002 desktop screenshot shows as a full-bleed mint block — in the rebuild it
+ * falls after the "How we work" section, before the fit qualifier. Without it
  * the band silently defaults to the white body background, so only one of the
  * live site's mint surfaces would survive the rebuild.
  *

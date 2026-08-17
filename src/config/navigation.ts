@@ -34,8 +34,8 @@ import { scanForbiddenCopy } from "./forbiddenCopy";
  */
 export const HOMEPAGE_SECTION_IDS = [
   "top",
-  "work",
   "how-we-work",
+  "work",
   "fit",
   "contact",
 ] as const;
@@ -68,15 +68,15 @@ export interface HeaderNav {
 }
 
 /**
- * The one approved header. Three anchors — Work, How we work, Fit — in the plan's
+ * The one approved header. Three anchors — How we work, Work, Fit — in the page's
  * reading order, plus the single approved CTA label. The brand link returns to
  * the top of the marketing page.
  */
 export const headerNav: HeaderNav = {
   brand: { label: "Helix Collective", href: "/" },
   items: [
-    { label: "Work", target: "work" },
     { label: "How we work", target: "how-we-work" },
+    { label: "Work", target: "work" },
     { label: "Fit", target: "fit" },
   ],
   ctaLabel: PRIMARY_CTA_LABEL,

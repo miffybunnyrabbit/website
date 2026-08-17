@@ -16,8 +16,8 @@ import {
  * `#5affba` runs on *three* full-bleed section backgrounds. The sibling
  * `proofBannerSurface.test.ts` and `casesSurface.test.ts` pin the first two —
  * the proof strip and the case-studies band; this gate pins the third, the
- * client/partner logo strip, which the RW-002 desktop screenshot shows sitting
- * between them, its logos reading dark on mint. Without it the strip silently
+ * client/partner logo strip, which the RW-002 desktop screenshot shows directly
+ * below the proof strip, its logos reading dark on mint. Without it the strip silently
  * defaults to the white body background, so only two of the live site's three
  * mint surfaces would survive the rebuild.
  *
