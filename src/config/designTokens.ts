@@ -141,6 +141,7 @@ export const TOKEN_GROUPS: readonly TokenGroup[] = [
       { name: "--space-10", value: "2.5rem" },
       { name: "--space-12", value: "3rem" },
       { name: "--space-16", value: "4rem" },
+      { name: "--space-20", value: "5rem" },
     ],
   },
   {

@@ -270,6 +270,7 @@ export const tokenProvenance: readonly TokenProvenance[] = [
   { name: "--space-10", provenance: "new", note: "Spacing scale step (§16.4)." },
   { name: "--space-12", provenance: "new", note: "Spacing scale step (§16.4)." },
   { name: "--space-16", provenance: "new", note: "Spacing scale step (§16.4)." },
+  { name: "--space-20", provenance: "new", note: "Spacing scale step (§16.4)." },
 
   // --- Layout: shared container and measure widths (§16.4). ---
   {

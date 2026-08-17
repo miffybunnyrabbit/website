@@ -57,6 +57,7 @@ The tokens ship from `src/config/designTokens.ts` (rendered to
 | `--space-10` | `2.5rem` | New | Spacing scale step (§16.4). |
 | `--space-12` | `3rem` | New | Spacing scale step (§16.4). |
 | `--space-16` | `4rem` | New | Spacing scale step (§16.4). |
+| `--space-20` | `5rem` | New | Spacing scale step (§16.4). |
 | `--width-container` | `72rem` | New | Shared max content width (§16.4). |
 | `--width-text` | `48ch` | New | Readable measure for body copy (§16.4). |
 | `--radius-sm` | `0.375rem` | New | Radius scale step (§16.4). |

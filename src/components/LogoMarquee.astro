@@ -131,11 +131,12 @@ const visible = marqueeLogos(logos);
   }
 
   /* Logo height is the one dimension that sets the strip's presence; it stays on
-     the spacing scale (--space-16 = 4rem) so the marquee keeps the section
-     rhythm rather than inventing a size of its own. */
+     the spacing scale (--space-20 = 5rem, the step added for exactly this) so
+     the marquee keeps the section rhythm rather than inventing a size of its
+     own. */
   .marquee__logo {
     display: block;
-    height: var(--space-16);
+    height: var(--space-20);
     width: auto;
   }
 
