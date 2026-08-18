@@ -1,8 +1,11 @@
 # Helix Collective Website
 
 Rebuild of the Helix Collective marketing site as a locally runnable, Git-managed
-static website. See [`IMPLEMENTATION_PLAN.md`](./IMPLEMENTATION_PLAN.md) for the
-full brief, decisions, and phase plan.
+static website. The build plan it was written against is retired — the brief,
+decisions, and phase plan live in git history (`git log --follow --
+IMPLEMENTATION_PLAN.md`). The live governance records are the ones the build
+itself validates: `docs/decisions/`, `docs/approvals/queue/`, and
+`docs/research/`.
 
 ## Stack
 
@@ -61,4 +64,6 @@ Early scaffold. Implemented so far:
   every push to `main` and pull request, rendered from a validated model
   (`src/config/ci.ts`, plan §9.1).
 
-Upcoming work follows the phases in `IMPLEMENTATION_PLAN.md`.
+Outstanding work is whatever the build reports: every run prints the open
+approval-queue items and the §6 decisions still publishing a recommended
+default.
