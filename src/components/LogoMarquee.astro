@@ -88,12 +88,16 @@ const visible = marqueeLogos(logos);
      colour — ink-on-mint clears WCAG AA where mint-on-white fails it (§16.2) —
      so the inherited colour is pinned to ink (which carries the logos' alt-text
      fallback), asserted in logoMarqueeSurface.test.ts. The strip is contiguous
-     with the mint proof strip above, forming one mint expanse, and the white
-     manifesto below now supplies the edge the case-studies band used to sit
-     against, so the former hairline bottom border stays dropped. */
+     with the mint proof strip above, forming one mint expanse.
+
+     The live site rules both bands in thin black (RW-002 desktop screenshot).
+     Only the bottom edge is drawn here: the proof strip's own bottom border
+     already supplies the line between the two, and doubling them would render a
+     2px rule where the live site has a hairline. */
   .marquee {
     background-color: var(--color-accent);
     color: var(--color-helix-ink);
+    border-block-end: 1px solid var(--color-helix-ink);
     overflow: hidden;
   }
 
@@ -123,7 +127,7 @@ const visible = marqueeLogos(logos);
     margin: 0;
     padding: 0 var(--space-6);
     list-style: none;
-    animation: marquee-scroll 40s linear infinite;
+    animation: marquee-scroll 25s linear infinite;
   }
 
   .marquee__item {

@@ -63,12 +63,19 @@ const published = publishedProofBanner(banner);
      accent. Mint is a surface colour, not a text
      colour — ink-on-mint clears WCAG AA where mint-on-white fails it (§16.2) —
      so the text is pinned to ink and the pairing's contrast is asserted in
-     proofBannerSurface.test.ts. The full-bleed colour change delineates the
-     strip from the white sections above and below, so no hairline border is
-     needed. */
+     proofBannerSurface.test.ts.
+
+     The live site rules the strip in thin black: a hairline above and below the
+     band, and a hairline between the metric cells, so the figures read as a row
+     of framed panels rather than as floating text on mint (RW-002 desktop
+     screenshot). The bottom rule is also the line between this strip and the
+     logo ticker below it, which is why the marquee draws only its own bottom
+     edge — two adjacent 1px borders would render as a 2px rule the live site
+     does not have. */
   .proof {
     background-color: var(--color-accent);
     color: var(--color-helix-ink);
+    border-block: 1px solid var(--color-helix-ink);
   }
 
   /* The banner is a proof strip, not a titled section; the heading names the
@@ -85,11 +92,20 @@ const published = publishedProofBanner(banner);
     border: 0;
   }
 
+  /* The vertical rhythm sits on the cells rather than the list so the divider
+     between them runs the full height of the band, as it does on the live site. */
   .proof__list {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-8);
+  }
+
+  .proof__metric {
     padding-block: var(--space-12);
+  }
+
+  /* Stacked below the breakpoint, so the divider is horizontal. */
+  .proof__metric + .proof__metric {
+    border-block-start: 1px solid var(--color-helix-ink);
   }
 
   /* Two equal columns from the small-tablet breakpoint up; stacked with equal
@@ -97,6 +113,15 @@ const published = publishedProofBanner(banner);
   @media (min-width: 40rem) {
     .proof__list {
       grid-template-columns: 1fr 1fr;
+    }
+
+    .proof__metric {
+      padding-inline: var(--space-8);
+    }
+
+    .proof__metric + .proof__metric {
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--color-helix-ink);
     }
   }
 </style>
