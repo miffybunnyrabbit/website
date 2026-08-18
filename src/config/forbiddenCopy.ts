@@ -236,3 +236,138 @@ export function assertNoForbiddenCopy(
     throw new Error(`Forbidden copy found:\n- ${lines.join("\n- ")}`);
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * §11.7 commercial-promise wording.
+ *
+ * A second, narrower ruleset with a different job from the vocabulary above.
+ * Those rules retire copy the repositioning dropped; these prevent the site
+ * misrepresenting the commercial relationship — implying an employment
+ * relationship, guaranteeing an enterprise-value result or an instrument,
+ * making the "get paid when you get paid" claim universal, presenting a company
+ * sale as mandatory, or asserting a fiduciary, agency, or directorship role.
+ *
+ * They lived in the engagement-model research record until 2026-08-18 and moved
+ * here when it was retired: the record was reference material, but this is a
+ * guard on what ships, and `renderedProhibitedWording.test.ts` runs it over the
+ * assembled page.
+ * ------------------------------------------------------------------------- */
+
+
+/** One occurrence of prohibited wording found in scanned copy. */
+export interface ProhibitedWordingHit {
+  /** The `id` of the rule that matched. */
+  id: string;
+  /** Label of the copy source the match was found in. */
+  source: string;
+  /** The exact substring that triggered the match. */
+  match: string;
+  reason: string;
+}
+
+/**
+ * Wording that must never reach the "How we work"/"We're different" copy (§11.7
+ * accuracy and legal guardrails). These complement the site-wide
+ * `forbiddenCopy.ts` rules with the engagement-model-specific promises §11.7
+ * bans: an employment relationship, a guaranteed result, a universal payment
+ * claim, a mandatory sale, a fiduciary/agency/directorship representation, or an
+ * over-specified/guaranteed back-end instrument.
+ *
+ * Patterns are case-insensitive and declared WITHOUT the global flag; the scanner
+ * clones each with `g` per call so `lastIndex` is never shared between scans.
+ */
+/** A phrase that must never reach the site's commercial copy (§11.7). */
+export interface ProhibitedPhrase {
+  /** Stable, kebab-case identifier for the rule. */
+  id: string;
+  /** Case-insensitive matcher. Declared WITHOUT the global flag (see scanner). */
+  pattern: RegExp;
+  /** Why the §11.7 guardrails forbid it, phrased for a failed build. */
+  reason: string;
+}
+
+/** One occurrence of prohibited wording found in scanned copy. */
+export interface ProhibitedWordingHit {
+  /** The `id` of the rule that matched. */
+  id: string;
+  /** Label of the copy source the match was found in. */
+  source: string;
+  /** The exact substring that triggered the match. */
+  match: string;
+  reason: string;
+}
+
+export const PROHIBITED_WORDING: readonly ProhibitedPhrase[] = [
+  {
+    id: "employment-relationship",
+    pattern:
+      /\b(?:as|become|becoming|are|join(?:ing)?\s+as)\s+(?:your\s+|full[\s-]time\s+)*employees?\b/i,
+    reason:
+      "\"Part of the operating team\" must not imply an employment relationship (§11.7).",
+  },
+  {
+    id: "on-your-payroll",
+    pattern: /\bon\s+your\s+payroll\b/i,
+    reason: "Embedded delivery must not be described as being on the payroll (§11.7).",
+  },
+  {
+    id: "guaranteed-result",
+    pattern:
+      /\bguarantee(?:d|s)?\s+(?:a\s+|the\s+)?(?:result|outcome|valuation|multiple|success)\w*\b/i,
+    reason: "The site must never guarantee an enterprise-value result (§11.7, §4).",
+  },
+  {
+    id: "universal-payment-claim",
+    pattern: /\bwe\s+(?:only\s+)?get\s+paid\s+when\s+you\s+get\s+paid\b/i,
+    reason:
+      "\"Get paid when you get paid\" is not true of every engagement; keep payment wording instrument-neutral (§11.7).",
+  },
+  {
+    id: "mandatory-sale",
+    pattern:
+      /\b(?:must|required\s+to|have\s+to|obligated\s+to)\s+sell\s+(?:the|your)\s+(?:company|business)\b/i,
+    reason: "\"Exit\" must not imply a mandatory sale of the company (§11.7).",
+  },
+  {
+    id: "sale-required",
+    pattern: /\b(?:requires?|mandatory|guaranteed)\s+(?:a\s+)?(?:company\s+)?(?:sale|liquidity\s+event)\b/i,
+    reason:
+      "A company sale or liquidity event must never be presented as required or inevitable (§11.7).",
+  },
+  {
+    id: "fiduciary-agency-directorship",
+    pattern:
+      /\b(?:as|acting\s+as|serving\s+as)\s+(?:your\s+)?(?:fiduciary|agent|directors?)\b/i,
+    reason:
+      "Embedded delivery must not assert a fiduciary, agency, or directorship representation (§11.7).",
+  },
+  {
+    id: "guaranteed-instrument",
+    pattern: /\bguaranteed\s+(?:equity|options?|carry|gain[\s-]share|shares?|warrants?)\b/i,
+    reason:
+      "The back-end instrument varies per engagement and must never be described as guaranteed (§11.7).",
+  },
+];
+
+/**
+ * Scan one copy string for every prohibited-wording occurrence. An empty array
+ * means the copy is clean. Mirrors the safe-clone approach in `forbiddenCopy.ts`.
+ */
+export function scanProhibitedWording(
+  source: string,
+  text: string,
+  rules: readonly ProhibitedPhrase[] = PROHIBITED_WORDING,
+): ProhibitedWordingHit[] {
+  const hits: ProhibitedWordingHit[] = [];
+  for (const rule of rules) {
+    const flags = rule.pattern.flags.includes("g")
+      ? rule.pattern.flags
+      : rule.pattern.flags + "g";
+    const re = new RegExp(rule.pattern.source, flags);
+    for (let m = re.exec(text); m !== null; m = re.exec(text)) {
+      hits.push({ id: rule.id, source, match: m[0], reason: rule.reason });
+      if (m.index === re.lastIndex) re.lastIndex += 1;
+    }
+  }
+  return hits;
+}

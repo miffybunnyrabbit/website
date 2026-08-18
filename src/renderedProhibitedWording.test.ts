@@ -6,7 +6,7 @@ import IndexPage from "./pages/index.astro";
 import {
   PROHIBITED_WORDING,
   scanProhibitedWording,
-} from "./config/engagementModel";
+} from "./config/forbiddenCopy";
 
 /**
  * Assembled-page prohibited-wording gate (implementation plan §24 "Message",
@@ -15,19 +15,17 @@ import {
  * §24 requires that "the public wording does not imply a guaranteed result, a
  * universal financial instrument, an employment relationship, or a mandatory
  * sale of the company". §11.7 turns that into the concrete
- * `PROHIBITED_WORDING` ruleset in `engagementModel.ts`: an employment
+ * `PROHIBITED_WORDING` ruleset in `forbiddenCopy.ts`: an employment
  * relationship, being on the payroll, a guaranteed result/instrument, the
  * universal "get paid when you get paid" claim, a mandatory company sale, and a
  * fiduciary/agency/directorship representation.
  *
- * `engagementModel.test.ts` proves that ruleset fires, and the build-time
- * `validateEngagementModel` gate scans the copy *model* — the how-we-work and
- * why-helix config (`governedCopySources`) — for every rule. But that scan only
- * sees the strings the models export. It does not see the assembled page. A
+ * `forbiddenCopy.test.ts` proves that ruleset fires, but it only sees the
+ * strings the models export. It does not see the assembled page. A
  * §11.7-prohibited phrase hardcoded straight into `HowWeWork.astro`,
  * `WhyHelix.astro`, `Hero.astro`, or any other component's markup — a heading,
  * an intro, a closing line, alt text — never passes through
- * `governedCopySources`, so the engagement-model gate cannot see it. The
+ * the copy models at all, so a model-level scan cannot see it. The
  * `forbiddenCopy` ruleset that `renderedCopy.test.ts` enforces governs a
  * different vocabulary (the removed brands, the retired people/ventures copy,
  * "market domination"), not these commercial-promise phrasings. That leaves a
