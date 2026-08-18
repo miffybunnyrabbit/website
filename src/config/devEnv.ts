@@ -11,14 +11,14 @@
  *
  * The one variable the site reads today is the Calendly booking URL behind the
  * single site-wide CTA. Its name and approved host are taken from
- * `conversionFacts` (R-009 / D-006), not re-typed here, so the documented example
+ * `cta.ts`, not re-typed here, so the documented example
  * cannot drift from the real CTA gate in `cta.ts`. Real `.env` files are
  * gitignored; this example carries only a safe placeholder value.
  *
  * This module is pure configuration plus validation: no UI, no I/O.
  */
 
-import { conversionFacts } from "./conversionSpec";
+import { APPROVED_CTA_HOSTS, CTA_URL_ENV_VAR } from "./cta";
 
 /** A single documented environment variable. */
 export interface EnvVar {
@@ -38,23 +38,23 @@ export interface EnvVar {
 /**
  * The environment variables local development and the static build read. Sourced
  * from the content models where one already owns the fact (the Calendly URL name
- * and approved host come from `conversionFacts`) so this list cannot drift.
+ * and approved host come from `cta.ts`) so this list cannot drift.
  */
 export const ENV_VARS: readonly EnvVar[] = [
   {
-    name: conversionFacts.urlSource,
+    name: CTA_URL_ENV_VAR,
     required: false,
     description: [
       "The booking link behind the single site-wide CTA, injected at build time.",
       "Optional locally: without it the build only warns and the CTA renders",
       "without a link (see the `isCtaConfigured` warning in src/pages/index.astro).",
-      `Must be an https URL on an approved host (${conversionFacts.approvedHosts.join(
+      `Must be an https URL on an approved host (${APPROVED_CTA_HOSTS.join(
         ", ",
       )}); a set-but-insecure or off-host`,
       "value fails the build (`assertConfiguredCtaValid`). The exact production",
       "path and event type are the open D-006 decision.",
     ],
-    example: `https://${conversionFacts.approvedHosts[0]}/helix-collective/intro`,
+    example: `https://${APPROVED_CTA_HOSTS[0]}/helix-collective/intro`,
   },
 ];
 
@@ -100,7 +100,7 @@ export function validateEnvModel(): string[] {
 
   // The documented Calendly example must satisfy the same rules the CTA gate
   // enforces, so the doc can never show a value the build would reject.
-  const calendly = ENV_VARS.find((v) => v.name === conversionFacts.urlSource);
+  const calendly = ENV_VARS.find((v) => v.name === CTA_URL_ENV_VAR);
   if (calendly) {
     let url: URL | undefined;
     try {
@@ -111,9 +111,9 @@ export function validateEnvModel(): string[] {
     if (url && url.protocol !== "https:") {
       errors.push(`Example for "${calendly.name}" must be https.`);
     }
-    if (url && !conversionFacts.approvedHosts.includes(url.hostname)) {
+    if (url && !APPROVED_CTA_HOSTS.includes(url.hostname)) {
       errors.push(
-        `Example for "${calendly.name}" must be on an approved host [${conversionFacts.approvedHosts.join(
+        `Example for "${calendly.name}" must be on an approved host [${APPROVED_CTA_HOSTS.join(
           ", ",
         )}].`,
       );

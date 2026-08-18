@@ -33,6 +33,13 @@ export const CTA_ANALYTICS_EVENT = "cta_click";
  */
 export const APPROVED_CTA_HOSTS: readonly string[] = ["calendly.com"];
 
+/**
+ * The environment variable the booking URL is injected through at build time.
+ * Named here rather than in the env documentation so the documented example and
+ * the real gate cannot drift apart.
+ */
+export const CTA_URL_ENV_VAR = "PUBLIC_CALENDLY_URL";
+
 export interface CtaConfig {
   /** Public button label. */
   label: string;

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { conversionFacts } from "./conversionSpec";
+import { APPROVED_CTA_HOSTS, CTA_URL_ENV_VAR } from "./cta";
 import {
   ENV_VARS,
   assertEnvModelValid,
@@ -23,11 +23,11 @@ describe("dev-environment model", () => {
 
   it("documents the Calendly booking URL sourced from the conversion facts", () => {
     const names = ENV_VARS.map((v) => v.name);
-    expect(names).toContain(conversionFacts.urlSource);
+    expect(names).toContain(CTA_URL_ENV_VAR);
   });
 
   it("keeps the booking URL optional so an env-less local build still runs", () => {
-    const calendly = ENV_VARS.find((v) => v.name === conversionFacts.urlSource);
+    const calendly = ENV_VARS.find((v) => v.name === CTA_URL_ENV_VAR);
     expect(calendly?.required).toBe(false);
   });
 });
@@ -52,11 +52,11 @@ describe("renderEnvExample", () => {
 
   it("only ever shows an approved, https booking-URL example", () => {
     const url = new URL(
-      `https://${conversionFacts.approvedHosts[0]}/helix-collective/intro`,
+      `https://${APPROVED_CTA_HOSTS[0]}/helix-collective/intro`,
     );
-    expect(renderEnvExample()).toContain(`${conversionFacts.urlSource}=${url.href}`);
+    expect(renderEnvExample()).toContain(`${CTA_URL_ENV_VAR}=${url.href}`);
     expect(url.protocol).toBe("https:");
-    expect(conversionFacts.approvedHosts).toContain(url.hostname);
+    expect(APPROVED_CTA_HOSTS).toContain(url.hostname);
   });
 
   it("ends with a trailing newline", () => {

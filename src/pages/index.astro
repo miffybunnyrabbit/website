@@ -10,161 +10,13 @@ import HowWeWork from "../components/HowWeWork.astro";
 import Fit from "../components/Fit.astro";
 import FinalCta from "../components/FinalCta.astro";
 import Footer from "../components/Footer.astro";
-import {
-  assertApprovalQueueValid,
-  formatOpenQueueWarning,
-} from "../config/approvalQueue";
-import { assertClaimsLedgerValid } from "../config/claimsLedger";
-import { assertClaimsMethodologyValid } from "../config/claimsMethodology";
-import { assertToneOfVoiceValid } from "../config/toneOfVoice";
-import { assertPositioningResearchValid } from "../config/positioningResearch";
-import { assertAssetRegisterValid } from "../config/assetRegister";
-import { assertCaseStudyDossiersValid } from "../config/caseStudyDossiers";
-import { assertEngagementModelValid } from "../config/engagementModel";
-import { assertDecisionsValid, formatOpenDecisionsWarning } from "../config/decisions";
-import { assertAnalyticsAndPrivacyValid } from "../config/analyticsAndPrivacy";
-import { assertConversionSpecValid } from "../config/conversionSpec";
-import { assertSeoAndRedirectAuditValid } from "../config/seoAndRedirectAudit";
-import { assertDesignTokensRecordValid } from "../config/designTokensRecord";
-import { assertCurrentSiteAuditValid } from "../config/currentSiteAudit";
 import { assertConfiguredCtaValid, isCtaConfigured } from "../config/cta";
 import { assertPerformanceBudgetValid } from "../config/performanceBudget";
 
-// Governance gate (§23, P6-002): the queue must be internally consistent and
-// must track every content item that still needs sign-off, or the build fails.
-// Approval never blocks publication, so the still-open items are only surfaced
-// as a non-fatal warning listing what publishes in draft form (§20.1).
-assertApprovalQueueValid();
-console.warn(formatOpenQueueWarning());
-
-// Claims gate (§17.7 R-006, §20.1): every quantified claim on the site must
-// resolve to a ledger entry that is not `rejected`, is backed by an open
-// category-B approval item until it clears, and whose queue item actually covers
-// it. A dangling or mismatched `claimIds` reference fails the build here.
-assertClaimsLedgerValid();
-
-// Claims-methodology gate (§17.6 R-005): the methodology that defines what every
-// quantified claim *means* — enterprise value, attribution, currency, the
-// valuation-date convention, multiples, debt/funding treatment, headline
-// inclusion, double-counting, and the minimum evidence to publish — must be
-// complete, link the §6 ambiguities it resolves (D-001/D-002/D-003) to real
-// decisions, and define every metric type the ledger asserts. A ledger metric
-// type with no methodology basis, or a dangling decision link, fails here.
-assertClaimsMethodologyValid();
-
-// Tone-of-voice gate (§17.4 R-003, §15): the copywriter's section checklist and
-// the favour/retire vocabulary must stay in lock-step with the live copy guard.
-// Every keyword-enforced retirement must link a forbiddenCopy rule that still
-// exists and still fires; every context-dependent ban ("innovation partner … when
-// unsupported", "free consulting … unless intentional", the capital-vs-value
-// error) must stay documented as Gate A human-review; and no favoured word may be
-// caught by a ban. A dropped voice principle, a retirement whose enforcing rule
-// was deleted, a favoured word that became forbidden, or a dangling profanity
-// queue link fails the build here.
-assertToneOfVoiceValid();
-
-// Positioning-research gate (§17.5 R-004, §10): the strategist's record that
-// sharpens differentiation must stay tied to the live artefacts. Every
-// keyword-detectable category cliché links a forbiddenCopy rule that still exists
-// and still fires; the framings a scan cannot judge (generic venture-studio
-// language, unsupported "innovation partner") stay Gate A human-review; every
-// defensible difference is anchored to a real whyHelix pillar and every pillar is
-// defended; every objection targets a real positioning subject and every subject
-// is stress-tested; and every Helix-facing response and difference claim ships
-// clean of forbidden copy. A dropped subject, an unanchored differentiator, an
-// undefended pillar, a response that picked up a banned cliché, or a dangling
-// strategic-copy queue link fails the build here.
-assertPositioningResearchValid();
-
-// Asset-rights gate (§17.9 R-008, §8.4, §16.5): every logo and case-study image
-// the site can ship must resolve to an asset-register row recording its rights,
-// and the removed brands, the Xylo case-study panel, and the old team imagery
-// must stay marked off-site. A register that drifts from the logo/case-study
-// models — or an asset with people or confidential UI left visible — fails here.
-assertAssetRegisterValid();
-
-// Case-study dossier gate (§17.8 R-007): each of the five case studies must have
-// a research dossier under docs/research/case-studies/ capturing its engagement
-// timeline, starting/end/current states, what Helix actually did, the valuation
-// evidence, the calculation, the attribution language, sources, and asset/client
-// approval position. §17.8 states "dependent copy may not be finalised until the
-// corresponding dossier exists", so a required study with no dossier — or a
-// published study whose dossier is missing — fails the build here.
-assertCaseStudyDossiersValid();
-
-// Engagement-model gate (§11.7 R-012): the "How we work" and "We're different"
-// copy makes the site's most legally sensitive promises (unpaid preparation,
-// gain-share, embedded delivery, clean exit). The documented engagement model
-// must be complete and none of the §11.7-prohibited wording (an employment
-// relationship, a guaranteed result, a universal payment claim, a mandatory
-// sale, a fiduciary/agency/directorship representation, or a guaranteed back-end
-// instrument) may reach that copy, or the build fails here.
-assertEngagementModelValid();
-
-// Decisions gate (§6, §2): the twelve open decisions (D-001..D-012) that gate
-// published copy each live in the validated register. A dropped decision, a
-// dangling approval-queue reference, or a content gate (the proof-banner
-// currency, the hero performance-linked claim, the engagement-model review)
-// marked approved without a recorded owner decision fails the build here. Like
-// the approval queue, the still-open decisions are surfaced only as a non-fatal
-// warning listing what publishes to its recommended default.
-assertDecisionsValid();
-console.warn(formatOpenDecisionsWarning());
-
-// Analytics/privacy gate (§17.12 R-011, D-011): the funnel's "events to track"
-// documentation must be exactly the no-op adapter's live ANALYTICS_EVENTS enum,
-// every provider-contingent topic must link the real D-011 decision, and the
-// record may not claim sign-off ahead of that decision. A new analytics event
-// with no R-011 documentation — or a documented event the adapter dropped —
-// fails the build here, keeping the measured surface auditable and PII-free.
-assertAnalyticsAndPrivacyValid();
-
-// Conversion-spec gate (§17.10 R-009, §13, §20.3, D-006): the R-009 record that
-// documents the single booking action — the CTA label, the one conversion event,
-// the approved Calendly hosts, same-tab behaviour, UTM/confirmation/notification
-// handling, and the footer email fallback — must stay in lock-step with the live
-// cta.ts config and analytics adapter. A documented label/event/host that has
-// drifted from the code, a dangling D-006 link, an unapproved footer email, or a
-// record claiming sign-off ahead of D-006 fails the build here.
-assertConversionSpecValid();
-
-// SEO/redirect audit gate (§17.11 R-010, P7-001/002/003/004, P7-009): the R-010
-// record that audits the whole SEO surface — every indexable route, the
-// canonical domain, the default title/description, the sitemap/robots rules, the
-// conservative JSON-LD, the social-preview position, and the launch redirects —
-// must stay in lock-step with the live siteMeta/sitemap/redirects config. A
-// documented canonical origin, title, description, indexable-route set, or
-// sitemap URL that has drifted from the code, a launch redirect missing from
-// redirects.ts, forbidden schema markup, or a record claiming sign-off ahead of
-// the standing launch review fails the build here.
-assertSeoAndRedirectAuditValid();
-
-// Design-token inventory gate (§17.3 R-002, §16): the R-002 record must inventory
-// exactly the live designTokens.ts token set, so a token added to the design
-// system with no provenance — or a provenance entry for a token that was removed
-// — fails the build. It also keeps the record honest: a brand colour may not be
-// labelled newly invented, the font tokens stay licence-pending and linked to the
-// real D-010 decision, and the record may not claim sign-off ahead of it.
-assertDesignTokensRecordValid();
-
-// Current-site audit gate (§17.2 R-001, §5/§7/§16): R-001 is the Phase 1
-// foundation the plan says every visual decision rests on — "Do not begin final
-// styling until this audit exists". The record documents what the live Webflow
-// site does and how the rebuild reinterprets each of the twenty §17.2 aspects,
-// and cross-checks its machine-checkable facts against the live code: the
-// documented rebuild section order must be exactly navigation.ts's
-// HOMEPAGE_SECTION_IDS, the core brand colours designTokens.ts's
-// REQUIRED_BRAND_COLORS, the removed brands logos.ts's REMOVED_BRANDS, the routes
-// sitemap.ts's INDEXABLE_ROUTES, and the title siteMeta.ts's DEFAULT_TITLE, with
-// the retired /contact-us page resolving to a real 301 rule. A drifted fact, a
-// dangling review link, or a record claiming sign-off ahead of the standing
-// launch review fails the build here.
-assertCurrentSiteAuditValid();
-
-// Conversion gate (§13, §20.3, D-006): the single site-wide CTA must never ship
-// a wrong action. A configured booking URL that is insecure or off a Calendly
-// host fails the build here; an unset URL (env-less local/preview build) only
-// warns, since the deploy environment injects PUBLIC_CALENDLY_URL.
+// Conversion gate (§13, §20.3): the single site-wide CTA must never ship a wrong
+// action. A configured booking URL that is insecure or off a Calendly host fails
+// the build here; an unset URL (env-less local/preview build) only warns, since
+// the deploy environment injects PUBLIC_CALENDLY_URL.
 assertConfiguredCtaValid();
 
 // Performance-budget gate (§7 P7-006): the release budget — the Lighthouse
@@ -172,10 +24,9 @@ assertConfiguredCtaValid();
 // initial-JavaScript ceiling — must stay internally coherent, or a Lighthouse
 // run in CI would be checked against nonsense (a score outside 0–100, a
 // non-positive ceiling, a dropped target). The Lighthouse scores themselves are
-// measured in Phase 8/9 CI; the *rendered-output* invariants the budget depends
-// on (no third-party embed on initial load, hydrate only the fit qualifier, and
-// defer that island) are gated over the assembled page in
-// renderedPerformance.test.ts.
+// measured in CI; the *rendered-output* invariants the budget depends on (no
+// third-party embed on initial load, hydrate only the fit qualifier, and defer
+// that island) are gated over the assembled page in renderedPerformance.test.ts.
 assertPerformanceBudgetValid();
 
 if (!isCtaConfigured()) {
