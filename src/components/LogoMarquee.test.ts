@@ -24,10 +24,6 @@ async function renderMarquee(props?: {
 }
 
 /** The register with every retained brand's rights back to pending (pre-Q-0006). */
-function allPending(): LogoEntry[] {
-  return logos.map((e) => ({ ...e, permission: "pending" as const }));
-}
-
 describe("LogoMarquee.astro", () => {
   it("renders every retained logo in the site default (Q-0006 approved)", async () => {
     // Q-0006 cleared every retained brand's rights on 2026-07-29, so the site

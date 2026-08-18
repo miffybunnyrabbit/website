@@ -46,6 +46,10 @@ describe("logo register", () => {
     expect(errors.some((e) => e.includes("missing alt text"))).toBe(true);
   });
 
+  it("renders the whole register, in order", () => {
+    expect(marqueeLogos().map((l) => l.name)).toEqual(logos.map((l) => l.name));
+  });
+
   it("assertLogosValid throws with an aggregated message on a bad register", () => {
     const entries = cloneLogos();
     entries[0] = { ...entries[0], alt: "  " };

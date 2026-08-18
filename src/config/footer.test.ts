@@ -32,6 +32,20 @@ function validFooter(): FooterContent {
 }
 
 describe("footer configuration", () => {
+  it("publishes every identity fact it declares", () => {
+    expect(publishedFooter().facts).toEqual(footer.facts);
+  });
+
+  it("rejects the retired people and venture-volume wording", () => {
+    for (const term of [...FORBIDDEN_FOOTER_TERMS, ...FORBIDDEN_FOOTER_PHRASES]) {
+      const content = {
+        ...footer,
+        facts: [{ id: "test", label: "Test", value: `Helix ${term}` }],
+      };
+      expect(validateFooter(content).length, term).toBeGreaterThan(0);
+    }
+  });
+
   it("is valid as shipped", () => {
     expect(validateFooter()).toEqual([]);
     expect(() => assertFooterValid()).not.toThrow();

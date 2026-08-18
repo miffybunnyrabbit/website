@@ -4,7 +4,6 @@ import CaseStudies from "./CaseStudies.astro";
 import {
   caseStudies,
   caseStudyCopy,
-  stageLabel,
   type CaseStudy,
 } from "../config/caseStudies";
 

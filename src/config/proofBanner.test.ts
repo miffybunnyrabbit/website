@@ -21,6 +21,10 @@ function cloneBanner(overrides: Partial<MutableBanner> = {}): MutableBanner {
 }
 
 describe("proofBanner configuration", () => {
+  it("publishes the banner as authored", () => {
+    expect(publishedProofBanner()).toEqual(proofBanner);
+  });
+
   it("shows exactly the two required metrics in order", () => {
     expect(proofBanner.metrics).toHaveLength(2);
     expect(proofBanner.metrics.map((m) => m.id)).toEqual([
