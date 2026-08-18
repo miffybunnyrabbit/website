@@ -202,9 +202,8 @@ describe("live content is free of forbidden copy", () => {
     for (const logo of marqueeLogos()) {
       expect(isCopyClean(`${logo.name} ${logo.alt}`), logo.name).toBe(true);
     }
-    // The full register intentionally still lists removed brands as records;
-    // none of those may ever be visible, which the scan-of-visible above proves.
-    expect(logos.length).toBeGreaterThan(marqueeLogos().length);
+    // The register is now exactly what renders, so the scan above covers it all.
+    expect(logos.length).toBe(marqueeLogos().length);
   });
 
   it("keeps published case-study copy clean", () => {

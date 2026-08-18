@@ -16,8 +16,6 @@ function logo(overrides: Partial<LogoEntry> = {}): LogoEntry {
   return {
     name: "Fixture",
     asset: "fixture.svg",
-    status: "retain",
-    permission: "approved",
     alt: "Fixture",
     ...overrides,
   };
@@ -29,7 +27,6 @@ function study(overrides: Partial<CaseStudy> = {}): CaseStudy {
     name: "Fixture Co",
     slug: "fixture",
     order: 1,
-    publish: true,
     logo: "fixture-logo.svg",
     ...overrides,
   } as CaseStudy;
@@ -42,18 +39,6 @@ describe("requiredPublicImagePaths", () => {
       [],
     );
     expect(paths).toEqual([`${LOGO_DIR}/canva.svg`, `${LOGO_DIR}/neara.svg`]);
-  });
-
-  it("withholds logos that are not yet approved or are removed", () => {
-    const paths = requiredPublicImagePaths(
-      [
-        logo({ asset: "pending.svg", permission: "pending" }),
-        logo({ asset: "removed.svg", status: "remove" }),
-        logo({ asset: "live.svg" }),
-      ],
-      [],
-    );
-    expect(paths).toEqual([`${LOGO_DIR}/live.svg`]);
   });
 
   it("emits the logo and optional image path for every published study", () => {
@@ -70,14 +55,6 @@ describe("requiredPublicImagePaths", () => {
   it("omits the image path when a published study carries no image", () => {
     const paths = requiredPublicImagePaths([], [study({ logo: "veyor.svg" })]);
     expect(paths).toEqual([`${LOGO_DIR}/veyor.svg`]);
-  });
-
-  it("withholds unpublished studies entirely", () => {
-    const paths = requiredPublicImagePaths(
-      [],
-      [study({ publish: false, logo: "draft.svg", image: "draft.svg" })],
-    );
-    expect(paths).toEqual([]);
   });
 
   it("de-duplicates a logo shared by the marquee and a published study", () => {

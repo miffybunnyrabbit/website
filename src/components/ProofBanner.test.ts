@@ -22,25 +22,11 @@ async function renderBanner(banner?: ProofBannerModel): Promise<string> {
 const publishedModel = proofBanner;
 
 /** A copy explicitly held back from production (`publish: false`). */
-const heldBackModel: ProofBannerModel = {
-  ...proofBanner,
-  publish: false,
-};
-
 describe("ProofBanner.astro", () => {
-  it("renders the shipped model's figures in its published draft form", async () => {
-    // The banner publishes in its safe currency-neutral draft while Q-0007
-    // tracks the D-001 currency decision (§23), so `$500M+` reaches the output.
-    expect(proofBanner.publish).toBe(true);
+  it("renders the shipped model's figures", async () => {
     const html = await renderBanner();
     expect(html).toContain("$500M+");
     expect(html).toContain("<section");
-  });
-
-  it("renders nothing when the model is explicitly held back", async () => {
-    const html = await renderBanner(heldBackModel);
-    expect(html).not.toContain("$500M+");
-    expect(html).not.toContain("<section");
   });
 
   it("renders both metric figures", async () => {

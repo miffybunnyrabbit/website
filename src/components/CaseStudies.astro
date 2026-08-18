@@ -46,7 +46,7 @@
 import {
   caseStudies as defaultStudies,
   caseStudyCopy as defaultCopy,
-  publishedCaseStudies,
+  orderedCaseStudies,
   assertCaseStudiesValid,
   stageLabel,
   type CaseStudy,
@@ -62,7 +62,7 @@ const { studies = defaultStudies, copy = defaultCopy } = Astro.props;
 
 assertCaseStudiesValid(studies);
 
-const published = publishedCaseStudies(studies);
+const published = orderedCaseStudies(studies);
 ---
 
 {

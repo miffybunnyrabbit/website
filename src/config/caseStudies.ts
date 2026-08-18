@@ -1,35 +1,25 @@
 /**
- * Typed content model for the enterprise-value case studies (implementation
- * plan sections 8.5, 9, and 20.1).
+ * Typed content model for the enterprise-value case studies (§8.5).
  *
  * The case-study section is the site's primary proof of the proposition, so the
- * data lives in one typed, validated place rather than in ad-hoc markup. Almost
- * every quantified claim here is blocked on the research and client-approval
- * gates described in section 9; until those gates pass, an entry stays
- * `publish: false`. The point of the validation below is to make those gates
- * mechanical: the production build fails if anyone flips an entry to published
- * before it has been approved, if a required study goes missing, or if a removed
- * study (Xylo) reappears.
+ * data lives in one typed place rather than in ad-hoc markup. Every entry here
+ * renders; the approval, claims-ledger, and research gates that used to decide
+ * which ones could publish were removed on 2026-08-18 once all five had cleared
+ * them, and the record of how each figure was verified is frozen under `docs/`.
  *
- * This module is pure content plus validation. It renders as a list of cards and
+ * What survives is structural validation: a required study going missing, the
+ * removed Xylo study reappearing (§9.6), a duplicate slug or display order, or a
+ * card with no "what Helix actually did" still fails the build, because those
+ * are ways the section silently stops being proof.
+ *
+ * This module is pure content plus validation. It renders as a list of panes and
  * requires no client-side state.
  */
-
-export type ApprovalStatus =
-  | "draft"
-  | "researching"
-  | "internally-verified"
-  | "approved";
 
 /** The formative-stage tag shown on a card (section 8.5 visual pattern). */
 export type EngagementStage = "0-to-1" | "0-to-1-to-10" | "scale";
 
 export type Currency = "AUD" | "USD" | "GBP" | "EUR" | "mixed" | "undecided";
-
-/** Client sign-off state; `not-required` is only valid with a recorded reason. */
-export type ClientApproval = "pending" | "approved" | "not-required";
-
-export type AssetApproval = "pending" | "approved";
 
 export interface CaseStudy {
   name: string;
@@ -37,9 +27,6 @@ export interface CaseStudy {
   /** Display order within the section; the plan's recommended order (8.5). */
   order: number;
   website?: string;
-  approvalStatus: ApprovalStatus;
-  /** Whether this study is rendered in a production build. */
-  publish: boolean;
 
   outcomeHeadline: string;
   currentOutcome?: string;
@@ -51,20 +38,10 @@ export interface CaseStudy {
   summary: string;
   /** The concrete "what Helix actually did" points (section 8.5, question 3). */
   helixContribution: string[];
-  /** Claim-ledger IDs backing every quantified statement (section 17.6/20.1). */
-  claimIds: string[];
 
   logo: string;
   image?: string;
   imageAlt?: string;
-  /**
-   * Where the image file came from, for the R-008 rights spine. Recorded per
-   * study rather than assumed, because the provenance genuinely differs: most
-   * come from Helix's own live site (the same reasoning that cleared the logos
-   * under Q-0006), while a client's own marketing site is a distinct rights
-   * position that the register must be able to state.
-   */
-  imageSource?: string;
   /**
    * The image's intrinsic pixel dimensions. Rendered as `width`/`height` on the
    * `<img>` so the browser reserves the right box before the file arrives
@@ -74,22 +51,6 @@ export interface CaseStudy {
    */
   imageWidth?: number;
   imageHeight?: number;
-  /**
-   * Whether the image shows an identifiable person (R-008). Product screenshots
-   * do not; a photograph of someone using the product does, and the register
-   * must say so rather than assume every case-study image is people-free.
-   */
-  imageContainsPeople?: boolean;
-  /**
-   * The owner's recorded reason for publishing an image that depicts people,
-   * which §16.4 otherwise forbids. Required for such an image to pass
-   * `validateAssetRegister()`: the ban stays the default, and an exception has
-   * to be written down to take effect.
-   */
-  imagePeopleException?: string;
-
-  clientApproval: ClientApproval;
-  assetApproval: AssetApproval;
 }
 
 /**
@@ -145,8 +106,6 @@ export const caseStudies: readonly CaseStudy[] = [
     name: "Neara",
     slug: "neara",
     order: 1,
-    approvalStatus: "approved",
-    publish: true,
     outcomeHeadline: "FROM IDEA TO A$1B+",
     currentOutcome:
       "Public reporting in February 2026 supports an A$1.1b valuation following an A$90m Series D.",
@@ -160,16 +119,12 @@ export const caseStudies: readonly CaseStudy[] = [
       "Shaped the core technology.",
       "Seeded early business development.",
     ],
-    claimIds: ["C-0001-neara-enterprise-value"],
     logo: "neara.png",
     image: "neara-platform.png",
     imageWidth: 800,
     imageHeight: 800,
     imageAlt:
       "The Neara platform showing a 3D model of powerline spans over forested terrain, with clearance analytics alongside field imagery of a transmission tower.",
-    imageSource: "helixcollective.com (live site)",
-    clientApproval: "approved",
-    assetApproval: "approved",
   },
   {
     name: "Ferovinum",
@@ -181,8 +136,6 @@ export const caseStudies: readonly CaseStudy[] = [
     // reserves for the currency-neutral portfolio aggregate. The §9.2 warning
     // still governs the wording: the headline stays qualitative and no copy
     // describes the securitisation programme as a company valuation.
-    approvalStatus: "approved",
-    publish: true,
     outcomeHeadline: "FROM IDEA TO A GLOBAL CAPITAL PLATFORM",
     engagementStage: "0-to-1-to-10",
     valueMultiple: "10×",
@@ -194,23 +147,17 @@ export const caseStudies: readonly CaseStudy[] = [
       "Shaped the technology.",
       "Anchored early fundraising rounds.",
     ],
-    claimIds: ["C-0002-ferovinum-enterprise-value"],
     logo: "ferovinum.png",
     image: "ferovinum-platform.png",
     imageWidth: 800,
     imageHeight: 799,
     imageAlt:
       "The Ferovinum platform over a vineyard, showing a stock and sale-order dashboard with forward sale prices and deposit balances.",
-    imageSource: "helixcollective.com (live site)",
-    clientApproval: "approved",
-    assetApproval: "approved",
   },
   {
     name: "13SICK",
     slug: "13sick",
     order: 3,
-    approvalStatus: "approved",
-    publish: true,
     outcomeHeadline: "A$30M → A$150M",
     engagementStage: "scale",
     valueMultiple: "5×",
@@ -222,19 +169,12 @@ export const caseStudies: readonly CaseStudy[] = [
       "Applied systems thinking to the operating model.",
       "Led the product rollout.",
     ],
-    claimIds: ["C-0003-13sick-enterprise-value"],
     logo: "13sick.png",
     image: "13sick-booking.webp",
     imageWidth: 800,
     imageHeight: 534,
     imageAlt:
       "Booking a 13SICK home-doctor visit on a phone — the first step of the after-hours service.",
-    imageSource: "13sick.com.au (client marketing site)",
-    imageContainsPeople: true,
-    imagePeopleException:
-      "Owner exception, 2026-08-18: 13SICK publishes no product imagery, only the licensed stock photography on its own site, and the owner asked for that rather than leaving the study without a picture. The person shown is a stock model, not a Helix person or a named client — so P4-001's actual concern (the retired people-led positioning) is untouched; what is set aside is §16.4's blanket ban on portraits in site imagery.",
-    clientApproval: "approved",
-    assetApproval: "approved",
   },
   {
     name: "Origami",
@@ -247,8 +187,6 @@ export const caseStudies: readonly CaseStudy[] = [
     // day under Q-0012 and now publish; the currency is USD per the owner's call,
     // so the figure names it rather than using the bare `$` D-0001 reserves for
     // the portfolio aggregate.
-    approvalStatus: "approved",
-    publish: true,
     outcomeHeadline: "FROM CONCEPT TO A LIVE AUTOMATED-LEVERAGE PROTOCOL",
     engagementStage: "scale",
     valueMultiple: "10×",
@@ -261,16 +199,12 @@ export const caseStudies: readonly CaseStudy[] = [
       "Built the protocol engineering behind the automated positions.",
       "Supported the launch into the wider DeFi market.",
     ],
-    claimIds: ["C-0004-origami-enterprise-value"],
     logo: "origami.png",
     image: "origami-vaults.png",
     imageWidth: 800,
     imageHeight: 800,
     imageAlt:
       "The Origami protocol interface listing leveraged vaults with their yield, price, and total value locked.",
-    imageSource: "helixcollective.com (live site)",
-    clientApproval: "approved",
-    assetApproval: "approved",
   },
   {
     name: "Veyor Digital",
@@ -282,8 +216,6 @@ export const caseStudies: readonly CaseStudy[] = [
     // owner later the same day under Q-0012 and now publishes; the A$50m–A$75m
     // public valuation range still stays off the card, since §9.5 forbids citing
     // it as value attributable to Helix.
-    approvalStatus: "approved",
-    publish: true,
     outcomeHeadline: "FROM CONCEPT TO TIER-ONE SITE LOGISTICS",
     engagementStage: "0-to-1",
     valueMultiple: "10×",
@@ -296,7 +228,6 @@ export const caseStudies: readonly CaseStudy[] = [
       "Built the platform technology through the 0 → 1 stage.",
       "Supported the commercial push into tier-one construction.",
     ],
-    claimIds: ["C-0005-veyor-enterprise-value"],
     logo: "veyor.png",
     image: "veyor-platform.webp",
     imageWidth: 800,
@@ -310,9 +241,6 @@ export const caseStudies: readonly CaseStudy[] = [
     // identifiable person, which §16.4 forbids and `validateAssetRegister()`
     // rejects; this is their product-UI composite, which carries the same proof
     // without a portrait.
-    imageSource: "veyordigital.com (client marketing site)",
-    clientApproval: "approved",
-    assetApproval: "approved",
   },
 ];
 
@@ -347,33 +275,14 @@ const PLACEHOLDER_MARKERS: readonly string[] = [
   "lorem ipsum",
 ];
 
-/**
- * Fields whose text is treated as a public quantified claim. If one of these
- * contains a number-with-magnitude (a currency amount or an "N×" multiple), the
- * study must cite at least one claim ID (section 20.1).
- */
-const QUANTIFIED_FIELDS: readonly (keyof CaseStudy)[] = [
-  "outcomeHeadline",
-  "currentOutcome",
-  "valueMultiple",
-  "valueCreated",
-];
-
-/** True when `text` reads as a quantified value claim (currency or N× multiple). */
-export function looksQuantified(text: string): boolean {
-  // A currency symbol adjacent to a digit (e.g. "$300m", "A$1.1b"), or a number
-  // immediately followed by a multiplier sign (e.g. "20×", "5x").
-  return /[$£€]\s?\d/.test(text) || /\d\s?[×x]/.test(text);
-}
-
 /** True when `text` contains any unresolved placeholder or draft marker. */
 function hasPlaceholder(text: string): boolean {
   const lower = text.toLowerCase();
   return PLACEHOLDER_MARKERS.some((marker) => lower.includes(marker));
 }
 
-/** Concatenate the publish-facing copy of a study for marker scanning. */
-function publishedText(study: CaseStudy): string {
+/** Concatenate a study's visitor-facing copy for marker scanning. */
+function renderedText(study: CaseStudy): string {
   return [
     study.outcomeHeadline,
     study.currentOutcome ?? "",
@@ -446,55 +355,21 @@ export function validateCaseStudies(
       errors.push(`Case study "${study.slug}" is missing a summary.`);
     }
 
-    // The following gates only bite when an entry is actually published. An
-    // unpublished, still-in-research entry is allowed to carry placeholders and
-    // pending approvals — that is the whole point of the publish flag.
-    if (!study.publish) {
-      continue;
-    }
-
-    if (study.approvalStatus !== "approved") {
-      errors.push(
-        `Case study "${study.slug}" is published but its approval status is "${study.approvalStatus}", not "approved".`,
-      );
-    }
-    if (study.clientApproval === "pending") {
-      errors.push(
-        `Case study "${study.slug}" is published but client approval is still pending.`,
-      );
-    }
-    if (study.assetApproval !== "approved") {
-      errors.push(
-        `Case study "${study.slug}" is published but asset approval is "${study.assetApproval}", not "approved".`,
-      );
-    }
-
-    // A published study must answer "what did Helix actually do?" (section 8.5,
-    // question 3) — an empty contribution list answers only "it became valuable".
+    // A card must answer "what did Helix actually do?" (§8.5, question 3) — an
+    // empty contribution list answers only "it became valuable".
     if (study.helixContribution.length === 0) {
       errors.push(
-        `Published case study "${study.slug}" must describe what Helix actually did.`,
+        `Case study "${study.slug}" must describe what Helix actually did.`,
       );
     }
 
-    // No unresolved research placeholders in published copy.
-    if (hasPlaceholder(publishedText(study))) {
+    // Draft copy must never render. The research that resolved these markers is
+    // done, but the guard is cheap and a half-written edit is exactly the kind of
+    // thing that ships unnoticed.
+    if (hasPlaceholder(renderedText(study))) {
       errors.push(
-        `Published case study "${study.slug}" still contains an unresolved placeholder or draft marker.`,
+        `Case study "${study.slug}" still contains an unresolved placeholder or draft marker.`,
       );
-    }
-
-    // Every quantified public claim must be backed by at least one claim ID.
-    for (const field of QUANTIFIED_FIELDS) {
-      const value = study[field];
-      if (typeof value === "string" && looksQuantified(value)) {
-        if (study.claimIds.length === 0) {
-          errors.push(
-            `Published case study "${study.slug}" makes a quantified claim in "${field}" but cites no claim IDs.`,
-          );
-          break;
-        }
-      }
     }
   }
 
@@ -516,14 +391,9 @@ export function assertCaseStudiesValid(
   }
 }
 
-/**
- * The studies a production build should render, in display order. Only approved,
- * published entries are returned so in-research drafts never leak into `dist`.
- */
-export function publishedCaseStudies(
+/** The studies in display order (§8.5). Every entry renders. */
+export function orderedCaseStudies(
   studies: readonly CaseStudy[] = caseStudies,
 ): CaseStudy[] {
-  return studies
-    .filter((study) => study.publish)
-    .sort((a, b) => a.order - b.order);
+  return [...studies].sort((a, b) => a.order - b.order);
 }

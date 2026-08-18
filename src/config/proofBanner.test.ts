@@ -42,16 +42,6 @@ describe("proofBanner configuration", () => {
     expect(() => assertProofBannerValid()).not.toThrow();
   });
 
-  it("publishes the approved currency-neutral figure (Q-0007/D-001, 2026-07-29)", () => {
-    // The owner approved the deliberately currency-neutral $500M+ wording, and
-    // D-001 settled on that default, so the banner publishes as approved.
-    expect(proofBanner.currencyApproval).toBe("approved");
-    expect(proofBanner.publish).toBe(true);
-    expect(publishedProofBanner()).toBe(proofBanner);
-  });
-});
-
-describe("validateProofBanner guardrails", () => {
   it("rejects a third metric bolted on to refill the old layout", () => {
     const banner = cloneBanner({
       metrics: [
@@ -135,27 +125,6 @@ describe("validateProofBanner guardrails", () => {
     banner.metrics[1] = { id: "years-in-operation", value: "10+", label: "YEARS — TBD" };
     const errors = validateProofBanner(banner);
     expect(errors.some((e) => e.includes("draft marker"))).toBe(true);
-  });
-
-  it("allows publishing while the currency is still pending (D-001)", () => {
-    // Currency is no longer a publication gate: the safe currency-neutral draft
-    // publishes and Q-0007 tracks the decision (§23). The async linkage is
-    // enforced in approvalQueue.ts, not here.
-    const banner = cloneBanner({ publish: true, currencyApproval: "pending" });
-    expect(validateProofBanner(banner)).toEqual([]);
-    expect(publishedProofBanner(banner)).toBe(banner);
-  });
-
-  it("still renders nothing when the model is explicitly held back", () => {
-    const banner = cloneBanner({ publish: false, currencyApproval: "pending" });
-    expect(validateProofBanner(banner)).toEqual([]);
-    expect(publishedProofBanner(banner)).toBeNull();
-  });
-
-  it("allows publishing once the currency is approved", () => {
-    const banner = cloneBanner({ publish: true, currencyApproval: "approved" });
-    expect(validateProofBanner(banner)).toEqual([]);
-    expect(publishedProofBanner(banner)).toBe(banner);
   });
 
   it("assertProofBannerValid throws with an aggregated message on bad config", () => {

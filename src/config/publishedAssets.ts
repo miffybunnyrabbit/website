@@ -9,7 +9,7 @@
  *  - `LogoMarquee.astro` renders `/logos/<asset>` for every `marqueeLogos()`
  *    entry (a brand that is `status: "retain"` and `permission: "approved"`);
  *  - `CaseStudies.astro` renders `/logos/<logo>` and, when present,
- *    `/case-studies/<image>` for every `publishedCaseStudies()` entry.
+ *    `/case-studies/<image>` for every case study that carries one.
  *
  * Today both lists are empty — every logo stays `permission: "pending"` and
  * every study stays `publish: false` — so no image is emitted and no file is
@@ -32,7 +32,7 @@
 
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { caseStudies, publishedCaseStudies, type CaseStudy } from "./caseStudies";
+import { caseStudies, orderedCaseStudies, type CaseStudy } from "./caseStudies";
 import { logos, marqueeLogos, type LogoEntry } from "./logos";
 
 /** Public-root subdirectory the marquee and case-study logos are served from. */
@@ -59,7 +59,7 @@ export function requiredPublicImagePaths(
     paths.add(`${LOGO_DIR}/${logo.asset}`);
   }
 
-  for (const study of publishedCaseStudies(studies)) {
+  for (const study of orderedCaseStudies(studies)) {
     paths.add(`${LOGO_DIR}/${study.logo}`);
     if (study.image) {
       paths.add(`${CASE_STUDY_IMAGE_DIR}/${study.image}`);

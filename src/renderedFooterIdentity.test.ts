@@ -4,7 +4,6 @@ import reactRenderer from "@astrojs/react/server.js";
 import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 import IndexPage from "./pages/index.astro";
 import { footer, publishedFooter } from "./config/footer";
-import { openQueueItems } from "./config/approvalQueue";
 
 /**
  * Assembled-page footer-identity gate (implementation plan §24 "Logos and
@@ -65,16 +64,7 @@ function footerRegion(html: string): string | undefined {
   return html.match(/<footer class="site-footer"[\s\S]*?<\/footer>/)?.[0];
 }
 
-/** Ids of open queue items that cover footer identity (§23, currently Q-0010). */
-function openFooterIdentityQueueIds(): Set<string> {
-  return new Set(
-    openQueueItems()
-      .filter((item) => item.coverage.some((c) => c.kind === "footer-identity"))
-      .map((item) => item.id),
-  );
-}
-
-describe("assembled homepage represents footer identity per the §24 queue state", () => {
+describe("assembled homepage renders the footer identity facts (§14)", () => {
   let html: string;
   let region: string;
 
@@ -87,11 +77,10 @@ describe("assembled homepage represents footer identity per the §24 queue state
     region = found as string;
   });
 
-  it("guards the fixture: every identity fact is approved and rendered (Q-0010)", () => {
-    // The owner approved all three facts on 2026-08-03, so the assembled page
-    // must carry them; the withhold path is exercised by Footer.test.ts fixtures.
+  it("guards the fixture: the model declares identity facts to render", () => {
+    // Without this the assertions below would pass vacuously if the facts were
+    // ever emptied out of the model.
     expect(footer.facts.length).toBeGreaterThan(0);
-    expect(footer.facts.every((f) => f.approval === "approved")).toBe(true);
   });
 
   it("always renders the safe brand mark and copyright line (§14)", () => {
@@ -101,18 +90,11 @@ describe("assembled homepage represents footer identity per the §24 queue state
     expect(region).toContain(`${footer.copyrightHolder}. All rights reserved.`);
   });
 
-  it("shows approved identity facts and withholds pending drafts from the footer (§14, §20.1, §23)", () => {
-    const publishedFactIds = new Set(publishedFooter().facts.map((f) => f.id));
-    for (const fact of footer.facts) {
-      if (publishedFactIds.has(fact.id)) {
-        // Approved-and-published: the confirmed value is actually on the page.
-        expect(region).toContain(fact.value);
-      } else {
-        // Pending: its best-available draft must never leak into the rendered
-        // footer — scoped to the footer region so the fit qualifier's legitimate
-        // reuse of the Redfern address does not create a false positive.
-        expect(region).not.toContain(fact.value);
-      }
+  it("renders every identity fact the model declares (§14)", () => {
+    // The legal entity, ABN, and registered office are what make the footer an
+    // institutional record rather than a sign-off; each must reach the visitor.
+    for (const fact of publishedFooter().facts) {
+      expect(region, fact.id).toContain(fact.value);
     }
   });
 
@@ -124,18 +106,4 @@ describe("assembled homepage represents footer identity per the §24 queue state
     expect(region.toLowerCase()).not.toContain("[research");
   });
 
-  it("tracks every pending footer fact with an open footer-identity queue item (§23, §24)", () => {
-    const openIds = openFooterIdentityQueueIds();
-    const pending = footer.facts.filter((f) => f.approval === "pending");
-    if (pending.length > 0) {
-      // §24: pending identity content on the page is never silently untracked —
-      // an open footer-identity item must exist to keep the queue and the site in
-      // sync.
-      expect(openIds.size).toBeGreaterThan(0);
-    }
-    for (const fact of pending) {
-      // Each withheld fact points at the real open queue item that will clear it.
-      expect(openIds.has(fact.queueItem)).toBe(true);
-    }
-  });
 });

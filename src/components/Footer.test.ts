@@ -29,23 +29,17 @@ function footerWithApproval(): FooterContent {
         id: "legal-entity",
         label: "Legal entity",
         value: "Helix Collective Pty Ltd",
-        approval: "approved",
-        queueItem: "Q-0010-footer-identity",
       },
       {
         id: "abn",
         label: "ABN",
-        value: "[VERIFY: Australian Business Number]",
-        approval: "pending",
-        queueItem: "Q-0010-footer-identity",
+        value: "20 678 772 631",
       },
     ],
     socialLinks: [
       {
         label: "LinkedIn",
         href: "https://www.linkedin.com/company/helix-collective",
-        approval: "approved",
-        queueItem: "Q-0010-footer-identity",
       },
     ],
     copyrightHolder: "Helix Collective",
@@ -58,13 +52,6 @@ describe("Footer.astro", () => {
     expect(html).toContain(footer.brand.label);
     expect(html).toContain(`href="${footer.brand.href}"`);
     expect(html).toContain(copyrightLine(2026, footer));
-  });
-
-  it("publishes only approved identity facts, withholding pending drafts", async () => {
-    const html = await renderFooter({ content: footerWithApproval() });
-    expect(html).toContain("Helix Collective Pty Ltd");
-    // The pending ABN draft must not leak into the rendered markup.
-    expect(html).not.toContain("[VERIFY: Australian Business Number]");
   });
 
   it("renders approved social links", async () => {
@@ -92,17 +79,6 @@ describe("Footer.astro", () => {
     const html = await renderFooter({ year: 2026 });
     expect(html).toContain("Helix Venture Studio Pty Ltd");
     expect(html).toContain("20 678 772 631");
-    expect(html).not.toContain("[VERIFY");
-  });
-
-  it("renders no identity facts when nothing is approved", async () => {
-    // Winding every fact back to pending hides the whole <dl> again.
-    const pending: FooterContent = {
-      ...footer,
-      facts: footer.facts.map((f) => ({ ...f, approval: "pending" as const })),
-    };
-    const html = await renderFooter({ year: 2026, content: pending });
-    expect(html).not.toContain("<dl");
     expect(html).not.toContain("[VERIFY");
   });
 

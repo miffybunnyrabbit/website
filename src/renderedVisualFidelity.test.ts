@@ -4,7 +4,8 @@ import reactRenderer from "@astrojs/react/server.js";
 import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 import IndexPage from "./pages/index.astro";
 import { howWeWorkSteps, howWeWorkCopy } from "./config/howWeWork";
-import { assetRegister, publishableAssets } from "./config/assetRegister";
+import { caseStudies } from "./config/caseStudies";
+import { logos } from "./config/logos";
 
 /**
  * Assembled-page visual-fidelity gate (implementation plan §24 "Visual
@@ -40,7 +41,7 @@ import { assetRegister, publishableAssets } from "./config/assetRegister";
  * positioning forbids people (§16.4), the register withholds the one asset that
  * depicts them, and this gate proves none of them reaches the delivered markup.
  *
- * The assertions are driven off the `howWeWork` and `assetRegister` models, so a
+ * The assertions are driven off the `howWeWork`, `logos` and `caseStudies` models, so a
  * dropped stage or a leaked person asset fails here rather than shipping.
  *
  * The pre-commit hook runs the test suite, so a failure here blocks the commit.
@@ -142,44 +143,37 @@ describe("assembled homepage satisfies the §24 visual-fidelity criteria", () =>
     expect(html).toContain("astro-island");
   });
 
-  it("publishes an asset depicting a person only under a recorded exception (§16.4)", () => {
-    // The no-stock-person criterion, at the model level. §16.4's ban is still the
-    // default: every people-depicting asset must either be withheld from the site
-    // or carry the owner's written exception. The check is not vacuous — the
-    // register carries the legacy "humans of Helix" photography with no exception,
-    // and it stays correctly withheld.
-    const personAssets = assetRegister.filter((a) => a.containsPeople);
-    expect(personAssets.length).toBeGreaterThan(0);
-    expect(
-      personAssets.every((a) => a.removeFromSite || a.peopleException?.trim()),
-    ).toBe(true);
-    expect(
-      personAssets.some((a) => a.removeFromSite && !a.peopleException),
-      "the unexcepted-and-withheld case must still exist, or this gate is vacuous",
-    ).toBe(true);
-    // Anything publishable that shows a person shows one *because* the owner said
-    // so in writing, never by default.
-    for (const asset of publishableAssets().filter((a) => a.containsPeople)) {
-      expect(asset.peopleException?.trim(), asset.id).toBeTruthy();
+  it("renders no image that was withdrawn from the site (§24, §16.4)", () => {
+    // §16.4 bans stock photography of people, and §5/§9.6 removed a set of
+    // brands and panels outright. The asset register that used to track those
+    // withdrawals was retired on 2026-08-18, so the files themselves are named
+    // here: none may ever reappear in the delivered markup, whatever a model
+    // says. The record of why each went is frozen under `docs/`.
+    const withdrawn = new Set([
+      "humans-of-helix.jpg", // team photography, removed with the repositioning
+      "xylo-case-study.png", // removed case-study panel (§9.6)
+      "awayco.svg",
+      "perion.svg",
+      "synaptico.svg", // brands removed from the marquee (§5, §8.4)
+    ]);
+    for (const file of imageTags(html).map(basename)) {
+      expect(withdrawn.has(file), `withdrawn asset rendered: ${file}`).toBe(false);
     }
   });
 
-  it("renders no image that references a person or withheld asset (§24, §16.4)", () => {
-    // Every asset the register flags as removed, or as depicting people without
-    // the owner's recorded §16.4 exception, by filename — no rendered `<img>` may
-    // point at one. This guards the delivered markup even as legitimate imagery
-    // clears the register in future. An excepted asset is allowed here precisely
-    // because the exception is written down in the register, where it is audited.
-    const forbiddenFiles = new Set(
-      assetRegister
-        .filter(
-          (a) => a.removeFromSite || (a.containsPeople && !a.peopleException?.trim()),
-        )
-        .map((a) => a.filename),
-    );
-    const rendered = imageTags(html).map(basename);
+  it("renders only images the content models name", () => {
+    // The complement of the rule above: every `<img>` on the page traces back to
+    // a logo or case-study entry, so no stray file can be hardcoded into markup
+    // and slip past the models entirely.
+    const known = new Set<string>([
+      ...logos.map((l) => l.asset),
+      ...caseStudies.map((s) => s.logo),
+      ...caseStudies.flatMap((s) => (s.image ? [s.image] : [])),
+    ]);
+    const rendered = imageTags(html).map(basename).filter((f) => !f.endsWith(".svg"));
+    expect(rendered.length).toBeGreaterThan(0);
     for (const file of rendered) {
-      expect(forbiddenFiles.has(file)).toBe(false);
+      expect(known.has(file), `unknown image rendered: ${file}`).toBe(true);
     }
   });
 });

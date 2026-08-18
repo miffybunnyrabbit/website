@@ -1,59 +1,28 @@
 /**
- * Typed content model for the site footer (implementation plan section 14, and
- * the location handling recorded in sections 8 and 12).
+ * Typed content model for the site footer (§14).
  *
- * The footer's job is to establish institutional legitimacy *without*
- * reintroducing people. The plan (section 14) says it should carry the Helix
- * mark, legally accurate location, the legal entity name, the ABN, approved
- * social links, an optional privacy link, an optional approved email, and a
- * copyright line — and it must never carry the removed investment CTA, any team
- * or human reference, a stale contact form, an unverified office, or the old
- * "venture volume machine" positioning.
+ * The footer establishes institutional legitimacy without people: the brand
+ * mark, the legal entity, ABN and registered office, any approved social links,
+ * and the copyright line. Every fact here is confirmed and renders — the
+ * approval gating that used to withhold an unverified ABN or office was removed
+ * on 2026-08-18 once the owner had confirmed all three; the record of that
+ * confirmation is frozen under `docs/`.
  *
- * Almost every identity fact the footer wants to show — the registered entity,
- * the ABN, which offices to list, the LinkedIn URL — is not yet a recorded owner
- * decision. Rather than invent those facts or block the build on them, each one
- * lives here as an approval-gated value carrying its `docs/approvals/queue`
- * item (section 23). `publishedFooter()` renders only the facts that have cleared
- * approval, so an unverified ABN or office never leaks into `dist`, while the
- * always-safe parts (the brand mark and the copyright line) still render. This
- * mirrors the honest default the proof-banner and case-study models use.
- *
- * This module is pure content plus validation. The footer is static markup with
- * no client-side state; the production build should call `assertFooterValid()`
- * so a malformed or off-spec footer fails the build instead of shipping.
+ * What the validator still enforces is what the §14 copy rules demand of the
+ * text itself: no draft markers, no people or team language, no venture-volume
+ * claims, and HTTPS on every external link.
  */
 
 import { scanForbiddenCopy } from "./forbiddenCopy";
 
-/** Whether an identity fact has cleared its approval-queue item (section 23). */
-export type FactApproval = "pending" | "approved";
-
-/**
- * Format of an approval-queue item id, e.g. `Q-0010-footer-identity`
- * (section 23). This is the canonical `Q-NNNN-short-title` shape used by
- * `src/config/approvalQueue.ts`, so a footer fact references a *real* queue item
- * rather than a bare number that could collide with an unrelated item.
- */
-export const QUEUE_ITEM_PATTERN = /^Q-\d{4}-[a-z0-9-]+$/;
-
-/**
- * A single institutional identity fact (entity, ABN, registered office, …)
- * whose publication is gated on an approval-queue item. Until `approval` is
- * `"approved"` the fact carries a best-available draft and is withheld from the
- * rendered footer.
- */
+/** A single institutional identity fact (entity, ABN, registered office, …). */
 export interface FooterFact {
   /** Stable id, e.g. "legal-entity", "abn", "registered-office". */
   id: string;
   /** Visible label, e.g. "ABN". */
   label: string;
-  /** Current best-available value or draft. */
+  /** The published value. */
   value: string;
-  /** Whether the fact has cleared its approval-queue item. */
-  approval: FactApproval;
-  /** The `docs/approvals/queue` item tracking this fact, e.g. "Q-0010-footer-identity". */
-  queueItem: string;
 }
 
 /** An external social or profile link (LinkedIn, an approved privacy page, …). */
@@ -62,10 +31,6 @@ export interface FooterLink {
   label: string;
   /** Absolute HTTPS URL. */
   href: string;
-  /** Whether the link has cleared its approval-queue item. */
-  approval: FactApproval;
-  /** The `docs/approvals/queue` item tracking this link. */
-  queueItem: string;
 }
 
 /** The footer's brand/home mark. */
@@ -151,17 +116,11 @@ function hasDraftMarker(text: string): boolean {
  * The footer as it stands today. The owner approved all three identity facts on
  * 2026-08-03 (Q-0010): the legal entity and ABN are the values the live site
  * already publishes (confirmed in the 2026-07-29 audit capture) and the
- * registered office is the Vine Street, Redfern address, so `publishedFooter()`
- * now renders them alongside the brand mark and copyright line.
+ * registered office is the Vine Street, Redfern address, and all three render
+ * alongside the brand mark and copyright line.
  *
- * The registered-office draft uses the one concrete address in the plan
- * (section 12); whether the footer ultimately lists that address or the current
- * Sydney/Melbourne/Brisbane offices is itself an open decision (D-007). All
- * three institutional-identity facts are tracked by a single approval-queue
- * item, `Q-0010-footer-identity`, which the queue model cross-checks so this
- * pending content can never lose its tracking (section 23). No LinkedIn URL is
- * documented anywhere, so `socialLinks` is deliberately empty rather than
- * carrying an invented link.
+ * No LinkedIn URL is documented anywhere, so `socialLinks` is deliberately empty
+ * rather than carrying an invented link.
  */
 export const footer: FooterContent = {
   brand: { label: "Helix Collective", href: "/" },
@@ -170,22 +129,16 @@ export const footer: FooterContent = {
       id: "legal-entity",
       label: "Legal entity",
       value: "Helix Venture Studio Pty Ltd",
-      approval: "approved",
-      queueItem: "Q-0010-footer-identity",
     },
     {
       id: "abn",
       label: "ABN",
       value: "20 678 772 631",
-      approval: "approved",
-      queueItem: "Q-0010-footer-identity",
     },
     {
       id: "registered-office",
       label: "Registered office",
       value: "Level 1, 2–14 Vine Street, Redfern NSW 2016",
-      approval: "approved",
-      queueItem: "Q-0010-footer-identity",
     },
   ],
   socialLinks: [],
@@ -207,16 +160,10 @@ function validateFact(fact: FooterFact, context: string): string[] {
   if (!fact.value.trim()) {
     errors.push(`${context} ("${fact.id}") is missing a value.`);
   }
-  if (!QUEUE_ITEM_PATTERN.test(fact.queueItem)) {
+  // Facts publish verbatim, so a half-written one must never ship.
+  if (hasDraftMarker(fact.value)) {
     errors.push(
-      `${context} ("${fact.id}") has an invalid approval-queue id "${fact.queueItem}"; expected the form "Q-NNNN".`,
-    );
-  }
-
-  // An approved fact is published verbatim, so it may not still be a draft.
-  if (fact.approval === "approved" && hasDraftMarker(fact.value)) {
-    errors.push(
-      `${context} ("${fact.id}") is approved but still contains a draft marker: "${fact.value}".`,
+      `${context} ("${fact.id}") still contains a draft marker: "${fact.value}".`,
     );
   }
 
@@ -244,12 +191,6 @@ function validateLink(link: FooterLink, context: string): string[] {
   if (!link.label.trim()) {
     errors.push(`${context} is missing a label.`);
   }
-  if (!QUEUE_ITEM_PATTERN.test(link.queueItem)) {
-    errors.push(
-      `${context} ("${link.label}") has an invalid approval-queue id "${link.queueItem}"; expected the form "Q-NNNN".`,
-    );
-  }
-
   if (!link.href.trim()) {
     errors.push(`${context} ("${link.label}") is missing an href.`);
   } else {
@@ -266,9 +207,9 @@ function validateLink(link: FooterLink, context: string): string[] {
     }
   }
 
-  if (link.approval === "approved" && hasDraftMarker(link.href)) {
+  if (hasDraftMarker(link.href)) {
     errors.push(
-      `${context} ("${link.label}") is approved but its href is still a draft: "${link.href}".`,
+      `${context} ("${link.label}") href is still a draft: "${link.href}".`,
     );
   }
 
@@ -360,7 +301,7 @@ export function validateFooter(content: FooterContent = footer): string[] {
   }
   if (content.contactEmail) {
     errors.push(...validateFact(content.contactEmail, "Footer contact email"));
-    if (!content.contactEmail.value.includes("@") && content.contactEmail.approval === "approved") {
+    if (!content.contactEmail.value.includes("@")) {
       errors.push(
         `Footer contact email "${content.contactEmail.value}" does not look like an email address.`,
       );
@@ -381,25 +322,9 @@ export function assertFooterValid(content: FooterContent = footer): void {
   }
 }
 
-/**
- * The footer a production build should render: the always-safe brand mark and
- * copyright line, plus only those identity facts, social links, privacy link,
- * and contact email that have cleared approval. Pending facts are withheld so an
- * unverified ABN, entity, or office never reaches `dist`, while the footer still
- * renders in its minimal, honest current state.
- */
+/** The footer a build renders. Every fact here is confirmed and publishes. */
 export function publishedFooter(content: FooterContent = footer): FooterContent {
-  const isApproved = (item: { approval: FactApproval }) => item.approval === "approved";
-  return {
-    brand: content.brand,
-    facts: content.facts.filter(isApproved),
-    socialLinks: content.socialLinks.filter(isApproved),
-    privacyLink:
-      content.privacyLink && isApproved(content.privacyLink) ? content.privacyLink : undefined,
-    contactEmail:
-      content.contactEmail && isApproved(content.contactEmail) ? content.contactEmail : undefined,
-    copyrightHolder: content.copyrightHolder,
-  };
+  return content;
 }
 
 /**

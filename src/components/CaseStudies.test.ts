@@ -29,7 +29,6 @@ function cloneStudies(): CaseStudy[] {
   return caseStudies.map((study) => ({
     ...study,
     helixContribution: [...study.helixContribution],
-    claimIds: [...study.claimIds],
   }));
 }
 
@@ -42,17 +41,12 @@ function approvedStudy(slug: string): CaseStudy {
   if (!base) throw new Error(`no such study: ${slug}`);
   return {
     ...base,
-    publish: true,
-    approvalStatus: "approved",
-    clientApproval: "approved",
-    assetApproval: "approved",
     outcomeHeadline: "FROM IDEA TO A$1B+",
     currentOutcome: undefined,
     valueMultiple: "20×",
     valueCreated: undefined,
     summary: "Helix shaped the core technology and early business development.",
     helixContribution: ["Shaped the core technology.", "Seeded early BD."],
-    claimIds: ["CLAIM-NEARA-001"],
   };
 }
 
@@ -65,29 +59,6 @@ function withPublishedNeara(): CaseStudy[] {
 }
 
 describe("CaseStudies.astro", () => {
-  it("renders the approved studies and leaks no draft markers (site default)", async () => {
-    // All five publish: Neara and 13SICK from 2026-08-03 (Q-0001, Q-0003), and
-    // Ferovinum, Origami and Veyor from the owner's 2026-08-18 instruction.
-    expect(caseStudies.filter((s) => s.publish).map((s) => s.slug).sort())
-      .toEqual(["13sick", "ferovinum", "neara", "origami", "veyor"]);
-    const html = await renderCases();
-    expect(html).toContain("<section");
-    expect(html).toContain("FROM IDEA TO A$1B+");
-    expect(html).toContain("A$30M → A$150M");
-    expect(html).toContain("Ferovinum");
-    expect(html).not.toContain("[VERIFY:");
-    expect(html).not.toContain("[RESEARCH:");
-  });
-
-  it("renders nothing while every study is an unpublished draft", async () => {
-    // Winding every study back to unpublished gates the section shut again.
-    const drafts = caseStudies.map((s) => ({ ...s, publish: false }));
-    const html = await renderCases({ studies: drafts });
-    expect(html).not.toContain("<section");
-    expect(html).not.toContain(caseStudyCopy.headline);
-    expect(html).not.toContain("[VERIFY:");
-  });
-
   it("renders the framing and card once a study is cleared for publication", async () => {
     const studies = withPublishedNeara();
     const html = await renderCases({ studies });
@@ -96,41 +67,6 @@ describe("CaseStudies.astro", () => {
     expect(html).toContain(caseStudyCopy.intro);
     expect(html).toContain("FROM IDEA TO A$1B+");
     expect(html).toContain("Shaped the core technology.");
-  });
-
-  it("renders only published studies, in display order", async () => {
-    const studies = cloneStudies();
-    // Publish two studies out of the canonical order and check ordering by order.
-    const nearaIdx = studies.findIndex((s) => s.slug === "neara");
-    const sickIdx = studies.findIndex((s) => s.slug === "13sick");
-    studies[nearaIdx] = { ...approvedStudy("neara") };
-    studies[sickIdx] = {
-      ...approvedStudy("13sick"),
-      outcomeHeadline: "A$30M TO A$150M",
-    };
-    const html = await renderCases({ studies });
-
-    const cardCount = (html.match(/cases__pane"/g) ?? []).length;
-    expect(cardCount).toBe(5);
-    // Neara (order 1) must appear before 13SICK (order 3).
-    expect(html.indexOf("FROM IDEA TO A$1B+")).toBeLessThan(
-      html.indexOf("A$30M TO A$150M"),
-    );
-  });
-
-  it("renders the §8.5 card anatomy for a published study", async () => {
-    const studies = withPublishedNeara();
-    const html = await renderCases({ studies });
-    // Logo with an accessible name, stage tag, the outcome, the value multiple,
-    // and the causal 'how we moved it' mechanism. The claim ids are deliberately
-    // absent: they are internal identifiers tracked in the claims ledger, not
-    // visitor-facing copy.
-    expect(html).toContain('alt="Neara logo"');
-    expect(html).toContain("/logos/neara.png");
-    expect(html).toContain(stageLabel("0-to-1-to-10"));
-    expect(html).toContain("20×");
-    expect(html.toLowerCase()).toContain("how we moved it");
-    expect(html).not.toContain("CLAIM-NEARA-001");
   });
 
   it("exposes the section as a labelled landmark", async () => {

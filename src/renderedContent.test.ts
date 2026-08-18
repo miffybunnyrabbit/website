@@ -4,12 +4,29 @@ import reactRenderer from "@astrojs/react/server.js";
 import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 import IndexPage from "./pages/index.astro";
 import {
-  publishedCaseStudies,
+  caseStudies,
+  orderedCaseStudies,
   REQUIRED_CASE_STUDY_SLUGS,
   REMOVED_CASE_STUDY_SLUGS,
 } from "./config/caseStudies";
-import { marqueeLogos, REMOVED_BRANDS } from "./config/logos";
-import { openQueueItems } from "./config/approvalQueue";
+import { marqueeLogos } from "./config/logos";
+
+/**
+ * Brands struck from the marquee: the three the repositioning removed (§5, §8.4)
+ * and the five the owner struck on 2026-08-17. The register that used to carry
+ * them as auditable records was retired on 2026-08-18, so they are named here —
+ * the page must never show them again, and the reasoning is frozen under `docs/`.
+ */
+const REMOVED_BRANDS: readonly string[] = [
+  "Awayco",
+  "Perion",
+  "Synaptico",
+  "BCG",
+  "Agonics",
+  "Spec",
+  "Jubi",
+  "Xylo",
+];
 
 /**
  * Assembled-page logos-and-content gate (implementation plan §24 "Logos and
@@ -61,73 +78,41 @@ function caseCardCount(html: string): number {
   return (html.match(/cases__pane"/g) ?? []).length;
 }
 
-/** The case-study slugs a still-open queue item currently tracks. */
-function openlyTrackedCaseStudies(): Set<string> {
-  return new Set(
-    openQueueItems().flatMap((item) =>
-      item.coverage
-        .filter((c) => c.kind === "case-study" && c.ref)
-        .map((c) => c.ref as string),
-    ),
-  );
-}
-
-describe("assembled homepage represents logos and content per the §24 queue state", () => {
+describe("assembled homepage renders the logos and case studies its models declare", () => {
   let html: string;
 
   beforeAll(async () => {
     html = await renderPage(IndexPage as unknown as AstroComponentFactory);
   });
 
-  it("renders exactly the model's published case studies — no hardcoded or dropped panel (§24, §8.5, §20.1)", () => {
-    const published = publishedCaseStudies();
-    // The rendered card count must equal the published set: a hardcoded panel
-    // pushes it above, a dropped `<CaseStudies />` pushes it to zero.
-    expect(caseCardCount(html)).toBe(published.length);
-    // Every published study's name must actually reach the visitor.
-    for (const study of published) {
+  it("renders every case study — no hardcoded or dropped panel (§24, §8.5)", () => {
+    const studies = orderedCaseStudies();
+    // The rendered card count must equal the model: a hardcoded panel pushes it
+    // above, a dropped `<CaseStudies />` pushes it to zero.
+    expect(caseCardCount(html)).toBe(studies.length);
+    for (const study of studies) {
       expect(html).toContain(study.name);
     }
   });
 
-  it("keeps the removed Xylo study off the page as a case-study panel (§24, §9.6, D-008)", () => {
+  it("renders every required case study (§24, §5)", () => {
+    for (const slug of REQUIRED_CASE_STUDY_SLUGS) {
+      const study = caseStudies.find((s) => s.slug === slug);
+      expect(study, slug).toBeDefined();
+      expect(html).toContain(study!.name);
+    }
+  });
+
+  it("keeps the removed Xylo study off the page as a case-study panel (§24, §9.6)", () => {
     // Guard the fixture: the removal must still be declared, or this test would
     // pass vacuously if the slug were ever dropped from the register.
     expect(REMOVED_CASE_STUDY_SLUGS).toContain("xylo");
-    const publishedSlugs = new Set(publishedCaseStudies().map((s) => s.slug));
+    const slugs = new Set(caseStudies.map((s) => s.slug));
     for (const removed of REMOVED_CASE_STUDY_SLUGS) {
-      // A removed study may keep its *logo* in the marquee (D-008), but must
-      // never surface as a published case-study panel.
-      expect(publishedSlugs.has(removed)).toBe(false);
+      expect(slugs.has(removed)).toBe(false);
     }
   });
 
-  it("represents each required case study per the latest queue state — approved copy on the page, tracked draft otherwise (§24)", () => {
-    const published = new Map(publishedCaseStudies().map((s) => [s.slug, s]));
-    const tracked = openlyTrackedCaseStudies();
-    for (const slug of REQUIRED_CASE_STUDY_SLUGS) {
-      const study = published.get(slug);
-      if (study) {
-        // Approved-and-published: the approved copy is actually on the page.
-        expect(html).toContain(study.name);
-      } else {
-        // Not yet published: it must still be tracked as an open queue item so it
-        // is a deliberate draft, never a silently missing study.
-        expect(tracked.has(slug)).toBe(true);
-      }
-    }
-  });
-
-  it("keeps every published case study approved or covered by an open queue item (§24)", () => {
-    const tracked = openlyTrackedCaseStudies();
-    for (const study of publishedCaseStudies()) {
-      const approved = study.approvalStatus === "approved";
-      // §24: every case-study claim on the page is either approved or covered by
-      // an open approval-queue item — a rendered study may not be both unapproved
-      // and untracked.
-      expect(approved || tracked.has(study.slug)).toBe(true);
-    }
-  });
 
   it("withholds the removed marquee brands from the rendered page (§24, §8.4, P4-002)", () => {
     const visibleBrands = new Set(marqueeLogos().map((l) => l.name.toLowerCase()));
