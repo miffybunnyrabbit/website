@@ -114,7 +114,7 @@ export const caseStudies: readonly CaseStudy[] = [
     valueCreated: "A$200m",
     currency: "AUD",
     summary:
-      "Helix helped shape the core technology and early business development that moved Neara from concept through its formative 0 → 1 → 10 stage.",
+      "We helped shape the core technology and early business development that moved Neara from concept through its formative 0 → 1 → 10 stage.",
     helixContribution: [
       "Shaped the core technology.",
       "Seeded early business development.",
@@ -142,7 +142,7 @@ export const caseStudies: readonly CaseStudy[] = [
     valueCreated: "£300m",
     currency: "GBP",
     summary:
-      "Helix helped shape the technology and anchor early fundraising, supporting Ferovinum through the formative 0 → 1 → 10 stage.",
+      "We helped shape the technology and anchor early fundraising, supporting Ferovinum through the formative 0 → 1 → 10 stage.",
     helixContribution: [
       "Shaped the technology.",
       "Anchored early fundraising rounds.",
@@ -164,7 +164,7 @@ export const caseStudies: readonly CaseStudy[] = [
     valueCreated: "A$100m",
     currency: "AUD",
     summary:
-      "Helix applied systems thinking to the operating model and product rollout, helping turn delivery complexity into a repeatable growth engine.",
+      "We applied systems thinking to the operating model and product rollout, helping turn delivery complexity into a repeatable growth engine.",
     helixContribution: [
       "Applied systems thinking to the operating model.",
       "Led the product rollout.",
@@ -193,7 +193,7 @@ export const caseStudies: readonly CaseStudy[] = [
     valueCreated: "US$50m",
     currency: "USD",
     summary:
-      "Helix helped build Origami from an idea into a working automated-leverage protocol: one-click leveraged vaults that loop yield-bearing tokens and hold their own position health, rather than leaving that work to the user.",
+      "We helped build Origami from an idea into a working automated-leverage protocol: one-click leveraged vaults that loop yield-bearing tokens and hold their own position health, rather than leaving that work to the user.",
     helixContribution: [
       "Shaped the leveraged-vault product.",
       "Built the protocol engineering behind the automated positions.",
@@ -222,7 +222,7 @@ export const caseStudies: readonly CaseStudy[] = [
     valueCreated: "A$50m",
     currency: "AUD",
     summary:
-      "Helix helped build Veyor from an initial concept into a delivery-management platform that runs site logistics — bookings, materials and access — on some of Australia’s largest construction projects.",
+      "We helped build Veyor from an initial concept into a delivery-management platform that runs site logistics — bookings, materials and access — on some of Australia’s largest construction projects.",
     helixContribution: [
       "Shaped the delivery-management product.",
       "Built the platform technology through the 0 → 1 stage.",
