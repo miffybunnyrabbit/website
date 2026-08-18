@@ -54,7 +54,6 @@ function styleBlocks(source: string): string[] {
 const SHELL_SECTIONS: readonly string[] = [
   "Header.astro",
   "Hero.astro",
-  "ProofBanner.astro",
   "WhyHelix.astro",
   "HowWeWork.astro",
   "CaseStudies.astro",
@@ -62,6 +61,17 @@ const SHELL_SECTIONS: readonly string[] = [
   "FinalCta.astro",
   "Footer.astro",
 ];
+
+/**
+ * The one documented exception. The proof strip is a full-bleed, rule-divided
+ * band (RW-002): its metric cells run to the viewport edge so each figure sits on
+ * the centre of the half it is ruled into. Framing it with the shell would cap
+ * the cells at --width-container while the rules kept running to the edge, which
+ * pulls both callouts off the centre of their own cell and toward the middle of
+ * the band. The exception is asserted rather than merely omitted, so the section
+ * cannot silently drift back into a hand-rolled container of its own.
+ */
+const FULL_BLEED_SECTIONS: readonly string[] = ["ProofBanner.astro"];
 
 describe("section-shell primitive (VD-104)", () => {
   const css = read("./styles/global.css");
@@ -74,6 +84,21 @@ describe("section-shell primitive (VD-104)", () => {
     // so each section can still set its own vertical rhythm with padding-block.
     expect(body).toMatch(/padding-inline:\s*var\(--space-\d+\)/);
   });
+
+  for (const file of FULL_BLEED_SECTIONS) {
+    it(`keeps ${file} full-bleed, with no hand-rolled container`, () => {
+      const source = read(`./components/${file}`);
+      expect(source).not.toMatch(/class="[^"]*\bsection-shell\b/);
+      for (const body of styleBlocks(source)) {
+        expect(body, "a full-bleed section must not re-create the shell").not.toMatch(
+          /max-width:\s*var\(--width-container\)/,
+        );
+        expect(body, "a full-bleed section must not re-create the shell").not.toMatch(
+          /margin-inline:\s*auto/,
+        );
+      }
+    });
+  }
 
   for (const file of SHELL_SECTIONS) {
     it(`applies the shared .section-shell primitive in ${file}`, () => {

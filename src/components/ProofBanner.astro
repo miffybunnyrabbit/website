@@ -42,7 +42,7 @@ const published = publishedProofBanner(banner);
       <h2 class="proof__heading" id="proof-heading">
         Proof
       </h2>
-      <dl class="proof__list section-shell">
+      <dl class="proof__list">
         {published.metrics.map((metric) => (
           <div class="proof__metric metric">
             <dt class="metric__value">{metric.value}</dt>
@@ -92,15 +92,22 @@ const published = publishedProofBanner(banner);
     border: 0;
   }
 
-  /* The vertical rhythm sits on the cells rather than the list so the divider
-     between them runs the full height of the band, as it does on the live site. */
+  /* The strip is the one section that deliberately does *not* frame its content
+     with the shared `.section-shell` (VD-104): the shell caps content at
+     --width-container and centres it, which left each metric centred on its half
+     of the *container* while the band's rules run to the viewport edge — so both
+     callouts sat pulled toward the middle of the band, off the centre of the cell
+     they are ruled into. Full-bleed cells put each figure on the centre of its
+     own bordered half, which is what the live site does (RW-002). The gutter and
+     the vertical rhythm ride the cells so the divider runs the band's full
+     height. */
   .proof__list {
     display: grid;
     grid-template-columns: 1fr;
   }
 
   .proof__metric {
-    padding-block: var(--space-12);
+    padding: var(--space-12) var(--space-6);
   }
 
   /* Stacked below the breakpoint, so the divider is horizontal. */
