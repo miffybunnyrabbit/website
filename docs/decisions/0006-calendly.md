@@ -1,6 +1,5 @@
 # D-0006-calendly — Calendly
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** open
 - **Approval-queue item:** Q-0008-strategic-copy

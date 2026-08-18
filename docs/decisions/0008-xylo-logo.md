@@ -1,6 +1,5 @@
 # D-0008-xylo-logo — Xylo logo
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** decided
 - **Approval-queue item:** Q-0006-client-representation

@@ -1,6 +1,5 @@
 # Q-0007-proof-enterprise-value — $500M+ enterprise-value figure and currency
 
-<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->
 
 - **Category:** B — Financial claims
 - **Covers:** proof-metric (enterprise-value)

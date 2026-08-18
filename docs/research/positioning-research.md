@@ -1,6 +1,5 @@
 # Positioning research (R-004)
 
-<!-- Generated from src/config/positioningResearch.ts — do not edit by hand. -->
 
 **Plan references:** §17.5 R-004, §10 (differentiation).
 **Review status:** approved — positioning is strategic copy; sign-off is tracked in `Q-0008-strategic-copy`.

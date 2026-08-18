@@ -1,6 +1,5 @@
 # D-0007-locations — Locations
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** decided
 - **Approval-queue item:** Q-0010-footer-identity

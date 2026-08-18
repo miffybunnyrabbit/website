@@ -1,6 +1,5 @@
 # D-0003-attribution — Attribution
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** decided
 - **Approval-queue item:** Q-0011-engagement-model

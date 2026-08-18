@@ -1,6 +1,5 @@
 # D-0012-engagement-boundaries — Pre-engagement underwriting, embedded delivery, and exit
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** decided
 - **Approval-queue item:** Q-0011-engagement-model

@@ -1,6 +1,5 @@
 # Q-0006-client-representation — Client logo permissions and role descriptions
 
-<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->
 
 - **Category:** C — Client representation
 - **Covers:** logo-permissions, case-study (neara), case-study (ferovinum), case-study (13sick), case-study (origami), case-study (veyor)

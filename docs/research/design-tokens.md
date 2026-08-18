@@ -1,6 +1,5 @@
 # Design-token inventory (R-002)
 
-<!-- Generated from src/config/designTokensRecord.ts — do not edit by hand. -->
 
 **Plan references:** §17.3 R-002, §16 Visual system, decision D-010 (font rights).
 **Review status:** approved — the 2026-07-29 computed-value audit confirmed the brand colours (§16.1) and the font-rights decision that governs the font families (D-0010-font-rights, §16.3) is recorded, so this record reads approved; the build still blocks it from reading approved ahead of that decision.

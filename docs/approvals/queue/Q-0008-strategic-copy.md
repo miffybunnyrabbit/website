@@ -1,6 +1,5 @@
 # Q-0008-strategic-copy — Strategic copy: hero, model, fit, CTA, profanity
 
-<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->
 
 - **Category:** A — Strategic copy
 - **Covers:** strategic-copy

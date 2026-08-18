@@ -1,6 +1,5 @@
 # D-0005-capacity-no-branch — Missing “No” branch for the capacity question
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** decided
 - **Approval-queue item:** Q-0008-strategic-copy

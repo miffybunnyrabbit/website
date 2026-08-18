@@ -1,6 +1,5 @@
 # Q-0011-engagement-model — Engagement-model validation (How we work operating model)
 
-<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->
 
 - **Category:** B — Financial claims
 - **Covers:** engagement-model

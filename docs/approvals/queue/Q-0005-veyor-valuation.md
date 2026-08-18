@@ -1,6 +1,5 @@
 # Q-0005-veyor-valuation — Veyor Digital enterprise-value claim
 
-<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->
 
 - **Category:** B — Financial claims
 - **Covers:** case-study (veyor)

@@ -1,6 +1,5 @@
 # Q-0003-13sick-valuation — 13SICK enterprise-value claim
 
-<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->
 
 - **Category:** B — Financial claims
 - **Covers:** case-study (13sick)

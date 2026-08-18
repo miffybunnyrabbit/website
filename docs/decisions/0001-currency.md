@@ -1,6 +1,5 @@
 # D-0001-currency — Currency
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** decided
 - **Approval-queue item:** Q-0007-proof-enterprise-value

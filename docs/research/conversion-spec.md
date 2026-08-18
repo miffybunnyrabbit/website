@@ -1,6 +1,5 @@
 # Conversion specification (R-009)
 
-<!-- Generated from src/config/conversionSpec.ts — do not edit by hand. -->
 
 **Plan references:** §17.10 R-009, §13 (final CTA), §20.3 (single CTA configuration), decision D-006.
 **Review status:** pending — this document is the plan's working baseline; the exact Calendly URL, event type, UTMs, and email fallback are the open D-0006-calendly decision, and this record may only be marked approved once that decision is recorded.

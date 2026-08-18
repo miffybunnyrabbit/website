@@ -1,6 +1,5 @@
 # Q-0001-neara-valuation — Neara enterprise-value claim
 
-<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->
 
 - **Category:** B — Financial claims
 - **Covers:** case-study (neara)

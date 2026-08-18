@@ -1,6 +1,5 @@
 # D-0004-ebita-or-ebitda — EBITA or EBITDA
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** decided
 - **Approval-queue item:** Q-0008-strategic-copy

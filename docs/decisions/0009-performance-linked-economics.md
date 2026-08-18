@@ -1,6 +1,5 @@
 # D-0009-performance-linked-economics — Performance-linked economics and gain-share
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** decided
 - **Approval-queue item:** Q-0011-engagement-model

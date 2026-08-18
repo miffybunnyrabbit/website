@@ -1,6 +1,5 @@
 # Engagement-model validation (R-012)
 
-<!-- Generated from src/config/engagementModel.ts — do not edit by hand. -->
 
 **Plan references:** §11.7 (accuracy and legal guardrails), §17.13 R-012.
 **Review status:** approved — tracked by approval-queue item Q-0011-engagement-model (category B: finance, legal, and the commercial owner).

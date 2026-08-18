@@ -1,6 +1,5 @@
 # Q-0012-outstanding-valuation-figures — Outstanding case-study valuation figures: Origami, Veyor
 
-<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->
 
 - **Category:** B — Financial claims
 - **Covers:** case-study (origami), case-study (veyor)

@@ -1,6 +1,5 @@
 # Q-0009-launch-review — Standing launch review
 
-<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->
 
 - **Category:** D — Launch review
 - **Covers:** launch-review

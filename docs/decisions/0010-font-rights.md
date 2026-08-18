@@ -1,6 +1,5 @@
 # D-0010-font-rights — Font rights
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** decided
 - **Approval-queue item:** none (see notes)

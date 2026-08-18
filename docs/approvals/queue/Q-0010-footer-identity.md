@@ -1,6 +1,5 @@
 # Q-0010-footer-identity — Footer institutional identity: legal entity, ABN, registered office
 
-<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->
 
 - **Category:** A — Strategic copy
 - **Covers:** footer-identity

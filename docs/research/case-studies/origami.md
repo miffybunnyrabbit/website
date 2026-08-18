@@ -1,6 +1,5 @@
 # Origami
 
-<!-- Generated from src/config/caseStudyDossiers.ts — do not edit by hand. -->
 
 **Plan references:** §9.4 (research direction), §17.8 R-007.
 **Formative stage:** Scale.

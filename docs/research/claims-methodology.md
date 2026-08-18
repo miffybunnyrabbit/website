@@ -1,6 +1,5 @@
 # Claims methodology (R-005)
 
-<!-- Generated from src/config/claimsMethodology.ts — do not edit by hand. -->
 
 **Plan references:** §15 (claims discipline), §17.6 R-005.
 **Review status:** pending — this document is the plan's working baseline; its application to each figure is signed off through the category-B claim approval-queue items the claims ledger tracks (Q-0001..Q-0005, Q-0007).

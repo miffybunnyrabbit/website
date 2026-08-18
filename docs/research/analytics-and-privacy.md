@@ -1,6 +1,5 @@
 # Analytics and privacy (R-011)
 
-<!-- Generated from src/config/analyticsAndPrivacy.ts — do not edit by hand. -->
 
 **Plan references:** §17.12 R-011, §12.4 (no personal data in the fit qualifier), decision D-011.
 **Review status:** pending — this document is the plan's working baseline; the provider choice is the open D-0011-analytics decision, and this record may only be marked approved once that decision is recorded.

@@ -1,6 +1,5 @@
 # D-0011-analytics — Analytics
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** open
 - **Approval-queue item:** none (see notes)

@@ -1,6 +1,5 @@
 # Tone-of-voice system (R-003)
 
-<!-- Generated from src/config/toneOfVoice.ts — do not edit by hand. -->
 
 **Plan references:** §15 (tone-of-voice system), §17.4 R-003.
 **Review status:** approved — the tone system is the plan's working baseline, and its one outstanding sign-off, the §15.4 profanity decision, was recorded by the owner in `Q-0008-strategic-copy`.

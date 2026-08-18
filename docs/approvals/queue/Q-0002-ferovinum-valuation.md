@@ -1,6 +1,5 @@
 # Q-0002-ferovinum-valuation — Ferovinum enterprise-value claim
 
-<!-- Generated from src/config/approvalQueue.ts — do not edit by hand. -->
 
 - **Category:** B — Financial claims
 - **Covers:** case-study (ferovinum)

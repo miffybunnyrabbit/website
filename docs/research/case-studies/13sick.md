@@ -1,6 +1,5 @@
 # 13SICK
 
-<!-- Generated from src/config/caseStudyDossiers.ts — do not edit by hand. -->
 
 **Plan references:** §9.3 (research direction), §17.8 R-007.
 **Formative stage:** Scale.

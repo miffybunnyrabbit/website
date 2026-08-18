@@ -1,6 +1,5 @@
 # D-0002-enterprise-value-terminology — “Enterprise value” versus “company valuation”
 
-<!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
 - **Status:** decided
 - **Approval-queue item:** Q-0008-strategic-copy
