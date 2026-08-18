@@ -181,13 +181,27 @@ a {
    (VD-104). Mint is a surface colour, not a text colour: mint-on-white fails
    contrast, but ink-on-mint clears WCAG AA (§16.2), and the hover state inverts
    to a mint label on ink, which clears AA too. Both ratios are asserted in
-   ctaButton.test.ts against the same tokens. */
+   ctaButton.test.ts against the same tokens.
+
+   The pointer cursor is declared rather than inherited: the CTA renders as an
+   <a> with no href until PUBLIC_CALENDLY_URL is configured (§13, D-0006), and a
+   browser gives an anchor the hand cursor only when it has one — so without this
+   the button reads as inert text on hover in any build without the booking
+   URL.
+
+   The mint border is invisible at rest — it is the same colour as the fill — and
+   exists for the hover state: inverting to an ink fill would otherwise erase the
+   button's shape on the black hero, where ink-on-ink leaves nothing but floating
+   mint text. Holding the border at the accent colour through hover keeps one
+   button shape on every surface, white or black. */
 .cta-button {
   display: inline-block;
+  cursor: pointer;
   padding: var(--space-4) var(--space-6);
   background-color: var(--color-accent);
   color: var(--color-helix-ink);
   font-weight: var(--font-weight-bold);
+  border: 2px solid var(--color-accent);
   border-radius: var(--radius-md);
   text-decoration: none;
   transition:
@@ -199,6 +213,7 @@ a {
 .cta-button:focus-visible {
   background-color: var(--color-helix-ink);
   color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 /* Section eyebrow / kicker — the short tracked label above a section headline,

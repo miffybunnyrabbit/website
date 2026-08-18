@@ -56,10 +56,30 @@ describe("primary CTA mint button (VD-102/VD-104)", () => {
     expect(body).toMatch(/color:\s*var\(--color-helix-ink\)/);
   });
 
+  it("shows the pointer cursor even before a booking URL is configured", () => {
+    // The CTA renders as an href-less <a> until PUBLIC_CALENDLY_URL is set
+    // (§13, D-0006), and an anchor without an href gets no hand cursor from the
+    // browser — so the primitive has to declare it rather than inherit it.
+    expect(ruleBody(css, ".cta-button")).toMatch(/cursor:\s*pointer/);
+  });
+
   it("inverts to a mint label on ink for hover/focus", () => {
     const body = ruleBody(css, ".cta-button:hover,\n.cta-button:focus-visible");
     expect(body).toMatch(/background-color:\s*var\(--color-helix-ink\)/);
     expect(body).toMatch(/color:\s*var\(--color-accent\)/);
+  });
+
+  it("holds the mint border through hover so the shape survives on ink surfaces", () => {
+    // At rest the border matches the fill and is invisible. It earns its keep on
+    // hover: the hero sits on ink (heroSurface.test.ts), so an ink-filled button
+    // with no border would dissolve into the section, leaving floating mint
+    // text instead of a button.
+    expect(ruleBody(css, ".cta-button")).toMatch(
+      /border:\s*2px solid var\(--color-accent\)/,
+    );
+    expect(
+      ruleBody(css, ".cta-button:hover,\n.cta-button:focus-visible"),
+    ).toMatch(/border-color:\s*var\(--color-accent\)/);
   });
 
   it("keeps ink-on-mint (rest) at or above the WCAG AA floor", () => {
