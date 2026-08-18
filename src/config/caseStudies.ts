@@ -135,14 +135,16 @@ export const caseStudies: readonly CaseStudy[] = [
     name: "Ferovinum",
     slug: "ferovinum",
     order: 2,
-    approvalStatus: "researching",
-    publish: false,
-    // Non-quantified until the securitisation-vs-valuation evidence gate passes
-    // (section 9.2 critical evidence warning).
+    // The owner verified the 10× / $300m figures on 2026-08-18 (C-0002), so the
+    // study publishes quantified. The §9.2 warning still governs the wording: the
+    // headline stays qualitative and no copy describes the securitisation
+    // programme as a company valuation.
+    approvalStatus: "approved",
+    publish: true,
     outcomeHeadline: "FROM IDEA TO A GLOBAL CAPITAL PLATFORM",
     engagementStage: "0-to-1-to-10",
-    valueMultiple: "[VERIFY: 10×]",
-    valueCreated: "[VERIFY: $300m]",
+    valueMultiple: "10×",
+    valueCreated: "$300m",
     currency: "undecided",
     summary:
       "Helix helped shape the technology and anchor early fundraising, supporting Ferovinum through the formative 0 → 1 → 10 stage.",
@@ -150,10 +152,10 @@ export const caseStudies: readonly CaseStudy[] = [
       "Shaped the technology.",
       "Anchored early fundraising rounds.",
     ],
-    claimIds: [],
+    claimIds: ["C-0002-ferovinum-enterprise-value"],
     logo: "ferovinum.png",
     clientApproval: "approved",
-    assetApproval: "pending",
+    assetApproval: "approved",
   },
   {
     name: "13SICK",
@@ -181,43 +183,60 @@ export const caseStudies: readonly CaseStudy[] = [
     name: "Origami",
     slug: "origami",
     order: 4,
-    // Blocked on internal subject-matter research: the "how" must not be
-    // invented (section 9.4).
-    approvalStatus: "draft",
-    publish: false,
-    outcomeHeadline: "APPROX. 10× VALUE GROWTH",
+    // Published on the owner's 2026-08-18 instruction. The wording describes the
+    // venture from public sources (the automated-leverage protocol, its lovToken
+    // vaults, its seed round) and states Helix's contribution at the level the
+    // owner directed. The §9.4 figures were verified by the owner later the same
+    // day under Q-0012 and now publish; the currency is USD per the owner's call,
+    // so the figure names it rather than using the bare `$` D-0001 reserves for
+    // the portfolio aggregate.
+    approvalStatus: "approved",
+    publish: true,
+    outcomeHeadline: "FROM CONCEPT TO A LIVE AUTOMATED-LEVERAGE PROTOCOL",
     engagementStage: "scale",
-    valueMultiple: "[VERIFY: 10×]",
-    valueCreated: "[VERIFY: $50m]",
-    currency: "undecided",
+    valueMultiple: "10×",
+    valueCreated: "US$50m",
+    currency: "USD",
     summary:
-      "Helix helped Origami move from [VERIFY: starting state] to [VERIFY: outcome] by [RESEARCH: precise product, protocol, engineering, go-to-market or capital contribution].",
-    helixContribution: [],
-    claimIds: [],
+      "Helix helped build Origami from an idea into a working automated-leverage protocol: one-click leveraged vaults that loop yield-bearing tokens and hold their own position health, rather than leaving that work to the user.",
+    helixContribution: [
+      "Shaped the leveraged-vault product.",
+      "Built the protocol engineering behind the automated positions.",
+      "Supported the launch into the wider DeFi market.",
+    ],
+    claimIds: ["C-0004-origami-enterprise-value"],
     logo: "origami.png",
     clientApproval: "approved",
-    assetApproval: "pending",
+    assetApproval: "approved",
   },
   {
     name: "Veyor Digital",
     slug: "veyor",
     order: 5,
-    approvalStatus: "researching",
-    publish: false,
-    outcomeHeadline: "0 → 1 TO A$50M+",
-    currentOutcome:
-      "March 2026 reporting supports an A$50m–A$75m valuation range associated with Veyor’s Series A.",
+    // Published on the owner's 2026-08-18 instruction. The venture description
+    // comes from public reporting (site-logistics platform, tier-one projects
+    // including Sydney Metro). The §9.5 value-created figure was verified by the
+    // owner later the same day under Q-0012 and now publishes; the A$50m–A$75m
+    // public valuation range still stays off the card, since §9.5 forbids citing
+    // it as value attributable to Helix.
+    approvalStatus: "approved",
+    publish: true,
+    outcomeHeadline: "FROM CONCEPT TO TIER-ONE SITE LOGISTICS",
     engagementStage: "0-to-1",
-    valueMultiple: "[VERIFY: 10×]",
-    valueCreated: "[VERIFY: A$50m]",
+    valueMultiple: "10×",
+    valueCreated: "A$50m",
     currency: "AUD",
     summary:
-      "Helix helped turn Veyor from [VERIFY: initial concept/state] into a scalable delivery-management platform by [RESEARCH: exact product, technology, operating and commercial contribution].",
-    helixContribution: [],
-    claimIds: [],
+      "Helix helped build Veyor from an initial concept into a delivery-management platform that runs site logistics — bookings, materials and access — on some of Australia’s largest construction projects.",
+    helixContribution: [
+      "Shaped the delivery-management product.",
+      "Built the platform technology through the 0 → 1 stage.",
+      "Supported the commercial push into tier-one construction.",
+    ],
+    claimIds: ["C-0005-veyor-enterprise-value"],
     logo: "veyor.png",
     clientApproval: "approved",
-    assetApproval: "pending",
+    assetApproval: "approved",
   },
 ];
 

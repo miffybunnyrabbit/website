@@ -122,10 +122,10 @@ export const claimsLedger: readonly ClaimRecord[] = [
     id: "C-0002-ferovinum-enterprise-value",
     target: { kind: "case-study", slug: "ferovinum" },
     metricType: "enterprise-value",
-    publishStatus: "researching",
-    queueItem: "Q-0012-outstanding-valuation-figures",
+    publishStatus: "approved",
+    queueItem: "Q-0002-ferovinum-valuation",
     notes:
-      "Securitisation-vs-valuation evidence unresolved (§9.2). Q-0002 approved the study's non-quantified wording on 2026-08-17 but not this figure, so tracking moved to the open Q-0012.",
+      "Owner verified the 10× / $300m figures on 2026-08-18, so the study publishes quantified under Q-0002 and no longer sits in the open Q-0012 residue. The §9.2 warning still binds the wording: the card's headline stays qualitative and no copy describes the securitisation programme as a company valuation. The currency basis is still unnamed — the figure publishes as a bare `$300m`, which D-0001 reserves for the deliberately currency-neutral portfolio aggregate; naming it GBP or USD is an outstanding owner call.",
   },
   {
     id: "C-0003-13sick-enterprise-value",

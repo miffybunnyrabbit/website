@@ -40,15 +40,15 @@ Public materials support a large asset-backed securitisation/funding programme i
 
 ## Valuation or value evidence
 
-Before publishing any "valued at $500m" claim, internal evidence must distinguish company equity valuation, enterprise value, debt/funding capacity, assets financed, total capital deployed, and the securitisation programme (§9.2).
+The owner verified the 10× / $300m figures on 2026-08-18 (Q-0002, C-0002), so they publish. The §9.2 separation still binds the *wording*: nothing on the card describes the securitisation/funding programme as a company valuation, and the headline stays qualitative.
 
 ## Backing claim IDs
 
-- `C-0002-ferovinum-enterprise-value` — enterprise-value (researching, tracked by Q-0012-outstanding-valuation-figures)
+- `C-0002-ferovinum-enterprise-value` — enterprise-value (approved, tracked by Q-0002-ferovinum-valuation)
 
 ## Calculation
 
-[VERIFY: the ~10× value-growth and ~$300m value-created figures, once the valuation basis is established and separated from funding capacity].
+10× value growth and ~$300m value created during the engagement, verified by the owner on 2026-08-18. [VERIFY: the currency basis — the figure publishes as a bare `$300m` while its sources span GBP and USD, and D-0001 reserves the bare `$` for the portfolio aggregate].
 
 ## Currency treatment
 
@@ -87,4 +87,4 @@ Helix helped shape the technology and anchor early fundraising, supporting Ferov
 
 ## Approval record
 
-Published wording approved by Q-0002 (category B, 2026-08-17); the valuation figures it excluded are gated by the open Q-0012; logo and role description gated by Q-0006 (category C).
+Published wording approved by Q-0002 (category B, 2026-08-17); the owner verified the figures under the same item on 2026-08-18, so the study publishes quantified and left the Q-0012 residue; logo and role description gated by Q-0006 (category C).

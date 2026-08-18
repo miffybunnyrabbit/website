@@ -338,14 +338,13 @@ export const approvalQueue: readonly QueueItem[] = [
     // Category B, because what it gates is quantified financial claims.
     id: "Q-0012-outstanding-valuation-figures",
     category: "B",
-    title: "Outstanding case-study valuation figures: Ferovinum, Origami, Veyor",
+    title: "Outstanding case-study valuation figures: Origami, Veyor",
     coverage: [
-      { kind: "case-study", ref: "ferovinum" },
       { kind: "case-study", ref: "origami" },
       { kind: "case-study", ref: "veyor" },
     ],
     publishedWording:
-      "Nothing quantified publishes for these three: each study stays `publish: false` with its multiple, value-created figure, and Helix contribution held as [VERIFY:]/[RESEARCH:] markers until the §9.2 securitisation-vs-valuation evidence, the §9.4 Origami research, and the §9.5 Veyor figures resolve. Their approved headlines and role descriptions already publish under Q-0002, Q-0004, and Q-0005.",
+      "Both studies publish qualitatively — headline, role description, and Helix contribution — with no multiple, value-created figure, or valuation range on the card, so nothing quantified is on the page while the §9.4 Origami research and the §9.5 Veyor figures remain outstanding. Ferovinum left this item on 2026-08-18 when the owner verified its figures under Q-0002.",
     requiredApprovers: REQUIRED_APPROVERS.B,
     status: "open",
   },

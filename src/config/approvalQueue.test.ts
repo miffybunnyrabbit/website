@@ -115,24 +115,27 @@ describe("completeness cross-checks against live content", () => {
   });
 
   it("keeps the research-blocked figures tracked after their wording cleared", () => {
-    // Q-0002/Q-0004/Q-0005 approved only the wording those three studies
-    // publish; their figures are still unverified. Approving a wording gate must
-    // never leave an unapproved figure untracked, so Q-0012 carries the residue
-    // and the ledger points at it. This is the invariant that made Q-0012
-    // necessary — without it the claims ledger would have to call an
-    // unresearched figure "approved".
+    // Q-0004/Q-0005 approved only the wording Origami and Veyor publish; their
+    // figures are still unverified. Approving a wording gate must never leave an
+    // unapproved figure untracked, so Q-0012 carries the residue and the ledger
+    // points at it. This is the invariant that made Q-0012 necessary — without
+    // it the claims ledger would have to call an unresearched figure "approved".
+    // Both studies now publish (owner instruction, 2026-08-18) but strictly
+    // without figures, so the residue is the figure, not the card.
     const residue = approvalQueue.find(
       (i) => i.id === "Q-0012-outstanding-valuation-figures",
     );
     expect(residue?.status).toBe("open");
     expect(residue?.category).toBe("B");
-    for (const slug of ["ferovinum", "origami", "veyor"]) {
+    for (const slug of ["origami", "veyor"]) {
       expect(
         residue?.coverage.some((c) => c.kind === "case-study" && c.ref === slug),
         slug,
       ).toBe(true);
       const study = caseStudies.find((s) => s.slug === slug);
-      expect(study?.publish, slug).toBe(false);
+      expect(study?.claimIds, slug).toEqual([]);
+      expect(study?.valueMultiple, slug).toBeUndefined();
+      expect(study?.valueCreated, slug).toBeUndefined();
     }
   });
 
@@ -146,11 +149,21 @@ describe("completeness cross-checks against live content", () => {
   });
 
   it("fails when a pending case study loses its open queue item", () => {
-    const queue = cloneQueue().filter(
-      (i) => !i.coverage.some((c) => c.kind === "case-study" && c.ref === "ferovinum"),
-    );
-    const errors = validateApprovalQueue(queue);
-    expect(errors.join("\n")).toMatch(/ferovinum.*needs sign-off/i);
+    // Every live study is fully approved since 2026-08-18, so the guard is
+    // exercised by winding one back to a pending asset approval — the state that
+    // used to be real — while its open item is removed from the queue.
+    const origami = caseStudies.find((s) => s.slug === "origami")!;
+    const original = origami.assetApproval;
+    try {
+      (origami as { assetApproval: string }).assetApproval = "pending";
+      const queue = cloneQueue().filter(
+        (i) => !i.coverage.some((c) => c.kind === "case-study" && c.ref === "origami"),
+      );
+      const errors = validateApprovalQueue(queue);
+      expect(errors.join("\n")).toMatch(/origami.*needs sign-off/i);
+    } finally {
+      (origami as { assetApproval: string }).assetApproval = original;
+    }
   });
 
   it("accepts the resolved proof-figure item now the banner approval is recorded", () => {

@@ -172,9 +172,9 @@ export const caseStudyDossiers: readonly CaseStudyDossier[] = [
       other: "[RESEARCH: any other contribution]",
     },
     valuationEvidence:
-      "Before publishing any \"valued at $500m\" claim, internal evidence must distinguish company equity valuation, enterprise value, debt/funding capacity, assets financed, total capital deployed, and the securitisation programme (§9.2).",
+      "The owner verified the 10× / $300m figures on 2026-08-18 (Q-0002, C-0002), so they publish. The §9.2 separation still binds the *wording*: nothing on the card describes the securitisation/funding programme as a company valuation, and the headline stays qualitative.",
     calculation:
-      "[VERIFY: the ~10× value-growth and ~$300m value-created figures, once the valuation basis is established and separated from funding capacity].",
+      "10× value growth and ~$300m value created during the engagement, verified by the owner on 2026-08-18. [VERIFY: the currency basis — the figure publishes as a bare `$300m` while its sources span GBP and USD, and D-0001 reserves the bare `$` for the portfolio aggregate].",
     currencyTreatment:
       "Undecided — the underlying figures span GBP and USD sources; no aggregation until a documented conversion basis exists (D-001).",
     attributionLanguage:
@@ -191,7 +191,7 @@ export const caseStudyDossiers: readonly CaseStudyDossier[] = [
     risksOrProhibitedWording:
       "Do not describe the securitisation/funding programme as a company valuation or enterprise value; publish the qualitative headline until the evidence gate passes (§9.2).",
     approvalRecord:
-      "Published wording approved by Q-0002 (category B, 2026-08-17); the valuation figures it excluded are gated by the open Q-0012; logo and role description gated by Q-0006 (category C).",
+      "Published wording approved by Q-0002 (category B, 2026-08-17); the owner verified the figures under the same item on 2026-08-18, so the study publishes quantified and left the Q-0012 residue; logo and role description gated by Q-0006 (category C).",
   },
   {
     slug: "13sick",
@@ -235,38 +235,44 @@ export const caseStudyDossiers: readonly CaseStudyDossier[] = [
     slug: "origami",
     planSection: "§9.4",
     whyItBelongs:
-      "Demonstrates value creation in a capital/protocol context (~10× growth). Blocked on internal subject-matter research: the \"how\" must not be invented (§9.4).",
+      "Demonstrates value creation in a capital/protocol context. Publishes qualitatively on the owner's 2026-08-18 instruction — the venture description is drawn from public sources and the contribution from the owner's statement that Helix materially helped build it; the ~10× figures stay unpublished pending §9.4 research.",
     engagementTimeline: "[RESEARCH: engagement dates].",
     startingState: "[VERIFY: starting state].",
     endOfEngagementState: "[VERIFY: outcome].",
     currentState:
-      "The existing site describes Origami as an automated leverage protocol; public metrics such as funding raised or total value locked are not equivalent to company valuation (§9.4).",
+      "Public sources describe Origami Finance as an automated-leverage protocol whose lovToken vaults one-click loop yield-bearing tokens (weETH, sUSDe) using flash loans and hold a near-constant loan-to-value ratio; it announced a $1.5m seed round in August 2024 and is among the larger leveraged-farming protocols by TVL. None of those public metrics is a company valuation (§9.4).",
     contribution: {
-      product: "[RESEARCH: precise product contribution]",
-      technology: "[RESEARCH: protocol/engineering contribution]",
-      commercial: "[RESEARCH: go-to-market contribution]",
+      product: "Shaped the leveraged-vault product (owner-stated, 2026-08-18).",
+      technology:
+        "Built the protocol engineering behind the automated positions (owner-stated, 2026-08-18).",
+      commercial:
+        "Supported the launch into the wider DeFi market (owner-stated, 2026-08-18).",
       operatingModel: "[RESEARCH: operating-model contribution]",
       fundraisingCapital: "[RESEARCH: capital contribution]",
       other: "[RESEARCH: any other contribution]",
     },
     valuationEvidence:
-      "[VERIFY: the ~$50m value-created figure and the value basis, keeping company valuation distinct from funding raised or total value locked].",
+      "[VERIFY: the ~$50m value-created figure and the value basis, keeping company valuation distinct from funding raised or total value locked]. Nothing quantified publishes until this resolves — the card carries no figure.",
     calculation:
       "[VERIFY: the ~10× multiple and the ~$50m value-created basis, once the value measure is established].",
     currencyTreatment:
       "Undecided — crypto-market context; no aggregation until a documented basis exists (D-001).",
     attributionLanguage:
       "\"Approximately $50m in value was created during Helix's engagement\" (D-003) — pending the documented contribution.",
-    publicSources: [],
+    publicSources: [
+      "https://docs.origami.finance/",
+      "https://www.binance.com/en/square/post/2024-08-27-origami-finance-secures-1-5-million-in-seed-funding-for-automated-leverage-protocol-12713591275417",
+      "https://defillama.com/protocol/origami-finance",
+    ],
     internalSources:
-      "[RESEARCH: secure subject-matter evidence for the product, protocol, engineering, go-to-market, or capital contribution — reference the secure location].",
+      "The published contribution is the owner's own statement (2026-08-18) that Helix materially helped build the venture, not documented evidence. [RESEARCH: secure subject-matter evidence for the product, protocol, engineering, go-to-market, or capital contribution — reference the secure location].",
     assetPermissions:
       "Logo and any imagery pending permission (asset register; §23 category C, Q-0006).",
     clientApprovalNote: "Pending — client approval of the description required.",
     risksOrProhibitedWording:
-      "Do not invent the \"how\"; do not confuse funding raised or total value locked with company valuation (§9.4).",
+      "Do not confuse funding raised or total value locked with company valuation (§9.4). The published contribution rests on the owner's statement rather than documented evidence, so it must be re-read by the owner before launch and narrowed if any bullet overstates the role.",
     approvalRecord:
-      "Published wording approved by Q-0004 (category B, 2026-08-17); the valuation figures it excluded are gated by the open Q-0012; logo and role description gated by Q-0006 (category C).",
+      "Wording approved by Q-0004 (category B, 2026-08-17); the card published on the owner's 2026-08-18 instruction, which also supplied the contribution wording — that copy postdates Q-0004 and needs the owner's re-read. Figures remain gated by the open Q-0012; logo and role description gated by Q-0006 (category C).",
   },
   {
     slug: "veyor",
@@ -281,9 +287,12 @@ export const caseStudyDossiers: readonly CaseStudyDossier[] = [
     currentState:
       "March 2026 reporting supports an A$50m–A$75m valuation range associated with Veyor's Series A — the broad current valuation, but not the entry value, multiple, or Helix's exact contribution.",
     contribution: {
-      product: "[RESEARCH: exact product contribution]",
-      technology: "[RESEARCH: technology contribution]",
-      commercial: "[RESEARCH: commercial contribution]",
+      product:
+        "Shaped the delivery-management product (owner-stated, 2026-08-18).",
+      technology:
+        "Built the platform technology through the 0 → 1 stage (owner-stated, 2026-08-18).",
+      commercial:
+        "Supported the commercial push into tier-one construction (owner-stated, 2026-08-18).",
       operatingModel: "[RESEARCH: operating contribution]",
       fundraisingCapital: "[RESEARCH: capital contribution]",
       other: "[RESEARCH: any other contribution]",
@@ -298,16 +307,18 @@ export const caseStudyDossiers: readonly CaseStudyDossier[] = [
     publicSources: [
       "https://www.smartcompany.com.au/startupsmart/veyor-11-million-series-a-raise-us-expansion/",
       "https://www.veyordigital.com/news/australian-investors-back-construction-app-with-4m-over-subscribed-equity-raise",
+      "https://www.businessnewsaustralia.com/articles/the--ubereats--of-construction-logistics--veyor-digital-raises--2-75-million-in-pre-series-a.html",
+      "https://www.constructionadvisor.com.au/aussie-app-by-veyor-drives-construction-industry-into-digital-era-sydney-metro-case-study/",
     ],
     internalSources:
-      "[RESEARCH: secure engagement records, the initial value reference, and Helix's exact contribution — reference the secure location].",
+      "The published contribution is the owner's own statement (2026-08-18) that Helix materially helped build the venture, not documented evidence. [RESEARCH: secure engagement records, the initial value reference, and Helix's exact contribution — reference the secure location].",
     assetPermissions:
       "Logo and any imagery pending permission (asset register; §23 category C, Q-0006).",
     clientApprovalNote: "Pending — client approval of the description required.",
     risksOrProhibitedWording:
-      "Do not cite the A$50m–A$75m range as value attributable to Helix; use the brand spelling \"Veyor\".",
+      "Do not cite the A$50m–A$75m range as value attributable to Helix — it is off the published card entirely; use the brand spelling \"Veyor\". The published contribution rests on the owner's statement rather than documented evidence, so it must be re-read by the owner before launch and narrowed if any bullet overstates the role.",
     approvalRecord:
-      "Published wording approved by Q-0005 (category B, 2026-08-17); the valuation figures it excluded are gated by the open Q-0012; logo and role description gated by Q-0006 (category C).",
+      "Wording approved by Q-0005 (category B, 2026-08-17); the card published on the owner's 2026-08-18 instruction, which also supplied the contribution wording — that copy postdates Q-0005 and needs the owner's re-read. Figures remain gated by the open Q-0012; logo and role description gated by Q-0006 (category C).",
   },
 ];
 

@@ -7,7 +7,7 @@
 
 ## Proposed public claim
 
-0 → 1 TO A$50M+
+FROM CONCEPT TO TIER-ONE SITE LOGISTICS
 
 ## Why this case belongs on the site
 
@@ -31,9 +31,9 @@ March 2026 reporting supports an A$50m–A$75m valuation range associated with V
 
 ## Helix contribution
 
-- Product: [RESEARCH: exact product contribution]
-- Technology: [RESEARCH: technology contribution]
-- Commercial: [RESEARCH: commercial contribution]
+- Product: Shaped the delivery-management product (owner-stated, 2026-08-18).
+- Technology: Built the platform technology through the 0 → 1 stage (owner-stated, 2026-08-18).
+- Commercial: Supported the commercial push into tier-one construction (owner-stated, 2026-08-18).
 - Operating model: [RESEARCH: operating contribution]
 - Fundraising/capital: [RESEARCH: capital contribution]
 - Other: [RESEARCH: any other contribution]
@@ -62,12 +62,14 @@ AUD, shown as A$ per the claims methodology (D-001).
 
 - https://www.smartcompany.com.au/startupsmart/veyor-11-million-series-a-raise-us-expansion/
 - https://www.veyordigital.com/news/australian-investors-back-construction-app-with-4m-over-subscribed-equity-raise
+- https://www.businessnewsaustralia.com/articles/the--ubereats--of-construction-logistics--veyor-digital-raises--2-75-million-in-pre-series-a.html
+- https://www.constructionadvisor.com.au/aussie-app-by-veyor-drives-construction-industry-into-digital-era-sydney-metro-case-study/
 
 ## Internal sources
 
 Reference secure document IDs or locations. Do not commit sensitive source files.
 
-[RESEARCH: secure engagement records, the initial value reference, and Helix's exact contribution — reference the secure location].
+The published contribution is the owner's own statement (2026-08-18) that Helix materially helped build the venture, not documented evidence. [RESEARCH: secure engagement records, the initial value reference, and Helix's exact contribution — reference the secure location].
 
 ## Asset permissions
 
@@ -79,12 +81,12 @@ Pending — client approval of the description required.
 
 ## Risks or prohibited wording
 
-Do not cite the A$50m–A$75m range as value attributable to Helix; use the brand spelling "Veyor".
+Do not cite the A$50m–A$75m range as value attributable to Helix — it is off the published card entirely; use the brand spelling "Veyor". The published contribution rests on the owner's statement rather than documented evidence, so it must be re-read by the owner before launch and narrowed if any bullet overstates the role.
 
 ## Draft copy
 
-Helix helped turn Veyor from [VERIFY: initial concept/state] into a scalable delivery-management platform by [RESEARCH: exact product, technology, operating and commercial contribution].
+Helix helped build Veyor from an initial concept into a delivery-management platform that runs site logistics — bookings, materials and access — on some of Australia’s largest construction projects.
 
 ## Approval record
 
-Published wording approved by Q-0005 (category B, 2026-08-17); the valuation figures it excluded are gated by the open Q-0012; logo and role description gated by Q-0006 (category C).
+Wording approved by Q-0005 (category B, 2026-08-17); the card published on the owner's 2026-08-18 instruction, which also supplied the contribution wording — that copy postdates Q-0005 and needs the owner's re-read. Figures remain gated by the open Q-0012; logo and role description gated by Q-0006 (category C).

@@ -66,16 +66,17 @@ function withPublishedNeara(): CaseStudy[] {
 
 describe("CaseStudies.astro", () => {
   it("renders the approved studies and leaks no draft markers (site default)", async () => {
-    // Neara and 13SICK were approved and published on 2026-08-03 (Q-0001,
-    // Q-0003); Ferovinum, Origami, and Veyor remain unpublished drafts.
+    // All five publish: Neara and 13SICK from 2026-08-03 (Q-0001, Q-0003), and
+    // Ferovinum, Origami and Veyor from the owner's 2026-08-18 instruction.
     expect(caseStudies.filter((s) => s.publish).map((s) => s.slug).sort())
-      .toEqual(["13sick", "neara"]);
+      .toEqual(["13sick", "ferovinum", "neara", "origami", "veyor"]);
     const html = await renderCases();
     expect(html).toContain("<section");
     expect(html).toContain("FROM IDEA TO A$1B+");
     expect(html).toContain("A$30M → A$150M");
-    expect(html).not.toContain("Ferovinum");
+    expect(html).toContain("Ferovinum");
     expect(html).not.toContain("[VERIFY:");
+    expect(html).not.toContain("[RESEARCH:");
   });
 
   it("renders nothing while every study is an unpublished draft", async () => {
@@ -110,7 +111,7 @@ describe("CaseStudies.astro", () => {
     const html = await renderCases({ studies });
 
     const cardCount = (html.match(/cases__card/g) ?? []).length;
-    expect(cardCount).toBe(2);
+    expect(cardCount).toBe(5);
     // Neara (order 1) must appear before 13SICK (order 3).
     expect(html.indexOf("FROM IDEA TO A$1B+")).toBeLessThan(
       html.indexOf("A$30M TO A$150M"),

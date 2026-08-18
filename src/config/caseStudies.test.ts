@@ -74,13 +74,42 @@ describe("caseStudies configuration", () => {
     expect(names).not.toContain("xylo");
   });
 
-  it("publishes only the owner-approved studies; the rest stay gated", () => {
-    // Neara and 13SICK cleared Q-0001/Q-0003 on 2026-08-03; Ferovinum, Origami,
-    // and Veyor still carry unresolved [VERIFY:]/[RESEARCH:] markers.
+  it("publishes the owner-approved studies; the rest stay gated", () => {
+    // Neara and 13SICK cleared Q-0001/Q-0003 on 2026-08-03. On 2026-08-18 the
+    // owner verified Ferovinum's figures (Q-0002) and directed Origami and Veyor
+    // to publish qualitatively, so all five now render; none may still be
+    // publishing while its approval status says otherwise.
     const published = caseStudies.filter((s) => s.publish).map((s) => s.slug).sort();
-    expect(published).toEqual(["13sick", "neara"]);
-    for (const s of caseStudies.filter((s) => !s.publish)) {
-      expect(s.approvalStatus, s.slug).not.toBe("approved");
+    expect(published).toEqual([
+      "13sick",
+      "ferovinum",
+      "neara",
+      "origami",
+      "veyor",
+    ]);
+    for (const s of caseStudies.filter((s) => s.publish)) {
+      expect(s.approvalStatus, s.slug).toBe("approved");
+    }
+  });
+
+  it("keeps the studies whose figures are unverified free of quantified copy", () => {
+    // Origami and Veyor publish on the owner's instruction but their §9.4/§9.5
+    // figures are still unresearched (Q-0012). A card with no claim IDs must
+    // therefore carry no quantified copy at all — no multiple, no value created,
+    // no valuation range in the headline or the current-outcome line.
+    for (const slug of ["origami", "veyor"]) {
+      const study = caseStudies.find((s) => s.slug === slug)!;
+      expect(study.claimIds, slug).toEqual([]);
+      for (const field of [
+        study.outcomeHeadline,
+        study.currentOutcome ?? "",
+        study.valueMultiple ?? "",
+        study.valueCreated ?? "",
+        study.summary,
+        ...study.helixContribution,
+      ]) {
+        expect(looksQuantified(field), `${slug}: "${field}"`).toBe(false);
+      }
     }
   });
 
@@ -90,7 +119,13 @@ describe("caseStudies configuration", () => {
   });
 
   it("returns the approved, published entries in order", () => {
-    expect(publishedCaseStudies().map((s) => s.slug)).toEqual(["neara", "13sick"]);
+    expect(publishedCaseStudies().map((s) => s.slug)).toEqual([
+      "neara",
+      "ferovinum",
+      "13sick",
+      "origami",
+      "veyor",
+    ]);
   });
 
   it("keeps the required and removed slug lists disjoint", () => {
@@ -258,7 +293,10 @@ describe("validateCaseStudies guardrails", () => {
     expect(validateCaseStudies(studies)).toEqual([]);
     expect(publishedCaseStudies(studies).map((s) => s.slug)).toEqual([
       "neara",
+      "ferovinum",
       "13sick",
+      "origami",
+      "veyor",
     ]);
   });
 

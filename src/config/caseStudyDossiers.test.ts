@@ -184,8 +184,14 @@ describe("renderDossierMarkdown", () => {
     const origami = dossierForStudy("origami")!;
     const md = renderDossierMarkdown(origami);
     expect(md).toContain("Do not commit sensitive source files.");
-    // Origami has only internal evidence — no public sources fabricated.
-    expect(md).toContain("None documented — internal evidence only.");
+    // Every listed public source is one the dossier actually carries — the
+    // renderer never invents one. (Origami's list was empty until the 2026-08-18
+    // public research; the empty-list rendering is covered below.)
+    for (const url of origami.publicSources) expect(md).toContain(url);
+    const empty = { ...origami, publicSources: [] };
+    expect(renderDossierMarkdown(empty)).toContain(
+      "None documented — internal evidence only.",
+    );
   });
 
   it("ends with a single trailing newline", () => {

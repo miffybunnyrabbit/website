@@ -92,10 +92,12 @@ describe("claimsLedger model", () => {
   });
 
   it("tracks the owner approvals; unapproved claims stay researching", () => {
-    // Approved: the proof figure (Q-0007), Neara (Q-0001), 13SICK (Q-0003).
-    // Still researching: Ferovinum, Origami, Veyor.
+    // Approved: the proof figure (Q-0007), Neara (Q-0001), 13SICK (Q-0003), and
+    // Ferovinum (Q-0002, owner-verified 2026-08-18). Still researching: Origami
+    // and Veyor, whose studies publish qualitatively with no figure on the card.
     const approved = new Set([
       "C-0001-neara-enterprise-value",
+      "C-0002-ferovinum-enterprise-value",
       "C-0003-13sick-enterprise-value",
       "C-0006-portfolio-enterprise-value",
     ]);
@@ -190,19 +192,30 @@ describe("validateClaimsLedger — lifecycle", () => {
   });
 
   it("flags an approved claim whose copy still carries a draft marker", () => {
+    // No live study carries a marker any more — Ferovinum's figures were
+    // verified on 2026-08-18 and Origami/Veyor publish with no figure at all —
+    // so the guard is exercised against a study wound back to its draft state.
     const ledger = cloneLedger();
-    // Ferovinum's derived draft value is a [VERIFY:] string, so approving it must fail.
-    const ferovinum = ledger.find((c) => c.id === "C-0002-ferovinum-enterprise-value")!;
-    ferovinum.publishStatus = "approved";
+    const origami = ledger.find((c) => c.id === "C-0004-origami-enterprise-value")!;
+    origami.publishStatus = "approved";
     const queue = cloneQueue();
-    const item = queue.find((q) => q.id === ferovinum.queueItem)!;
+    const item = queue.find((q) => q.id === origami.queueItem)!;
     item.status = "approved";
     item.decision = "Approved.";
     item.decisionDate = "2026-07-26";
     item.decidedBy = "finance-owner";
-    expect(validateClaimsLedger(ledger, queue).join("\n")).toContain(
-      "contains a draft marker",
-    );
+    // The derived draft value reads the live study, so the marker is restored on
+    // the real record for the length of the assertion and wound back after.
+    const study = caseStudies.find((s) => s.slug === "origami")!;
+    const original = study.valueCreated;
+    try {
+      (study as { valueCreated?: string }).valueCreated = "[VERIFY: $50m]";
+      expect(validateClaimsLedger(ledger, queue).join("\n")).toContain(
+        "contains a draft marker",
+      );
+    } finally {
+      (study as { valueCreated?: string }).valueCreated = original;
+    }
   });
 });
 
