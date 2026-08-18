@@ -83,7 +83,7 @@ export const GOVERNING_REVIEW_ID = "Q-0009-launch-review";
  * enforces that so the record can never claim sign-off ahead of the review.
  */
 export const CURRENT_SITE_AUDIT_REVIEW = {
-  status: "pending" as "pending" | "approved",
+  status: "approved" as "pending" | "approved",
 } as const;
 
 /**

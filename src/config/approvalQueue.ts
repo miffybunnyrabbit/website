@@ -148,11 +148,12 @@ export interface QueueItem {
  * *open* item, Q-0012 was opened to carry exactly that residue — closing a
  * wording gate must never leave an unverified figure untracked.
  *
- * Two items remain open: Q-0009, the standing launch review, which by design
- * spans the six reviewers before and after launch rather than closing once; and
- * Q-0012. Approvers clear items here (flipping status and recording the
- * decision) in parallel with development; the content model for a cleared item
- * is then marked approved.
+ * Nothing remains open. Q-0012 closed when the outstanding figures were verified,
+ * and Q-0009 — the standing launch review, which by design spanned the six
+ * reviewers rather than closing once — was signed off on 2026-08-18. Approvers
+ * cleared items here (flipping status and recording the decision) in parallel
+ * with development; the content model for a cleared item is then marked
+ * approved.
  */
 export const approvalQueue: readonly QueueItem[] = [
   {
@@ -281,7 +282,11 @@ export const approvalQueue: readonly QueueItem[] = [
     publishedWording:
       "Product/strategy, design, development, copy, finance/legal, and the final owner each review before and after launch; findings are applied as content updates.",
     requiredApprovers: REQUIRED_APPROVERS.D,
-    status: "open",
+    status: "approved",
+    decision:
+      "Owner signed off the launch review on 2026-08-18, wearing all six reviewer hats: the copy and the site are broadly done. The sign-off clears R-001 (current-site audit) and R-010 (SEO and redirect audit) to read approved, which they were gated on. It is not a claim that the manual browser sweep was performed — the FX-204 pass across 1440/375/320, keyboard-only, no-JS, and reduced motion has not been run, and anything it turns up lands as an ordinary content update rather than reopening this item.",
+    decisionDate: "2026-08-18",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     // The footer's institutional-identity facts (§14) — legal entity name, ABN,

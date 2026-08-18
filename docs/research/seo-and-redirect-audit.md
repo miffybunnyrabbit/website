@@ -3,7 +3,7 @@
 <!-- Generated from src/config/seoAndRedirectAudit.ts — do not edit by hand. -->
 
 **Plan references:** §17.11 R-010, §7 (routes), P7-001 (metadata), P7-002 (canonical domain), P7-003 (social preview), P7-004 (structured data), P7-009 (redirects), §24 (“sitemap and robots are correct”).
-**Review status:** pending — this document is the plan's working baseline; the final metadata copy (P7-001) and the social-preview artwork (P7-003) are part of the standing launch review (Q-0009-launch-review), and this record may only be marked approved once that review clears.
+**Review status:** approved — this document is the plan's working baseline; the final metadata copy (P7-001) and the social-preview artwork (P7-003) are part of the standing launch review (Q-0009-launch-review), and this record may only be marked approved once that review clears.
 
 The rebuild's SEO surface ships across `siteMeta.ts` (canonical origin,
 title/description, structured data), `sitemap.ts` (robots + sitemap), and

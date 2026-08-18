@@ -64,7 +64,7 @@ describe("approval queue", () => {
     );
   });
 
-  it("carries the recorded owner approvals; everything else stays open", () => {
+  it("carries the recorded owner approvals; nothing is left open", () => {
     const approvedOn: Record<string, string> = {
       "Q-0001-neara-valuation": "2026-08-03",
       "Q-0003-13sick-valuation": "2026-08-03",
@@ -77,6 +77,7 @@ describe("approval queue", () => {
       "Q-0005-veyor-valuation": "2026-08-17",
       "Q-0008-strategic-copy": "2026-08-17",
       "Q-0012-outstanding-valuation-figures": "2026-08-18",
+      "Q-0009-launch-review": "2026-08-18",
     };
     for (const item of approvalQueue) {
       if (item.id in approvedOn) {
@@ -313,7 +314,15 @@ describe("generated one-file-per-item records (§23)", () => {
   });
 
   it("shows the decision block only once an item is decided", () => {
-    const open = approvalQueue.find((i) => i.status === "open")!;
+    // Every live item is resolved since 2026-08-18, so the open rendering is
+    // exercised against a copy wound back to the state they all published under.
+    const open: QueueItem = {
+      ...approvalQueue[0],
+      status: "open",
+      decision: undefined,
+      decisionDate: undefined,
+      decidedBy: undefined,
+    };
     expect(renderQueueItemMarkdown(open)).toContain("No decision recorded yet");
 
     const decided: QueueItem = {
@@ -352,7 +361,7 @@ describe("generated one-file-per-item records (§23)", () => {
 describe("build warning surface", () => {
   it("lists every open item on one line each", () => {
     const warning = formatOpenQueueWarning();
-    expect(warning).toMatch(/1 open item/);
+    expect(warning).toMatch(/no open items/);
     for (const item of openQueueItems()) {
       expect(warning).toContain(item.id);
     }

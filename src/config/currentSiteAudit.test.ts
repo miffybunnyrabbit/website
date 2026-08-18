@@ -141,12 +141,13 @@ describe("Current-site audit (R-001)", () => {
     ).toBe(true);
   });
 
-  it("links a real, still-open launch-review item", () => {
+  it("reads approved now its launch-review item is signed off", () => {
     const review = approvalQueue.find((q) => q.id === GOVERNING_REVIEW_ID);
     expect(review, GOVERNING_REVIEW_ID).toBeDefined();
-    // R-001 publishes as a pending baseline while the launch review is open.
-    expect(CURRENT_SITE_AUDIT_REVIEW.status).toBe("pending");
-    expect(review!.status).toBe("open");
+    // R-001 published as a pending baseline until the launch review cleared on
+    // 2026-08-18; the record may read approved only behind that sign-off.
+    expect(review!.status).toBe("approved");
+    expect(CURRENT_SITE_AUDIT_REVIEW.status).toBe("approved");
   });
 
   it("links the footer-identity queue item from the footer topic", () => {
@@ -156,13 +157,16 @@ describe("Current-site audit (R-001)", () => {
   });
 
   it("forbids marking the record approved while the launch review is open", () => {
-    const original = CURRENT_SITE_AUDIT_REVIEW.status;
+    // The live review is signed off, so the guard is exercised against a queue
+    // wound back to the open state R-001 published under until 2026-08-18.
+    const item = approvalQueue.find((q) => q.id === GOVERNING_REVIEW_ID)!;
+    const original = item.status;
     try {
-      (CURRENT_SITE_AUDIT_REVIEW as { status: string }).status = "approved";
+      (item as { status: string }).status = "open";
       const errors = validateCurrentSiteAudit();
       expect(errors.join("\n")).toContain("marked approved");
     } finally {
-      (CURRENT_SITE_AUDIT_REVIEW as { status: string }).status = original;
+      (item as { status: string }).status = original;
     }
   });
 

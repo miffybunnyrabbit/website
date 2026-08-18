@@ -3,7 +3,7 @@
 <!-- Generated from src/config/currentSiteAudit.ts — do not edit by hand. -->
 
 **Plan references:** §17.2 R-001, §5 (fixed requirements), §7 (information architecture), §16 (visual system), §27 (exact next actions 3–4).
-**Review status:** pending — this document is the plan's working baseline; the final visual fidelity and design sign-off (§16, §24) are part of the standing launch review (Q-0009-launch-review), and this record may only be marked approved once that review clears.
+**Review status:** approved — this document is the plan's working baseline; the final visual fidelity and design sign-off (§16, §24) are part of the standing launch review (Q-0009-launch-review), and this record may only be marked approved once that review clears.
 
 R-001 is the first Phase 1 research task and the foundation the plan says
 every visual decision rests on: “Do not begin final styling until this audit
