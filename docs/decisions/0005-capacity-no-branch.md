@@ -2,7 +2,7 @@
 
 <!-- Generated from src/config/decisions.ts — do not edit by hand. -->
 
-- **Status:** open
+- **Status:** decided
 - **Approval-queue item:** Q-0008-strategic-copy
 - **Content gate:** none
 
@@ -16,4 +16,7 @@ Show a polite “not the right growth lever today” outcome with the Redfern ad
 
 ## Decision
 
-_No decision recorded yet — this item is open and publishing its recommended default._
+Adopt the recommended default, confirmed with the strategic copy via Q-0008: an in-range business that cannot double sales on added capacity lands on the `not-current-fit` outcome (“WE MAY NOT BE THE RIGHT GROWTH LEVER—YET.”) with the Redfern address and no booking push, and is never re-routed into the 0 → 1 idea branch. `fitFlow.ts` already implements exactly this.
+
+- **Decision date:** 2026-08-18
+- **Decided by:** Helix owner (jeeva@helixcollective.com)

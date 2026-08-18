@@ -70,6 +70,10 @@ describe("decisions register content (§6)", () => {
       "D-0010-font-rights": "2026-07-29",
       "D-0012-engagement-boundaries": "2026-08-03",
       "D-0008-xylo-logo": "2026-08-17",
+      "D-0003-attribution": "2026-08-18",
+      "D-0005-capacity-no-branch": "2026-08-18",
+      "D-0007-locations": "2026-08-18",
+      "D-0009-performance-linked-economics": "2026-08-18",
     };
     for (const d of decisions) {
       if (d.id in decidedOn) {
@@ -129,6 +133,18 @@ describe("gateApproved", () => {
     expect(gateApproved("proof-currency")).toBe(true);
     expect(gateApproved("hero-performance-linked")).toBe(false);
     expect(gateApproved("engagement-model")).toBe(true);
+  });
+
+  it("keeps the hero gate pending even though D-0009 is decided", () => {
+    // D-0009 was decided on its default, and that default is "the literal
+    // 'get paid when you get paid' claim does NOT publish". `pending` is how the
+    // hero encodes an unselected variant, so a decided decision sitting over a
+    // pending gate is the correct state here — not drift to be tidied away by
+    // flipping the gate.
+    const d = decisionById("D-0009-performance-linked-economics");
+    expect(d?.status).toBe("decided");
+    expect(gateApproved("hero-performance-linked")).toBe(false);
+    expect(validateDecisions()).toEqual([]);
   });
 });
 
@@ -249,7 +265,7 @@ describe("validateDecisions", () => {
 describe("formatOpenDecisionsWarning", () => {
   it("lists every open decision", () => {
     const warning = formatOpenDecisionsWarning();
-    expect(warning).toContain("8 open §6 decision(s)");
+    expect(warning).toContain("4 open §6 decision(s)");
     for (const d of openDecisions()) expect(warning).toContain(d.id);
   });
 

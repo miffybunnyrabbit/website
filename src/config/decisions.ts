@@ -96,12 +96,21 @@ export const REQUIRED_DECISION_NUMBERS: readonly number[] = [
 ];
 
 /**
- * The live decisions register: all twelve §6 ambiguities. Every entry is `open` —
- * no owner decision has been recorded yet — and publishes its recommended
- * default, so the honest current state is "drafted to the plan's default, owner
- * decision outstanding". Each links to the approval-queue item tracking it where
- * one exists; D-0010 (font rights) and D-0011 (analytics) are design/engineering
+ * The live decisions register: all twelve §6 ambiguities. Eight are now decided;
+ * the rest stay `open` and publish their recommended default, so the honest
+ * current state for those is "drafted to the plan's default, owner decision
+ * outstanding". Each links to the approval-queue item tracking it where one
+ * exists; D-0010 (font rights) and D-0011 (analytics) are design/engineering
  * calls with no content/legal-approval queue item, and say so in `notes`.
+ *
+ * On 2026-08-18 the owner cleared the four that were waiting on nothing but a
+ * signature — D-0003, D-0005, D-0007, D-0009 — each on its recommended default,
+ * which is the wording already publishing. Recording them changes no rendered
+ * copy; it closes the gap where a gate had cleared but the decision behind it
+ * was never written down. The four still open need facts or review the owner
+ * alone cannot supply: D-0002 (finance/legal on the quantified statements),
+ * D-0004 (the EBITA/EBITDA definition), D-0006 (the production Calendly URL),
+ * and D-0011 (the analytics provider).
  */
 export const decisions: readonly DecisionRecord[] = [
   {
@@ -136,8 +145,12 @@ export const decisions: readonly DecisionRecord[] = [
       "“Helix created $X of enterprise value” can imply sole causation for value created during the engagement.",
     recommendedDefault:
       "Use “value created during Helix's engagement, with Helix contributing through…” wording; never claim Helix alone caused the entire valuation movement.",
-    status: "open",
+    status: "decided",
     queueItem: "Q-0011-engagement-model",
+    decision:
+      "Adopt the recommended default: value is described as created during Helix's engagement, with Helix's contribution named concretely; the site never claims Helix alone caused an entire valuation movement. This is the wording the case studies and claims methodology already publish, so the decision records existing practice rather than changing copy.",
+    decisionDate: "2026-08-18",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "D-0004-ebita-or-ebitda",
@@ -156,8 +169,12 @@ export const decisions: readonly DecisionRecord[] = [
       "The fit flow does not define the outcome when an in-range business cannot double sales through added delivery capacity.",
     recommendedDefault:
       "Show a polite “not the right growth lever today” outcome with the Redfern address; do not route the visitor into the “great idea” path.",
-    status: "open",
+    status: "decided",
     queueItem: "Q-0008-strategic-copy",
+    decision:
+      "Adopt the recommended default, confirmed with the strategic copy via Q-0008: an in-range business that cannot double sales on added capacity lands on the `not-current-fit` outcome (“WE MAY NOT BE THE RIGHT GROWTH LEVER—YET.”) with the Redfern address and no booking push, and is never re-routed into the 0 → 1 idea branch. `fitFlow.ts` already implements exactly this.",
+    decisionDate: "2026-08-18",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "D-0006-calendly",
@@ -176,8 +193,12 @@ export const decisions: readonly DecisionRecord[] = [
       "The current site lists Sydney/Melbourne/Brisbane; the fit flow references Vine Street, Redfern.",
     recommendedDefault:
       "Retain the legally/currently accurate locations in the footer and use `Level 1, 2–14 Vine Street, Redfern NSW 2016` in the no-fit outcome.",
-    status: "open",
+    status: "decided",
     queueItem: "Q-0010-footer-identity",
+    decision:
+      "Adopt the recommended default: the only location the site states is the registered office, Level 1, 2–14 Vine Street, Redfern NSW 2016 — in the footer (approved with the footer identity via Q-0010) and in the no-fit outcome. The old site's Sydney/Melbourne/Brisbane list stays retired: §14 requires accurate institutional facts, and three cities would assert a presence the register does not support.",
+    decisionDate: "2026-08-18",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "D-0008-xylo-logo",
@@ -200,9 +221,15 @@ export const decisions: readonly DecisionRecord[] = [
       "Which parts of the commercial model are universal (paid-as-we-deliver, back-end upside) versus engagement-specific is unconfirmed.",
     recommendedDefault:
       "Publish the aligned wording (“paid as we deliver, with additional upside tied to the value thesis”); keep the literal “get paid when you get paid” unselected and name no specific instrument until reviewed.",
-    status: "open",
+    status: "decided",
     queueItem: "Q-0011-engagement-model",
     gate: "hero-performance-linked",
+    notes:
+      "Deciding this on its default deliberately leaves the `hero-performance-linked` gate reading `pending`: the decision is that the literal claim is *not* approved for publication, and `pending` is how the hero encodes an unselected variant. The gate flips only if the owner later approves the literal wording.",
+    decision:
+      "Adopt the recommended default, confirmed alongside the strategic copy: the hero keeps its `aligned` supporting line, the literal “get paid when you get paid” variant stays unselected, and no specific gain-share instrument is named until finance and legal have reviewed which parts of the commercial model are universal rather than engagement-specific.",
+    decisionDate: "2026-08-18",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "D-0010-font-rights",
