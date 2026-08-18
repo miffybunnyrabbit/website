@@ -135,17 +135,19 @@ export const caseStudies: readonly CaseStudy[] = [
     name: "Ferovinum",
     slug: "ferovinum",
     order: 2,
-    // The owner verified the 10× / $300m figures on 2026-08-18 (C-0002), so the
-    // study publishes quantified. The §9.2 warning still governs the wording: the
-    // headline stays qualitative and no copy describes the securitisation
-    // programme as a company valuation.
+    // The owner verified the 10× / 300m figures on 2026-08-18 (C-0002), so the
+    // study publishes quantified, and named the currency as GBP later the same
+    // day — the figure had briefly published as a bare `$300m`, which D-0001
+    // reserves for the currency-neutral portfolio aggregate. The §9.2 warning
+    // still governs the wording: the headline stays qualitative and no copy
+    // describes the securitisation programme as a company valuation.
     approvalStatus: "approved",
     publish: true,
     outcomeHeadline: "FROM IDEA TO A GLOBAL CAPITAL PLATFORM",
     engagementStage: "0-to-1-to-10",
     valueMultiple: "10×",
-    valueCreated: "$300m",
-    currency: "undecided",
+    valueCreated: "£300m",
+    currency: "GBP",
     summary:
       "Helix helped shape the technology and anchor early fundraising, supporting Ferovinum through the formative 0 → 1 → 10 stage.",
     helixContribution: [

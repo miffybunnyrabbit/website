@@ -63,7 +63,7 @@ export const FIT_NODES: Readonly<Record<NodeId, FitNode>> = {
     type: "question",
     id: "existing-business",
     prompt:
-      "Are you already doing A$1m–A$10m in annual revenue or A$500k–A$3m in EBITA?",
+      "Are you already doing A$1m–A$10m in annual revenue or A$500k–A$3m in EBITDA?",
     yes: "capacity-leverage",
     no: "strong-idea",
   },

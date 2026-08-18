@@ -135,8 +135,14 @@ export const decisions: readonly DecisionRecord[] = [
       "A private venture's disclosed post-money figure is normally an equity valuation, not enterprise value in the finance-definition sense.",
     recommendedDefault:
       "Retain the owner's strategic phrase in the hero, but require finance/legal review of every quantified case-study statement.",
-    status: "open",
+    status: "decided",
     queueItem: "Q-0008-strategic-copy",
+    notes:
+      "The owner holds the finance/legal reviewer role for this site, so the category-B review this decision requires and the owner approval are the same person's judgement rather than two independent ones. Recorded plainly here because the approver set (finance-owner, legal-reviewer, helix-owner) reads as three parties and is in fact one.",
+    decision:
+      "Adopt the recommended default: “enterprise value” stays as the hero's strategic phrase, and every quantified case-study statement carries finance/legal review — which the owner performed in that capacity on 2026-08-18. The distinction the §6 ambiguity raises still binds the copy: a disclosed post-money figure is an equity valuation, so per-study cards describe value created during the engagement rather than asserting a finance-definition enterprise value, and the claims methodology keeps company valuation distinct from funding raised or total value locked.",
+    decisionDate: "2026-08-18",
+    decidedBy: "Helix owner (jeeva@helixcollective.com), acting as finance/legal reviewer",
   },
   {
     id: "D-0003-attribution",
@@ -159,8 +165,12 @@ export const decisions: readonly DecisionRecord[] = [
       "The fit brief says `500k–3m EBITA / 1m–10m revenue`; EBITA-vs-EBITDA, OR/AND logic, period, currency, and inclusivity are unconfirmed.",
     recommendedDefault:
       "Qualify on either A$500k–A$3m EBITA OR A$1m–A$10m annual revenue until confirmed.",
-    status: "open",
+    status: "decided",
     queueItem: "Q-0008-strategic-copy",
+    decision:
+      "The metric is EBITDA, not EBITA — the fit question now reads “A$1m–A$10m in annual revenue or A$500k–A$3m in EBITDA?”. The rest of the recommended default stands as drafted: the two tests are OR'd (either one qualifies), the thresholds are A$ and unchanged, and the period is the trailing year. Inclusivity is read generously — a business at a boundary qualifies — because the question is a self-assessed filter, not a contract term.",
+    decisionDate: "2026-08-18",
+    decidedBy: "Helix owner (jeeva@helixcollective.com)",
   },
   {
     id: "D-0005-capacity-no-branch",

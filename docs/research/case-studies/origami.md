@@ -44,7 +44,7 @@ Public sources describe Origami Finance as an automated-leverage protocol whose 
 
 ## Backing claim IDs
 
-- `C-0004-origami-enterprise-value` — enterprise-value (researching, tracked by Q-0012-outstanding-valuation-figures)
+- `C-0004-origami-enterprise-value` — enterprise-value (approved, tracked by Q-0012-outstanding-valuation-figures)
 
 ## Calculation
 

@@ -7,7 +7,7 @@
  * site runs today, what it should run at launch, the cookie and privacy-policy
  * implications, data retention, the events the funnel is allowed to track, and —
  * just as important — the data it must never collect (a visitor's name, email,
- * free text, an entered revenue/EBITA figure, or Calendly form data).
+ * free text, an entered revenue/EBITDA figure, or Calendly form data).
  *
  * The mechanism already ships: `src/utils/analytics.ts` is a no-op-safe adapter
  * whose closed `ANALYTICS_EVENTS` enum is the *only* thing the site can emit, and
@@ -198,7 +198,7 @@ export const NEVER_TRACKED: readonly string[] = [
   "A visitor's name",
   "An email address",
   "Any free text a visitor types",
-  "A revenue or EBITA figure a visitor enters in the fit qualifier",
+  "A revenue or EBITDA figure a visitor enters in the fit qualifier",
   "Any Calendly booking-form data",
 ];
 

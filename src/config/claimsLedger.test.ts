@@ -91,20 +91,12 @@ describe("claimsLedger model", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("tracks the owner approvals; unapproved claims stay researching", () => {
-    // Approved: the proof figure (Q-0007), Neara (Q-0001), 13SICK (Q-0003), and
-    // Ferovinum (Q-0002, owner-verified 2026-08-18). Still researching: Origami
-    // and Veyor, whose studies publish qualitatively with no figure on the card.
-    const approved = new Set([
-      "C-0001-neara-enterprise-value",
-      "C-0002-ferovinum-enterprise-value",
-      "C-0003-13sick-enterprise-value",
-      "C-0006-portfolio-enterprise-value",
-    ]);
+  it("has every figure owner-verified as of 2026-08-18", () => {
+    // The ledger's financial spine is now fully closed: the proof figure
+    // (Q-0007), Neara (Q-0001), 13SICK (Q-0003), Ferovinum (Q-0002), and the
+    // last two — Origami and Veyor — verified under Q-0012 on 2026-08-18.
     for (const claim of claimsLedger) {
-      expect(claim.publishStatus, claim.id).toBe(
-        approved.has(claim.id) ? "approved" : "researching",
-      );
+      expect(claim.publishStatus, claim.id).toBe("approved");
       expect(isPublishable(claim)).toBe(true);
     }
   });
@@ -178,15 +170,14 @@ describe("validateClaimsLedger — referential integrity", () => {
 
 describe("validateClaimsLedger — lifecycle", () => {
   it("flags an unapproved claim whose queue item is already resolved", () => {
+    // Every live claim is approved as of 2026-08-18, so the guard is exercised
+    // against a claim wound back to `researching` under its now-resolved item —
+    // exactly the state that would arise if a figure were later challenged and
+    // nobody reopened a queue item to track it.
     const ledger = cloneLedger();
-    const stillResearching = ledger.find((c) => c.publishStatus === "researching")!;
-    const queue = cloneQueue();
-    const item = queue.find((q) => q.id === stillResearching.queueItem)!;
-    item.status = "approved";
-    item.decision = "Approved.";
-    item.decisionDate = "2026-07-26";
-    item.decidedBy = "finance-owner";
-    expect(validateClaimsLedger(ledger, queue).join("\n")).toContain(
+    const claim = ledger.find((c) => c.id === "C-0004-origami-enterprise-value")!;
+    claim.publishStatus = "researching";
+    expect(validateClaimsLedger(ledger, cloneQueue()).join("\n")).toContain(
       "needs an open queue item",
     );
   });

@@ -74,6 +74,8 @@ describe("decisions register content (§6)", () => {
       "D-0005-capacity-no-branch": "2026-08-18",
       "D-0007-locations": "2026-08-18",
       "D-0009-performance-linked-economics": "2026-08-18",
+      "D-0002-enterprise-value-terminology": "2026-08-18",
+      "D-0004-ebita-or-ebitda": "2026-08-18",
     };
     for (const d of decisions) {
       if (d.id in decidedOn) {
@@ -265,7 +267,7 @@ describe("validateDecisions", () => {
 describe("formatOpenDecisionsWarning", () => {
   it("lists every open decision", () => {
     const warning = formatOpenDecisionsWarning();
-    expect(warning).toContain("4 open §6 decision(s)");
+    expect(warning).toContain("2 open §6 decision(s)");
     for (const d of openDecisions()) expect(warning).toContain(d.id);
   });
 

@@ -76,6 +76,7 @@ describe("approval queue", () => {
       "Q-0004-origami-valuation": "2026-08-17",
       "Q-0005-veyor-valuation": "2026-08-17",
       "Q-0008-strategic-copy": "2026-08-17",
+      "Q-0012-outstanding-valuation-figures": "2026-08-18",
     };
     for (const item of approvalQueue) {
       if (item.id in approvedOn) {
@@ -114,18 +115,17 @@ describe("completeness cross-checks against live content", () => {
     }
   });
 
-  it("keeps the research-blocked figures tracked after their wording cleared", () => {
-    // Q-0004/Q-0005 approved only the wording Origami and Veyor publish; their
-    // figures are still unverified. Approving a wording gate must never leave an
-    // unapproved figure untracked, so Q-0012 carries the residue and the ledger
-    // points at it. This is the invariant that made Q-0012 necessary — without
-    // it the claims ledger would have to call an unresearched figure "approved".
-    // Both studies now publish (owner instruction, 2026-08-18) but strictly
-    // without figures, so the residue is the figure, not the card.
+  it("closed the figures residue only once the studies carried their claims", () => {
+    // Q-0012 existed because approving Q-0002/Q-0004/Q-0005 cleared each study's
+    // *wording* while its figures were still unverified, and an unapproved figure
+    // must never be left untracked. The owner verified them on 2026-08-18, so the
+    // item resolves — but resolving it is only legitimate if the studies it
+    // covered now publish their figures with backing claim IDs. That is what this
+    // pins: the item closed because the work was done, not because it was dropped.
     const residue = approvalQueue.find(
       (i) => i.id === "Q-0012-outstanding-valuation-figures",
     );
-    expect(residue?.status).toBe("open");
+    expect(residue?.status).toBe("approved");
     expect(residue?.category).toBe("B");
     for (const slug of ["origami", "veyor"]) {
       expect(
@@ -133,9 +133,8 @@ describe("completeness cross-checks against live content", () => {
         slug,
       ).toBe(true);
       const study = caseStudies.find((s) => s.slug === slug);
-      expect(study?.claimIds, slug).toEqual([]);
-      expect(study?.valueMultiple, slug).toBeUndefined();
-      expect(study?.valueCreated, slug).toBeUndefined();
+      expect(study?.claimIds.length, slug).toBeGreaterThan(0);
+      expect(study?.valueCreated, slug).toBeTruthy();
     }
   });
 
@@ -353,7 +352,7 @@ describe("generated one-file-per-item records (§23)", () => {
 describe("build warning surface", () => {
   it("lists every open item on one line each", () => {
     const warning = formatOpenQueueWarning();
-    expect(warning).toMatch(/2 open item/);
+    expect(warning).toMatch(/1 open item/);
     for (const item of openQueueItems()) {
       expect(warning).toContain(item.id);
     }

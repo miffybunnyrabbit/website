@@ -64,5 +64,5 @@ answers.
 - A visitor's name
 - An email address
 - Any free text a visitor types
-- A revenue or EBITA figure a visitor enters in the fit qualifier
+- A revenue or EBITDA figure a visitor enters in the fit qualifier
 - Any Calendly booking-form data

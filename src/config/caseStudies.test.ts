@@ -92,24 +92,37 @@ describe("caseStudies configuration", () => {
     }
   });
 
-  it("keeps the studies whose figures are unverified free of quantified copy", () => {
-    // Origami and Veyor publish on the owner's instruction but their §9.4/§9.5
-    // figures are still unresearched (Q-0012). A card with no claim IDs must
-    // therefore carry no quantified copy at all — no multiple, no value created,
-    // no valuation range in the headline or the current-outcome line.
-    for (const slug of ["origami", "veyor"]) {
-      const study = caseStudies.find((s) => s.slug === slug)!;
-      expect(study.claimIds, slug).toEqual([]);
-      for (const field of [
+  it("lets a card carry quantified copy only when claim IDs back it", () => {
+    // The rule that survives every approval round: quantified copy and claim IDs
+    // travel together. A card with no claim IDs must carry no multiple, no value
+    // created, and no figure in its headline, summary, or contribution lines;
+    // a card with figures must cite the ledger entries that verified them.
+    for (const study of caseStudies) {
+      const quantified = [
         study.outcomeHeadline,
         study.currentOutcome ?? "",
         study.valueMultiple ?? "",
         study.valueCreated ?? "",
         study.summary,
         ...study.helixContribution,
-      ]) {
-        expect(looksQuantified(field), `${slug}: "${field}"`).toBe(false);
+      ].filter((f) => looksQuantified(f));
+      if (study.claimIds.length === 0) {
+        expect(quantified, study.slug).toEqual([]);
       }
+    }
+  });
+
+  it("names a currency on every per-study figure (D-0001)", () => {
+    // D-0001 reserves the unqualified `$` for the deliberately currency-neutral
+    // portfolio aggregate. A per-study value-created figure must therefore say
+    // which currency it is in — A$, US$, £, or € — never a bare $. Ferovinum
+    // briefly published a bare `$300m` before the owner named it GBP; this is
+    // the guard that would have caught it.
+    for (const study of caseStudies) {
+      const figure = study.valueCreated;
+      if (!figure || !looksQuantified(figure)) continue;
+      expect(study.currency, study.slug).not.toBe("undecided");
+      expect(figure, study.slug).not.toMatch(/(^|[^A-Za-z$])\$\d/);
     }
   });
 

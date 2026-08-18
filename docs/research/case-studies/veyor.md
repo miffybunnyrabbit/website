@@ -44,7 +44,7 @@ Current A$50m–A$75m range is public (see sources). The entry value, the multip
 
 ## Backing claim IDs
 
-- `C-0005-veyor-enterprise-value` — enterprise-value (researching, tracked by Q-0012-outstanding-valuation-figures)
+- `C-0005-veyor-enterprise-value` — enterprise-value (approved, tracked by Q-0012-outstanding-valuation-figures)
 
 ## Calculation
 

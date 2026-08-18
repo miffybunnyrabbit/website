@@ -125,7 +125,7 @@ export const claimsLedger: readonly ClaimRecord[] = [
     publishStatus: "approved",
     queueItem: "Q-0002-ferovinum-valuation",
     notes:
-      "Owner verified the 10× / $300m figures on 2026-08-18, so the study publishes quantified under Q-0002 and no longer sits in the open Q-0012 residue. The §9.2 warning still binds the wording: the card's headline stays qualitative and no copy describes the securitisation programme as a company valuation. The currency basis is still unnamed — the figure publishes as a bare `$300m`, which D-0001 reserves for the deliberately currency-neutral portfolio aggregate; naming it GBP or USD is an outstanding owner call.",
+      "Owner verified the 10× / 300m figures on 2026-08-18, so the study publishes quantified under Q-0002 and no longer sits in the Q-0012 residue. The §9.2 warning still binds the wording: the card's headline stays qualitative and no copy describes the securitisation programme as a company valuation. The currency was briefly unnamed — the figure published as a bare `$300m`, which D-0001 reserves for the currency-neutral portfolio aggregate — and the owner settled it as GBP the same day, so it now publishes as £300m against a UK business.",
   },
   {
     id: "C-0003-13sick-enterprise-value",
@@ -139,19 +139,19 @@ export const claimsLedger: readonly ClaimRecord[] = [
     id: "C-0004-origami-enterprise-value",
     target: { kind: "case-study", slug: "origami" },
     metricType: "enterprise-value",
-    publishStatus: "researching",
+    publishStatus: "approved",
     queueItem: "Q-0012-outstanding-valuation-figures",
     notes:
-      "Figures and Helix contribution await internal research (§9.4). Q-0004 approved the study's wording on 2026-08-17 but not this figure, so tracking moved to the open Q-0012.",
+      "Owner verified the 10× / US$50m figures on 2026-08-18, closing the §9.4 research this claim was waiting on and with it Q-0012. The currency is named USD rather than left as the bare `$` D-0001 reserves for the portfolio aggregate. The §9.4 warning still binds the wording: the card keeps company valuation distinct from funding raised or total value locked.",
   },
   {
     id: "C-0005-veyor-enterprise-value",
     target: { kind: "case-study", slug: "veyor" },
     metricType: "enterprise-value",
-    publishStatus: "researching",
+    publishStatus: "approved",
     queueItem: "Q-0012-outstanding-valuation-figures",
     notes:
-      "Draft figures and Helix contribution carry [VERIFY:]/[RESEARCH:] markers (§9.5). Q-0005 approved the study's wording on 2026-08-17 but not this figure, so tracking moved to the open Q-0012.",
+      "Owner verified the 10× / A$50m figures on 2026-08-18, closing the §9.5 research this claim was waiting on and with it Q-0012. The A$50m–A$75m public valuation range stays off the card: §9.5 forbids citing it as value attributable to Helix, and the verified value-created figure is a separate statement.",
   },
   {
     id: "C-0006-portfolio-enterprise-value",
