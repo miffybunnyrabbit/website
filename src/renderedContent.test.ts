@@ -58,7 +58,7 @@ async function renderPage(Component: AstroComponentFactory): Promise<string> {
 
 /** Count the case-study cards in the rendered markup (one per rendered study). */
 function caseCardCount(html: string): number {
-  return (html.match(/cases__card/g) ?? []).length;
+  return (html.match(/cases__pane"/g) ?? []).length;
 }
 
 /** The case-study slugs a still-open queue item currently tracks. */

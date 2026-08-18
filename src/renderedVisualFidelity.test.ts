@@ -142,23 +142,39 @@ describe("assembled homepage satisfies the §24 visual-fidelity criteria", () =>
     expect(html).toContain("astro-island");
   });
 
-  it("never publishes an asset that depicts a person (§16.4)", () => {
-    // The no-stock-person criterion, at the model level: nothing the build may
-    // reference depicts people. The check is not vacuous — the register does
-    // carry a person asset, and it is correctly withheld from publication.
+  it("publishes an asset depicting a person only under a recorded exception (§16.4)", () => {
+    // The no-stock-person criterion, at the model level. §16.4's ban is still the
+    // default: every people-depicting asset must either be withheld from the site
+    // or carry the owner's written exception. The check is not vacuous — the
+    // register carries the legacy "humans of Helix" photography with no exception,
+    // and it stays correctly withheld.
     const personAssets = assetRegister.filter((a) => a.containsPeople);
     expect(personAssets.length).toBeGreaterThan(0);
-    expect(personAssets.every((a) => a.removeFromSite)).toBe(true);
-    expect(publishableAssets().some((a) => a.containsPeople)).toBe(false);
+    expect(
+      personAssets.every((a) => a.removeFromSite || a.peopleException?.trim()),
+    ).toBe(true);
+    expect(
+      personAssets.some((a) => a.removeFromSite && !a.peopleException),
+      "the unexcepted-and-withheld case must still exist, or this gate is vacuous",
+    ).toBe(true);
+    // Anything publishable that shows a person shows one *because* the owner said
+    // so in writing, never by default.
+    for (const asset of publishableAssets().filter((a) => a.containsPeople)) {
+      expect(asset.peopleException?.trim(), asset.id).toBeTruthy();
+    }
   });
 
   it("renders no image that references a person or withheld asset (§24, §16.4)", () => {
-    // Every asset the register flags as depicting people or as removed, by
-    // filename — no rendered `<img>` may point at one. This guards the delivered
-    // markup even as legitimate imagery clears the register in future.
+    // Every asset the register flags as removed, or as depicting people without
+    // the owner's recorded §16.4 exception, by filename — no rendered `<img>` may
+    // point at one. This guards the delivered markup even as legitimate imagery
+    // clears the register in future. An excepted asset is allowed here precisely
+    // because the exception is written down in the register, where it is audited.
     const forbiddenFiles = new Set(
       assetRegister
-        .filter((a) => a.containsPeople || a.removeFromSite)
+        .filter(
+          (a) => a.removeFromSite || (a.containsPeople && !a.peopleException?.trim()),
+        )
         .map((a) => a.filename),
     );
     const rendered = imageTags(html).map(basename);

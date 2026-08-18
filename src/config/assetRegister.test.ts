@@ -104,10 +104,12 @@ describe("assetRegister content", () => {
   });
 
   it("publishes the Q-0006-approved logos and withholds the still-pending assets", () => {
-    // Q-0006 (2026-07-29) cleared every retained logo; the case-study image and
-    // the legacy humans photo stay pending/removed and must be withheld.
+    // Q-0006 (2026-07-29) cleared every retained logo, and the case-study
+    // imagery added on 2026-08-18 rides the studies' own approved asset gate:
+    // fourteen logos plus five case-study images. The legacy humans photo stays
+    // removed and must be withheld.
     const publishable = publishableAssets();
-    expect(publishable).toHaveLength(14);
+    expect(publishable).toHaveLength(19);
     const filenames = new Set(publishable.map((a) => a.filename));
     expect(filenames.has("canva.png")).toBe(true);
     expect(filenames.has("xylo-case-study.png")).toBe(false);

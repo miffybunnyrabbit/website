@@ -57,6 +57,36 @@ export interface CaseStudy {
   logo: string;
   image?: string;
   imageAlt?: string;
+  /**
+   * Where the image file came from, for the R-008 rights spine. Recorded per
+   * study rather than assumed, because the provenance genuinely differs: most
+   * come from Helix's own live site (the same reasoning that cleared the logos
+   * under Q-0006), while a client's own marketing site is a distinct rights
+   * position that the register must be able to state.
+   */
+  imageSource?: string;
+  /**
+   * The image's intrinsic pixel dimensions. Rendered as `width`/`height` on the
+   * `<img>` so the browser reserves the right box before the file arrives
+   * (P7-007). They must be the file's real size: a square placeholder over a
+   * 2:1 picture reserves the wrong space and shifts the layout on load, which is
+   * the exact CLS the attributes exist to prevent.
+   */
+  imageWidth?: number;
+  imageHeight?: number;
+  /**
+   * Whether the image shows an identifiable person (R-008). Product screenshots
+   * do not; a photograph of someone using the product does, and the register
+   * must say so rather than assume every case-study image is people-free.
+   */
+  imageContainsPeople?: boolean;
+  /**
+   * The owner's recorded reason for publishing an image that depicts people,
+   * which §16.4 otherwise forbids. Required for such an image to pass
+   * `validateAssetRegister()`: the ban stays the default, and an exception has
+   * to be written down to take effect.
+   */
+  imagePeopleException?: string;
 
   clientApproval: ClientApproval;
   assetApproval: AssetApproval;
@@ -97,14 +127,18 @@ export const caseStudyCopy = {
  * with backing claim IDs: Neara (owner-approved 2026-08-03, Q-0001) and 13SICK
  * (owner-approved 2026-08-03, Q-0003).
  *
- * The remaining three — Ferovinum, Origami, and Veyor — had their *published
- * wording* approved on 2026-08-17 (Q-0002, Q-0004, Q-0005), but that approval
- * was explicitly scoped to the non-quantified headline and role description of
- * each. Their figures are blocked on research, not on approval, so they still
- * carry unresolved `[VERIFY:]`/`[RESEARCH:]` markers and each stays
- * `publish: false` with no claim IDs; Q-0012 is the open item that now tracks
- * that outstanding §9 research. The validator forbids publishing any entry while
- * it is still in that draft state.
+ * The other three took a longer route. Their *published wording* was approved on
+ * 2026-08-17 (Q-0002, Q-0004, Q-0005) with the approval explicitly scoped to the
+ * headline and role description, leaving their figures blocked on §9 research
+ * and tracked by the open Q-0012. That research closed on 2026-08-18: the owner
+ * verified Ferovinum, then Origami and Veyor, so all five now publish with
+ * backing claim IDs and no `[VERIFY:]`/`[RESEARCH:]` markers anywhere in the
+ * collection. The validator still forbids publishing any entry that carries one,
+ * which is the gate that held these three back for three weeks.
+ *
+ * Four studies carry a product image; 13SICK does not, because the only imagery
+ * on its site is stock photography of models, which §16.4 forbids and which
+ * would be weak proof besides. `CaseStudies.astro` renders a pane without one.
  */
 export const caseStudies: readonly CaseStudy[] = [
   {
@@ -128,6 +162,12 @@ export const caseStudies: readonly CaseStudy[] = [
     ],
     claimIds: ["C-0001-neara-enterprise-value"],
     logo: "neara.png",
+    image: "neara-platform.png",
+    imageWidth: 800,
+    imageHeight: 800,
+    imageAlt:
+      "The Neara platform showing a 3D model of powerline spans over forested terrain, with clearance analytics alongside field imagery of a transmission tower.",
+    imageSource: "helixcollective.com (live site)",
     clientApproval: "approved",
     assetApproval: "approved",
   },
@@ -156,6 +196,12 @@ export const caseStudies: readonly CaseStudy[] = [
     ],
     claimIds: ["C-0002-ferovinum-enterprise-value"],
     logo: "ferovinum.png",
+    image: "ferovinum-platform.png",
+    imageWidth: 800,
+    imageHeight: 799,
+    imageAlt:
+      "The Ferovinum platform over a vineyard, showing a stock and sale-order dashboard with forward sale prices and deposit balances.",
+    imageSource: "helixcollective.com (live site)",
     clientApproval: "approved",
     assetApproval: "approved",
   },
@@ -178,6 +224,15 @@ export const caseStudies: readonly CaseStudy[] = [
     ],
     claimIds: ["C-0003-13sick-enterprise-value"],
     logo: "13sick.png",
+    image: "13sick-booking.webp",
+    imageWidth: 800,
+    imageHeight: 534,
+    imageAlt:
+      "Booking a 13SICK home-doctor visit on a phone — the first step of the after-hours service.",
+    imageSource: "13sick.com.au (client marketing site)",
+    imageContainsPeople: true,
+    imagePeopleException:
+      "Owner exception, 2026-08-18: 13SICK publishes no product imagery, only the licensed stock photography on its own site, and the owner asked for that rather than leaving the study without a picture. The person shown is a stock model, not a Helix person or a named client — so P4-001's actual concern (the retired people-led positioning) is untouched; what is set aside is §16.4's blanket ban on portraits in site imagery.",
     clientApproval: "approved",
     assetApproval: "approved",
   },
@@ -208,6 +263,12 @@ export const caseStudies: readonly CaseStudy[] = [
     ],
     claimIds: ["C-0004-origami-enterprise-value"],
     logo: "origami.png",
+    image: "origami-vaults.png",
+    imageWidth: 800,
+    imageHeight: 800,
+    imageAlt:
+      "The Origami protocol interface listing leveraged vaults with their yield, price, and total value locked.",
+    imageSource: "helixcollective.com (live site)",
     clientApproval: "approved",
     assetApproval: "approved",
   },
@@ -237,6 +298,19 @@ export const caseStudies: readonly CaseStudy[] = [
     ],
     claimIds: ["C-0005-veyor-enterprise-value"],
     logo: "veyor.png",
+    image: "veyor-platform.webp",
+    imageWidth: 800,
+    imageHeight: 403,
+    imageAlt:
+      "The Veyor platform, showing a site delivery schedule on tablet alongside the mobile booking flow, with live delivery overview and on-site delivery actions called out.",
+    // Veyor is the one study whose image is not on Helix's own live site, so it
+    // comes from the client's marketing site on the owner's 2026-08-18
+    // instruction — a different rights position, stated rather than assumed.
+    // Their photography of the product in use was the obvious pick but shows an
+    // identifiable person, which §16.4 forbids and `validateAssetRegister()`
+    // rejects; this is their product-UI composite, which carries the same proof
+    // without a portrait.
+    imageSource: "veyordigital.com (client marketing site)",
     clientApproval: "approved",
     assetApproval: "approved",
   },

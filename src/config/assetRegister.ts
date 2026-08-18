@@ -73,6 +73,15 @@ export interface AssetRecord {
   altText: string;
   /** True if the asset depicts identifiable people (§16.4 forbids portraits). */
   containsPeople: boolean;
+  /**
+   * The owner's recorded reason for publishing a people-depicting asset anyway.
+   * §16.4's ban is the default and stays enforced for every asset without one;
+   * this exists so an exception has to be *written down* to take effect, rather
+   * than being granted by quietly deleting the rule. An exception on an asset
+   * that depicts no people is itself an error — it would leave a permission
+   * lying around with nothing to permit.
+   */
+  peopleException?: string;
   /** True if the asset shows confidential product UI or customer data (§16.5). */
   containsConfidentialUi: boolean;
   /** True if the plan requires this asset be kept off the published site. */
@@ -162,12 +171,17 @@ function caseStudyImageRecord(study: CaseStudy): AssetRecord | undefined {
     company: study.name,
     type: "case-study-image",
     filename: image,
-    source: "internal",
+    // Provenance is stated by the study rather than assumed to be internal: an
+    // image carried over from Helix's own live site and one taken from a client's
+    // marketing site are different rights positions, and R-008 exists to record
+    // which is which.
+    source: study.imageSource ?? "internal",
     owner: study.name,
     permissionStatus: study.assetApproval,
     usage: "case-study-card",
     altText: study.imageAlt ?? "",
-    containsPeople: false,
+    containsPeople: study.imageContainsPeople ?? false,
+    peopleException: study.imagePeopleException,
     containsConfidentialUi: false,
     removeFromSite: false,
     notes: "",
@@ -262,9 +276,17 @@ export function validateAssetRegister(
 
     // §16.4/§16.5: a visible asset must not contain portraits or confidential UI.
     const visible = !asset.removeFromSite;
-    if (visible && asset.containsPeople) {
+    if (visible && asset.containsPeople && !asset.peopleException?.trim()) {
       errors.push(
         `Asset "${asset.id}" depicts people but is not marked for removal (§16.4 forbids portraits).`,
+      );
+    }
+    // An exception with nothing to except is a stale permission: it would sit in
+    // the register reading as owner sign-off for people imagery on an asset that
+    // has none, and survive a later swap to a file that does.
+    if (asset.peopleException?.trim() && !asset.containsPeople) {
+      errors.push(
+        `Asset "${asset.id}" records a §16.4 people exception but depicts no people.`,
       );
     }
     if (visible && asset.containsConfidentialUi) {

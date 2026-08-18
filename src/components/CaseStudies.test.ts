@@ -110,7 +110,7 @@ describe("CaseStudies.astro", () => {
     };
     const html = await renderCases({ studies });
 
-    const cardCount = (html.match(/cases__card/g) ?? []).length;
+    const cardCount = (html.match(/cases__pane"/g) ?? []).length;
     expect(cardCount).toBe(5);
     // Neara (order 1) must appear before 13SICK (order 3).
     expect(html.indexOf("FROM IDEA TO A$1B+")).toBeLessThan(

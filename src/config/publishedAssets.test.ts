@@ -131,11 +131,20 @@ describe("the live site", () => {
   it("requires every Q-0006-approved logo asset (all committed in public/)", () => {
     // Q-0006 approved the full marquee, so the gate demands a local file for
     // every brand still standing after the owner's 2026-08-17 cull: thirteen
-    // live-site brands plus OccuMed.
+    // live-site brands plus OccuMed. The five case-study images added on
+    // 2026-08-18 are demanded the same way, so nineteen files in all.
     const required = requiredPublicImagePaths();
-    expect(required).toHaveLength(14);
+    expect(required).toHaveLength(19);
     expect(required).toContain("logos/canva.png");
-    expect(required.every((p) => p.startsWith("logos/") && p.endsWith(".png"))).toBe(true);
+    expect(required).toContain("case-studies/neara-platform.png");
+    // Every required path lands in one of the two public image directories, so a
+    // model that started emitting some third path would be caught here rather
+    // than 404 in production.
+    expect(
+      required.every(
+        (p) => p.startsWith(`${LOGO_DIR}/`) || p.startsWith(`${CASE_STUDY_IMAGE_DIR}/`),
+      ),
+    ).toBe(true);
   });
 
   it("resolves required paths against the real public/ directory", () => {

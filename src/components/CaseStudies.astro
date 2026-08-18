@@ -3,26 +3,45 @@
  * Homepage enterprise-value case studies (implementation plan §8.5, §9, §20.1).
  *
  * This section is the site's primary proof of the proposition, so — like every
- * other section — it invents no copy: the framing and every card come from the
+ * other section — it invents no copy: the framing and every pane come from the
  * validated `caseStudies` content model. `assertCaseStudiesValid()` runs at
  * render time so a drifted collection (a missing required study, the removed
  * Xylo study reappearing, or an entry published before its section-9 research
  * and approval gates pass) fails the build instead of shipping.
  *
- * Publication is gated per study: every quantified figure is still a working
- * draft carrying `[VERIFY:]`/`[RESEARCH:]` markers, so each entry is
- * `publish: false` and `publishedCaseStudies()` returns an empty list. Following
- * the proof banner's honest default, when nothing is published this component
- * renders nothing at all — a case-study section with no case studies is not
- * proof — and the section reappears automatically as studies are approved.
+ * Publication is gated per study. Following the proof banner's honest default,
+ * when nothing is published this component renders nothing at all — a
+ * case-study section with no case studies is not proof — and the section
+ * reappears automatically as studies are approved.
  *
- * Each rendered card answers the §8.5 questions the page itself should carry:
- * where the company was, what changed, and what Helix actually did. Large numbers
- * are prominent, but the causal mechanism ("How we moved it") gets equal
- * attention. The evidence trail is deliberately not printed on the card — the
- * claim ids live in the claims ledger (`claimsLedger.ts`, R-005) and the
- * approval queue, which is where they are auditable; a visitor-facing
- * "Evidence: C-0001-…" line only exposed internal identifiers.
+ * ## Layout: the live site's stacking panes
+ *
+ * The live site presents each study as a full-width pane that pins to the top of
+ * the viewport and is then slid over by the next one, so the studies stack on
+ * each other as you scroll — content on the left, product image on the right.
+ * That is reproduced here with `position: sticky` per pane and a per-pane `top`
+ * offset, which leaves a sliver of each buried pane visible so the stack reads as
+ * a stack rather than as one pane that keeps changing. It needs no JavaScript and
+ * no scroll listener, so it costs nothing against the P7-006 budget.
+ *
+ * Two deliberate departures from the live markup:
+ *
+ *  - The live panes are dark charcoal on a green section. Here the band stays
+ *    the mint surface the audit pins (VD-102, `casesSurface.test.ts`) and each
+ *    pane is a white card on it. That keeps the section's audited identity, and
+ *    it keeps the marquee logo files usable: they are dark-on-transparent PNGs
+ *    drawn for a light surface, and on a charcoal pane they would disappear.
+ *  - Below the layout breakpoint the panes stop being sticky and simply stack in
+ *    reading order. A pinned pane taller than a short viewport would otherwise
+ *    trap its own overflow.
+ *
+ * Each pane still answers the §8.5 questions the page itself should carry: where
+ * the company was, what changed, and what Helix actually did. Large numbers are
+ * prominent, but the causal mechanism ("How we moved it") gets equal attention.
+ * The evidence trail is deliberately not printed on the pane — the claim ids live
+ * in the claims ledger (`claimsLedger.ts`, R-005) and the approval queue, which
+ * is where they are auditable; a visitor-facing "Evidence: C-0001-…" line only
+ * exposed internal identifiers.
  */
 import {
   caseStudies as defaultStudies,
@@ -49,56 +68,75 @@ const published = publishedCaseStudies(studies);
 {
   published.length > 0 && (
     <section class="cases" aria-labelledby="cases-heading">
-      <div class="cases__inner section-shell">
+      <div class="cases__intro-shell section-shell">
         <p class="eyebrow">{copy.eyebrow}</p>
         <h2 class="cases__headline" id="cases-heading">
           {copy.headline}
         </h2>
         <p class="cases__intro">{copy.intro}</p>
-        <ul class="cases__list" role="list">
-          {published.map((study) => (
-            <li class="cases__card">
-              <div class="cases__brand">
-                <img
-                  class="cases__logo"
-                  src={`/logos/${study.logo}`}
-                  alt={`${study.name} logo`}
-                  width="120"
-                  height="32"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <span class="cases__stage">{stageLabel(study.engagementStage)}</span>
-              </div>
-              <p class="cases__outcome">{study.outcomeHeadline}</p>
-              {study.valueMultiple && (
-                <p class="cases__multiple">{study.valueMultiple}</p>
-              )}
-              {study.currentOutcome && (
-                <p class="cases__current">{study.currentOutcome}</p>
-              )}
-              {study.image && (
-                <img
-                  class="cases__image media-frame"
-                  src={`/case-studies/${study.image}`}
-                  alt={study.imageAlt ?? ""}
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
-              <p class="cases__how-label">How we moved it</p>
-              <p class="cases__summary">{study.summary}</p>
-              {study.helixContribution.length > 0 && (
-                <ul class="cases__contribution" role="list">
-                  {study.helixContribution.map((point) => (
-                    <li>{point}</li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ul>
       </div>
+      <ol class="cases__stack" role="list">
+        {published.map((study) => (
+          <li class="cases__pane">
+            <article
+              class:list={[
+                "cases__pane-inner",
+                "section-shell",
+                !study.image && "cases__pane-inner--textonly",
+              ]}
+            >
+              <div class="cases__body">
+                <p class="cases__brand">
+                  <img
+                    class="cases__logo"
+                    src={`/logos/${study.logo}`}
+                    alt={`${study.name} logo`}
+                    width="180"
+                    height="48"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span class="cases__stage">{stageLabel(study.engagementStage)}</span>
+                </p>
+                <p class="cases__outcome">{study.outcomeHeadline}</p>
+                {study.valueMultiple && (
+                  <p class="cases__multiple">
+                    {study.valueMultiple}
+                    {study.valueCreated && (
+                      <span class="cases__created"> · {study.valueCreated} created</span>
+                    )}
+                  </p>
+                )}
+                <p class="cases__how-label">How we moved it</p>
+                <p class="cases__summary">{study.summary}</p>
+                {study.helixContribution.length > 0 && (
+                  <ul class="cases__contribution" role="list">
+                    {study.helixContribution.map((point) => (
+                      <li>{point}</li>
+                    ))}
+                  </ul>
+                )}
+                {study.currentOutcome && (
+                  <p class="cases__current">{study.currentOutcome}</p>
+                )}
+              </div>
+              {study.image && (
+                <div class="cases__media">
+                  <img
+                    class="cases__image media-frame"
+                    src={`/case-studies/${study.image}`}
+                    alt={study.imageAlt ?? ""}
+                    width={study.imageWidth}
+                    height={study.imageHeight}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              )}
+            </article>
+          </li>
+        ))}
+      </ol>
     </section>
   )
 }
@@ -130,8 +168,8 @@ const published = publishedCaseStudies(studies);
     background-color: var(--color-helix-ink);
   }
 
-  .cases__inner {
-    padding-block: var(--space-16);
+  .cases__intro-shell {
+    padding-block: var(--space-16) var(--space-10);
   }
 
   .cases__headline {
@@ -144,42 +182,55 @@ const published = publishedCaseStudies(studies);
   .cases__intro {
     font-size: var(--font-size-lg);
     max-width: 56ch;
-    margin: 0 0 var(--space-12);
+    margin: 0;
   }
 
-  .cases__list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-10);
+  .cases__stack {
     margin: 0;
-    padding: 0;
+    padding: 0 0 var(--space-16);
     list-style: none;
   }
 
-  /* Two columns on wider viewports; a single vertical sequence in ordinary
-     reading order below the breakpoint (§8.5, §16.4 layout). */
-  @media (min-width: 48rem) {
-    .cases__list {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-12);
-    }
+  /* Each pane is a white card on the mint band. The panes abut rather than sit
+     in a gapped grid, because the stack effect below depends on a later pane
+     sliding cleanly over the one before it — a gap would show the band through
+     the seam mid-slide. */
+  .cases__pane {
+    display: block;
   }
 
-  .cases__card {
+  /* The hairline matters more here than on an ordinary card: a pane slides over
+     the pane beneath it, and white-on-white the seam is invisible — the two read
+     as one long card with two studies in it. The border draws the moving edge. */
+  .cases__pane-inner {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-ink-100);
+    border-radius: var(--radius-lg);
+    padding-block: var(--space-10);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .cases__pane + .cases__pane {
+    margin-top: var(--space-6);
+  }
+
+  .cases__body {
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
 
   .cases__brand {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
+    gap: var(--space-5);
     margin: 0 0 var(--space-6);
   }
 
   .cases__logo {
-    height: 2rem;
+    height: 3rem;
     width: auto;
     object-fit: contain;
   }
@@ -189,6 +240,7 @@ const published = publishedCaseStudies(studies);
     letter-spacing: var(--letter-spacing-label);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+    margin-left: auto;
   }
 
   /* Large numbers are prominent (§8.5). */
@@ -203,19 +255,15 @@ const published = publishedCaseStudies(studies);
   .cases__multiple {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-bold);
-    margin: 0 0 var(--space-3);
+    margin: 0 0 var(--space-6);
   }
 
-  .cases__current {
-    margin: 0 0 var(--space-6);
-    max-width: var(--width-text);
-  }
-
-  /* The shared .media-frame primitive owns the responsive frame (full width,
-     intrinsic ratio, §16.4 rounded corner); this scoped hook keeps only the
-     card's own spacing beneath the picture. */
-  .cases__image {
-    margin: 0 0 var(--space-6);
+  /* The value-created figure rides alongside the multiple rather than on its own
+     line: it is the same claim measured twice, and splitting it read as two
+     separate numbers. */
+  .cases__created {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-regular);
   }
 
   /* The causal mechanism gets equal attention to the numbers (§8.5). */
@@ -240,5 +288,74 @@ const published = publishedCaseStudies(studies);
 
   .cases__contribution li {
     margin: 0 0 0.375rem;
+  }
+
+  /* The public-reporting line is evidence, not a headline: it sits last and
+     quieter than the copy above it, on the muted end of the neutral ramp. */
+  .cases__current {
+    font-size: var(--font-size-sm);
+    color: var(--color-ink-800);
+    margin: var(--space-2) 0 0;
+    max-width: var(--width-text);
+  }
+
+  .cases__media {
+    min-width: 0;
+  }
+
+  /* The shared .media-frame primitive owns the responsive frame (full width,
+     intrinsic ratio, §16.4 rounded corner). */
+  .cases__image {
+    display: block;
+    /* The grid gap owns the space between the columns, so the picture carries no
+       spacing of its own — but the hook stays, because the primitive owns the
+       frame and this is where a future spacing tweak belongs. */
+    margin: 0;
+  }
+
+  @media (min-width: 48rem) {
+    /* Content left, product image right — the live site's pane split. */
+    .cases__pane-inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+      align-items: center;
+      gap: var(--space-12);
+      padding-block: var(--space-12);
+    }
+
+    /* A study with no image (13SICK: its only public photography is stock
+       portraits, which §16.4 forbids) would otherwise hold open an empty right
+       column the width of a missing picture. It takes the full pane instead. */
+    .cases__pane-inner--textonly {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* The stack itself: every pane pins near the top of the viewport, so
+       scrolling slides each new pane over the one before it. The `top` offset
+       grows by pane so a sliver of each buried pane stays visible and the stack
+       reads as a stack. Offsets are geometric, not rhythm, so they are literal
+       rather than scale steps — they are chosen to match the sliver, not a
+       spacing step. There are at most five published studies (the required
+       roster), so five rules cover the section; a sixth pane would simply share
+       the fifth offset rather than break. */
+    .cases__pane {
+      position: sticky;
+      top: 2rem;
+    }
+
+    .cases__pane:nth-child(2) {
+      top: 3rem;
+    }
+
+    .cases__pane:nth-child(3) {
+      top: 4rem;
+    }
+
+    .cases__pane:nth-child(4) {
+      top: 5rem;
+    }
+
+    .cases__pane:nth-child(n + 5) {
+      top: 6rem;
+    }
   }
 </style>
