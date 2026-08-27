@@ -68,7 +68,7 @@ export const howWeWorkSteps: readonly HowWeWorkStep[] = [
     number: "04",
     id: "sustain-and-realise",
     title: "WE MAKE THE VALUE LAST—THEN REALISE THE UPSIDE.",
-    body: "We build capability, systems, and ownership that the business can sustain without Helix. We then work with the founders and leadership on a clean exit from the engagement and the agreed path for realising our back-end gain-share as the value thesis plays out.",
+    body: "We build capability, systems, and ownership that the business can sustain without us. We then work with the founders and leadership on a clean exit from the engagement and the agreed path for realising our back-end gain-share as the value thesis plays out.",
     // Stage four must cover sustainability, handover, and gain-share realisation.
     requiredConcepts: ["sustain", "exit", "gain-share"],
   },

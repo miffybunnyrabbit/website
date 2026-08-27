@@ -51,9 +51,9 @@ describe("renderEnvExample", () => {
   });
 
   it("only ever shows an approved, https booking-URL example", () => {
-    const url = new URL(
-      `https://${APPROVED_CTA_HOSTS[0]}/helix-collective/intro`,
-    );
+    const calendly = ENV_VARS.find((v) => v.name === CTA_URL_ENV_VAR);
+    expect(calendly).toBeDefined();
+    const url = new URL(calendly?.example ?? "");
     expect(renderEnvExample()).toContain(`${CTA_URL_ENV_VAR}=${url.href}`);
     expect(url.protocol).toBe("https:");
     expect(APPROVED_CTA_HOSTS).toContain(url.hostname);

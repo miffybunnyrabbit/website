@@ -99,6 +99,13 @@ describe("BaseLayout.astro", () => {
     expect(html).not.toContain("application/ld+json");
   });
 
+  it("does not render provider analytics scripts without env configuration", async () => {
+    const html = await renderLayout();
+    expect(html).not.toContain("googletagmanager.com/gtag/js");
+    expect(html).not.toContain("static.cloudflareinsights.com/beacon.min.js");
+    expect(html).toContain("BaseLayout.astro?astro&type=script");
+  });
+
   it("fails the render when metadata is off-spec", async () => {
     // A placeholder description must fail the build, not ship to visitors.
     await expect(

@@ -76,7 +76,7 @@ export const whyHelixCopy: WhyHelixCopy = {
   eyebrow: "WE’RE DIFFERENT BECAUSE…",
   headline: "WE PARTNER DEEPLY. OUR UPSIDE IS TIED TO YOURS.",
   intro:
-    "Helix is not a hired pair of hands at the edge of the business. We take on a small number of situations where there is a credible path to materially higher enterprise value—and structure the relationship so we win when the business wins.",
+    "We are not a hired pair of hands at the edge of the business. We take on a small number of situations where there is a credible path to materially higher enterprise value—and structure the relationship so we win when the business wins.",
 } as const;
 
 /** The exact point ids required, in the exact order (section 10). */

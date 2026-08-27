@@ -172,6 +172,13 @@ describe("assembled homepage offers exactly one primary conversion action", () =
     expect(distinct.size).toBe(1);
   });
 
+  it("opens every CTA booking link in a safe new tab", () => {
+    for (const cta of tracked) {
+      expect(attr(cta, "target")).toBe(primaryCta.target);
+      expect(attr(cta, "rel")).toBe(primaryCta.rel);
+    }
+  });
+
   it("emits the one approved analytics event, and only it, from the CTAs (§20.3, R-011)", () => {
     // The tracked set is selected by event, so assert the event value itself is
     // the approved constant rather than trusting the selector — a CTA firing some

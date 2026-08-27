@@ -28,11 +28,17 @@ cp .env.example .env # then edit .env if you have a booking URL (see below)
 npm run dev          # serve the site at http://localhost:4321
 ```
 
-`.env` is optional. The one variable it documents, `PUBLIC_CALENDLY_URL`, is the
-booking link behind the single site-wide CTA and is injected at build time — see
+`.env` is optional. `PUBLIC_CALENDLY_URL` is the booking link behind the single
+site-wide CTA and is injected at build time — see
 [`.env.example`](./.env.example) for the constraints (https, on an approved
 Calendly host). Without it the build only **warns** and the CTA renders without a
 link; a set-but-insecure or off-host value **fails** the build.
+
+Analytics are optional and env-driven. Set `PUBLIC_GA_MEASUREMENT_ID` in
+Cloudflare Pages to load GA4 page views and custom funnel events such as
+`cta_click`; set `PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN` to load Cloudflare Web
+Analytics for visit measurement. Without those values, the provider scripts are
+not rendered and the local site remains no-op-safe.
 
 Every build prints an **approval queue** report: the content still awaiting
 sign-off (`docs/approvals/queue/`) that publishes in draft form. Two homepage

@@ -20,6 +20,10 @@
 
 import { APPROVED_CTA_HOSTS, CTA_URL_ENV_VAR } from "./cta";
 
+export const GA_MEASUREMENT_ID_ENV_VAR = "PUBLIC_GA_MEASUREMENT_ID";
+export const CLOUDFLARE_WEB_ANALYTICS_TOKEN_ENV_VAR =
+  "PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN";
+
 /** A single documented environment variable. */
 export interface EnvVar {
   /** The variable name, e.g. `PUBLIC_CALENDLY_URL`. */
@@ -54,7 +58,28 @@ export const ENV_VARS: readonly EnvVar[] = [
       "value fails the build (`assertConfiguredCtaValid`). The exact production",
       "path and event type are the open D-006 decision.",
     ],
-    example: `https://${APPROVED_CTA_HOSTS[0]}/helix-collective/intro`,
+    example: `https://${APPROVED_CTA_HOSTS[0]}/nathan-helixcollective/30min`,
+  },
+  {
+    name: GA_MEASUREMENT_ID_ENV_VAR,
+    required: false,
+    description: [
+      "GA4 measurement ID used for page views and explicit funnel events.",
+      "Optional locally: without it the Google tag is not rendered and event",
+      "tracking remains a no-op. Set this in Cloudflare Pages when a GA4",
+      "property is ready.",
+    ],
+    example: "G-XXXXXXXXXX",
+  },
+  {
+    name: CLOUDFLARE_WEB_ANALYTICS_TOKEN_ENV_VAR,
+    required: false,
+    description: [
+      "Cloudflare Web Analytics site token used for privacy-friendly visit",
+      "measurement. Optional locally: without it the Cloudflare beacon is not",
+      "rendered. Set this in Cloudflare Pages after enabling Web Analytics.",
+    ],
+    example: "00000000-0000-0000-0000-000000000000",
   },
 ];
 

@@ -23,7 +23,7 @@
  * island already resolved to a given branch without simulating clicks; the flow
  * has no side effects and reads/writes no storage (§12.4).
  */
-import { useMemo, useState } from "react";
+import { Component } from "react";
 import {
   START_NODE_ID,
   isQuestion,
@@ -69,112 +69,136 @@ interface FlowState {
   answers: readonly Answer[];
 }
 
-export default function FitQualifier({
-  initialAnswers = [],
-}: FitQualifierProps) {
-  const [answers, setAnswers] = useState<readonly Answer[]>(initialAnswers);
+interface FitQualifierState {
+  answers: readonly Answer[];
+}
 
-  // Derive the current node from the answers; `resolve` is pure so the render is
-  // a direct function of state and never drifts from the graph.
-  const state: FlowState = useMemo(
-    () => ({ node: resolve(answers), answers }),
-    [answers],
-  );
+export default class FitQualifier extends Component<
+  FitQualifierProps,
+  FitQualifierState
+> {
+  state: FitQualifierState = {
+    answers: this.props.initialAnswers ?? [],
+  };
 
-  const answer = (choice: Answer) => {
+  answer = (choice: Answer) => {
+    const { answers } = this.state;
+    const state: FlowState = {
+      node: resolve(answers),
+      answers,
+    };
+
     // Guard against a stray click on an already-terminal node.
     if (!isQuestion(state.node)) return;
     // Confirm the transition exists before committing it.
     next(state.node.id, choice);
     // Report funnel progress (no-op until a provider is configured, §R-011).
     for (const event of analyticsEventsForAnswer(answers, choice)) track(event);
-    setAnswers([...answers, choice]);
+    this.setState({ answers: [...answers, choice] });
   };
 
-  const back = () => setAnswers(answers.slice(0, -1));
-  const restart = () => setAnswers([]);
+  back = () => {
+    this.setState(({ answers }) => ({ answers: answers.slice(0, -1) }));
+  };
 
-  const onQuestion = isQuestion(state.node);
-  const step = answers.length + 1;
+  restart = () => {
+    this.setState({ answers: [] });
+  };
 
-  return (
-    <div className="fit-qualifier" data-node={state.node.id}>
-      <p className="fit-qualifier__progress" aria-hidden={!onQuestion}>
-        {onQuestion ? `Question ${step}` : "Your result"}
-      </p>
+  render() {
+    const { answers } = this.state;
+    // Derive the current node from the answers; `resolve` is pure so the render
+    // is a direct function of state and never drifts from the graph.
+    const state: FlowState = {
+      node: resolve(answers),
+      answers,
+    };
+    const onQuestion = isQuestion(state.node);
+    const step = answers.length + 1;
 
-      {/* The interactive region is a polite live region so screen readers hear
+    return (
+      <div className="fit-qualifier" data-node={state.node.id}>
+        <p className="fit-qualifier__progress" aria-hidden={!onQuestion}>
+          {onQuestion ? `Question ${step}` : "Your result"}
+        </p>
+
+        {/* The interactive region is a polite live region so screen readers hear
           each new question and the final outcome without a manual focus jump. */}
-      <div className="fit-qualifier__stage" role="group" aria-live="polite">
-        {onQuestion && isQuestion(state.node) ? (
-          <fieldset className="fit-qualifier__question">
-            <legend className="fit-qualifier__prompt">
-              {state.node.prompt}
-            </legend>
-            <div className="fit-qualifier__answers">
-              <button
-                type="button"
-                className="fit-qualifier__answer"
-                onClick={() => answer("yes")}
-              >
-                Yes
-              </button>
-              <button
-                type="button"
-                className="fit-qualifier__answer"
-                onClick={() => answer("no")}
-              >
-                No
-              </button>
-            </div>
-          </fieldset>
-        ) : (
-          !isQuestion(state.node) && (
-            <div className="fit-qualifier__result">
-              <h3 className="fit-qualifier__result-headline">
-                {state.node.headline}
-              </h3>
-              <p className="fit-qualifier__result-body">{state.node.body}</p>
-              {state.node.qualified ? (
-                <a
-                  className="fit-qualifier__cta"
-                  href={primaryCta.href}
-                  data-analytics-event={primaryCta.analyticsEvent}
+        <div className="fit-qualifier__stage" role="group" aria-live="polite">
+          {onQuestion && isQuestion(state.node) ? (
+            <fieldset className="fit-qualifier__question">
+              <legend className="fit-qualifier__prompt">
+                {state.node.prompt}
+              </legend>
+              <div className="fit-qualifier__answers">
+                <button
+                  type="button"
+                  className="fit-qualifier__answer"
+                  onClick={() => this.answer("yes")}
                 >
-                  {primaryCta.label}
-                </a>
-              ) : (
-                state.node.address && (
-                  <address className="fit-qualifier__address">
-                    {state.node.address}
-                  </address>
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  className="fit-qualifier__answer"
+                  onClick={() => this.answer("no")}
+                >
+                  No
+                </button>
+              </div>
+            </fieldset>
+          ) : (
+            !isQuestion(state.node) && (
+              <div className="fit-qualifier__result">
+                <h3 className="fit-qualifier__result-headline">
+                  {state.node.headline}
+                </h3>
+                <p className="fit-qualifier__result-body">{state.node.body}</p>
+                {state.node.qualified ? (
+                  <a
+                    className="fit-qualifier__cta"
+                    href={primaryCta.href}
+                    target={primaryCta.target}
+                    rel={primaryCta.rel}
+                    data-analytics-event={primaryCta.analyticsEvent}
+                  >
+                    {primaryCta.label}
+                  </a>
+                ) : (
+                  state.node.address && (
+                    <address className="fit-qualifier__address">
+                      {state.node.address}
+                    </address>
+                  )
                 )
-              )}
-            </div>
+                }
+              </div>
+            )
           )
-        )}
-      </div>
+          }
+        </div>
 
-      <div className="fit-qualifier__controls">
-        <button
-          type="button"
-          className="fit-qualifier__control"
-          onClick={back}
-          disabled={answers.length === 0}
-        >
-          Back
-        </button>
-        <button
-          type="button"
-          className="fit-qualifier__control"
-          onClick={restart}
-          disabled={answers.length === 0}
-        >
-          Start again
-        </button>
+        <div className="fit-qualifier__controls">
+          <button
+            type="button"
+            className="fit-qualifier__control"
+            onClick={this.back}
+            disabled={answers.length === 0}
+          >
+            Back
+          </button>
+          <button
+            type="button"
+            className="fit-qualifier__control"
+            onClick={this.restart}
+            disabled={answers.length === 0}
+          >
+            Start again
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 // Re-export the start id so callers can reason about the initial state.

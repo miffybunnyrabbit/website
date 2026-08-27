@@ -48,6 +48,9 @@ export type AnalyticsEvent = (typeof ANALYTICS_EVENTS)[number];
 /** A sink receives each tracked event. Provider wiring lives entirely here. */
 export type AnalyticsSink = (event: AnalyticsEvent) => void;
 
+/** Minimal Google tag API shape used by this adapter. */
+export type GoogleTag = (command: "event", event: AnalyticsEvent) => void;
+
 const ALLOWED_EVENTS: ReadonlySet<string> = new Set(ANALYTICS_EVENTS);
 
 /**
@@ -68,6 +71,24 @@ export function isAnalyticsEvent(name: string): name is AnalyticsEvent {
  */
 export function configureAnalytics(next: AnalyticsSink | null): void {
   sink = next;
+}
+
+/**
+ * Install a GA4 event sink when the Google tag script is present. Page views are
+ * sent by the inline `gtag("config", ...)` snippet in `BaseLayout`; this sink
+ * sends the site's explicit funnel events such as `cta_click`.
+ */
+export function configureGoogleAnalytics(
+  global: { gtag?: unknown } = globalThis as { gtag?: unknown },
+): boolean {
+  if (typeof global.gtag !== "function") {
+    configureAnalytics(null);
+    return false;
+  }
+
+  const gtag = global.gtag as GoogleTag;
+  configureAnalytics((event) => gtag("event", event));
+  return true;
 }
 
 /** Whether a sink is currently installed. */

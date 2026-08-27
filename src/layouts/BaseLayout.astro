@@ -52,6 +52,12 @@ const ogImage = canonicalUrl(OG_IMAGE_PATH);
 // (P7-004). Validate it so a forbidden node never reaches the markup.
 const structuredData = noindex ? null : structuredDataGraph();
 if (structuredData) assertStructuredDataValid(structuredData);
+
+const gaMeasurementId = (import.meta.env.PUBLIC_GA_MEASUREMENT_ID as string | undefined)
+  ?.trim();
+const cloudflareAnalyticsToken = (
+  import.meta.env.PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN as string | undefined
+)?.trim();
 ---
 
 <!doctype html>
@@ -89,6 +95,23 @@ if (structuredData) assertStructuredDataValid(structuredData);
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    {gaMeasurementId && (
+      <>
+        <script
+          is:inline
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
+            gaMeasurementId,
+          )}`}
+        />
+        <script
+          is:inline
+          set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config",${JSON.stringify(
+            gaMeasurementId,
+          )});`}
+        />
+      </>
+    )}
     {structuredData && (
       <script
         is:inline
@@ -106,11 +129,20 @@ if (structuredData) assertStructuredDataValid(structuredData);
     <slot name="footer" />
 
     {/* One delegated listener tracks every `cta_click` (P5-006, D-006 outbound
-        tracking). It is a no-op until a provider is configured for D-011, so no
-        visitor data is collected until that decision lands. */}
+        tracking). GA4 receives explicit funnel events when configured; otherwise
+        the listener remains no-op-safe. */}
     <script>
-      import { trackAnalyticsClicks } from "../utils/analytics";
+      import { configureGoogleAnalytics, trackAnalyticsClicks } from "../utils/analytics";
+      configureGoogleAnalytics();
       trackAnalyticsClicks();
     </script>
+    {cloudflareAnalyticsToken && (
+      <script
+        is:inline
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={JSON.stringify({ token: cloudflareAnalyticsToken })}
+      />
+    )}
   </body>
 </html>

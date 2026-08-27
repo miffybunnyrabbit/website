@@ -45,6 +45,10 @@ export interface CtaConfig {
   label: string;
   /** Absolute booking URL; undefined when the environment variable is unset. */
   href: string | undefined;
+  /** Browser target for the booking navigation. */
+  target: "_blank";
+  /** Link relationship used when opening the booking page in a new tab. */
+  rel: "noopener noreferrer";
   /** Analytics event name fired when the CTA is clicked. */
   analyticsEvent: string;
 }
@@ -57,6 +61,8 @@ export interface CtaConfig {
 export const primaryCta: CtaConfig = {
   label: PRIMARY_CTA_LABEL,
   href: import.meta.env.PUBLIC_CALENDLY_URL as string | undefined,
+  target: "_blank",
+  rel: "noopener noreferrer",
   analyticsEvent: CTA_ANALYTICS_EVENT,
 };
 
@@ -160,6 +166,14 @@ function validateCtaMeta(cta: CtaConfig): string[] {
 
   if (!cta.analyticsEvent.trim()) {
     errors.push("CTA analytics event is missing.");
+  }
+
+  if (cta.target !== "_blank") {
+    errors.push('CTA target must be "_blank" so the booking link opens in a new tab.');
+  }
+
+  if (cta.rel !== "noopener noreferrer") {
+    errors.push('CTA rel must be "noopener noreferrer" for new-tab safety.');
   }
 
   return errors;

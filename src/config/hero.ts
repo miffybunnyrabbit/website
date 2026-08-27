@@ -52,7 +52,7 @@ export type PerformanceLinkedApproval = "pending" | "approved";
 /** The two approved supporting-copy drafts, keyed by variant (§8.2). */
 export const HERO_SUPPORTING_COPY: Readonly<Record<HeroSupportingVariant, string>> = {
   aligned:
-    "We partner deeply across product, technology and commercial execution—then structure our success around yours.",
+    "We partner deeply across product, technology and commercial execution. Then we structure our success around yours.",
   "performance-linked":
     "We go deep, build what moves the business, and get paid when you get paid.",
 };

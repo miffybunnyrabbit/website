@@ -22,13 +22,17 @@ function validConfig(): CtaConfig {
   return {
     label: PRIMARY_CTA_LABEL,
     href: "https://calendly.com/helix-collective/intro",
+    target: "_blank",
+    rel: "noopener noreferrer",
     analyticsEvent: CTA_ANALYTICS_EVENT,
   };
 }
 
 describe("primaryCta configuration", () => {
-  it("uses the single approved label and analytics event", () => {
+  it("uses the single approved label, new-tab behavior, and analytics event", () => {
     expect(primaryCta.label).toBe(PRIMARY_CTA_LABEL);
+    expect(primaryCta.target).toBe("_blank");
+    expect(primaryCta.rel).toBe("noopener noreferrer");
     expect(primaryCta.analyticsEvent).toBe("cta_click");
   });
 
@@ -99,6 +103,19 @@ describe("validatePrimaryCta guardrails", () => {
     const errors = validatePrimaryCta(cta);
     expect(errors.some((e) => e.includes("CTA label is missing"))).toBe(true);
     expect(errors.some((e) => e.includes("analytics event is missing"))).toBe(
+      true,
+    );
+  });
+
+  it("rejects CTA new-tab metadata that is not safe", () => {
+    const cta = {
+      ...validConfig(),
+      target: "_self",
+      rel: "opener",
+    } as unknown as CtaConfig;
+    const errors = validatePrimaryCta(cta);
+    expect(errors.some((e) => e.includes('target must be "_blank"'))).toBe(true);
+    expect(errors.some((e) => e.includes('rel must be "noopener noreferrer"'))).toBe(
       true,
     );
   });

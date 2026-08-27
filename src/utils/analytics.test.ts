@@ -2,6 +2,7 @@ import { afterEach, describe, it, expect } from "vitest";
 import {
   ANALYTICS_EVENTS,
   analyticsEventFromAttribute,
+  configureGoogleAnalytics,
   configureAnalytics,
   fitResultEvent,
   isAnalyticsEnabled,
@@ -84,6 +85,24 @@ describe("configureAnalytics + track", () => {
     });
     expect(() => track("cta_click")).not.toThrow();
     expect(track("cta_click")).toBe(false);
+  });
+});
+
+describe("configureGoogleAnalytics", () => {
+  it("keeps analytics disabled when gtag is absent", () => {
+    expect(configureGoogleAnalytics({})).toBe(false);
+    expect(isAnalyticsEnabled()).toBe(false);
+  });
+
+  it("routes allowed events to GA4 when gtag is present", () => {
+    const calls: Array<[string, AnalyticsEvent]> = [];
+    expect(
+      configureGoogleAnalytics({
+        gtag: (command: string, event: AnalyticsEvent) => calls.push([command, event]),
+      }),
+    ).toBe(true);
+    expect(track("cta_click")).toBe(true);
+    expect(calls).toEqual([["event", "cta_click"]]);
   });
 });
 
