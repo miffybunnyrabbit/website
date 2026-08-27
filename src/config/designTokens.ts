@@ -394,6 +394,7 @@ const RESET_AND_GLOBALS = `/* Self-hosted brand fonts (P3-003, D-010): latin wof
 
 html {
   -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
